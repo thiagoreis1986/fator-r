@@ -1,0 +1,1449 @@
+<!--
+    Projeto Brisa TIC55 ULBRA CANOAS ? Alessandro ? Paloma ? Thiago ? Kevin - Laura
+    Calculadora Fator R - Sistema de c†lculo tribut†rio
+    Desenvolvido para auxiliar empresas do Simples Nacional
+-->
+<!doctype html>
+<html lang="pt-BR">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Fator R - Conta?gil</title>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        /* Header fixo */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .logo .highlight {
+            color: #fbbf24;
+        }
+
+        /* Layout principal */
+        .main-container {
+            display: flex;
+            margin-top: 70px;
+            min-height: calc(100vh - 70px);
+            position: relative;
+        }
+
+        /* Sidebar esquerda */
+        .sidebar {
+            width: 350px;
+            background: linear-gradient(135deg, #2563eb 0%, #a855f7 100%);
+            padding: 40px 30px;
+            color: white;
+            position: relative;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .sidebar h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sidebar p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        /* ?rea de conte£do */
+        .content {
+            flex: 1;
+            background: white;
+            padding: 40px;
+            min-height: calc(100vh - 70px);
+            box-sizing: border-box;
+            overflow-x: auto;
+        }
+
+        /* Formul†rio */
+        .form-section {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .question {
+            margin-bottom: 30px;
+        }
+
+        .question h3 {
+            color: #1f2937;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2563eb;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .info-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(37, 99, 235, 0.1);
+            border: 2px solid #2563eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: help;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .info-icon:hover {
+            background: #2563eb;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: #1f2937;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: normal;
+            line-height: 1.5;
+            width: 280px;
+            max-width: calc(100vw - 40px);
+            min-width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 9px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.1);
+            z-index: -1;
+        }
+
+        /* Responsividade para tooltips */
+        @media (max-width: 768px) {
+            .tooltip {
+                width: calc(100vw - 60px);
+                max-width: calc(100vw - 60px);
+                min-width: 200px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 12px;
+                padding: 14px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tooltip {
+                width: calc(100vw - 40px);
+                max-width: calc(100vw - 40px);
+                min-width: 180px;
+                font-size: 11px;
+                padding: 12px 14px;
+                bottom: 25px;
+            }
+        }
+
+        .info-icon:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .calculate-button {
+            background: #2563eb;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 30px;
+        }
+
+        .calculate-button:hover {
+            background: #1d4ed8;
+        }
+
+        /* Alertas */
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #ecfdf5;
+            border-color: #2563eb;
+            color: #1f2937;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-color: #fbbf24;
+            color: #92400e;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        /* Resultados */
+        .result-container {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin: 30px 0;
+        }
+
+        .result-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .result-description {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Gr†fico de pizza */
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        .recalculate-button {
+            background: #2563eb;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .recalculate-button:hover {
+            background: #1d4ed8;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Popup Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2563eb 0%, #a855f7 100%);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .modal-text {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-button-primary {
+            background: #fbbf24;
+            color: #1f2937;
+            font-weight: bold;
+        }
+
+        .modal-button-primary:hover {
+            background: #f59e0b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+        }
+
+        .modal-button-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-button-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Responsivo */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 300px;
+            }
+            
+            .content {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 280px;
+                padding: 30px 20px;
+            }
+            
+            .sidebar h1 {
+                font-size: 24px;
+            }
+            
+            .sidebar p {
+                font-size: 14px;
+            }
+            
+            .content {
+                padding: 30px 25px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 30px 20px;
+                position: relative;
+                flex-shrink: 0;
+            }
+            
+            .sidebar h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            
+            .sidebar p {
+                font-size: 15px;
+                line-height: 1.6;
+                text-align: center;
+            }
+            
+            .content {
+                padding: 30px 20px;
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 15px;
+                height: 60px;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            .main-container {
+                margin-top: 60px;
+            }
+            
+            .sidebar {
+                padding: 25px 20px;
+            }
+            
+            .sidebar h1 {
+                font-size: 22px;
+                margin-bottom: 15px;
+            }
+            
+            .sidebar p {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            
+            .content {
+                padding: 25px 15px;
+                min-height: auto;
+            }
+            
+            .form-section {
+                max-width: 100%;
+            }
+            
+            .question h3 {
+                font-size: 16px;
+            }
+            
+            .checkbox-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .radio-group {
+                gap: 15px;
+            }
+            
+            .input-field {
+                padding: 15px 12px;
+                font-size: 16px;
+            }
+            
+            .calculate-button, .recalculate-button {
+                width: 100%;
+                padding: 15px;
+                font-size: 16px;
+            }
+            
+            .result-container {
+                padding: 25px 15px;
+                margin: 20px 0;
+            }
+            
+            .result-title {
+                font-size: 20px;
+            }
+            
+            .result-description {
+                font-size: 14px;
+            }
+            
+            .chart-container {
+                margin: 20px 0;
+            }
+            
+            .pie-chart {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .legend {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 0 15px;
+                height: 55px;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .main-container {
+                margin-top: 55px;
+            }
+            
+            .sidebar {
+                padding: 20px 15px;
+            }
+            
+            .sidebar h1 {
+                font-size: 20px;
+                margin-bottom: 12px;
+            }
+            
+            .sidebar p {
+                font-size: 13px;
+                line-height: 1.4;
+            }
+            
+            .content {
+                padding: 20px 10px;
+                min-height: auto;
+            }
+            
+            .question {
+                margin-bottom: 25px;
+            }
+            
+            .alert {
+                padding: 15px;
+                font-size: 14px;
+            }
+            
+            .result-container {
+                padding: 20px 10px;
+            }
+            
+            .pie-chart {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .header {
+                height: 50px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .main-container {
+                margin-top: 50px;
+            }
+            
+            .sidebar {
+                padding: 15px 10px;
+            }
+            
+            .sidebar h1 {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            
+            .sidebar p {
+                font-size: 12px;
+            }
+            
+            .content {
+                padding: 15px 8px;
+                min-height: auto;
+            }
+            
+            .input-field {
+                padding: 12px 10px;
+                font-size: 14px;
+            }
+            
+            .calculate-button, .recalculate-button {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Header -->
+  <div class="header">
+   <div class="logo">
+    Conta<span class="highlight">?gil</span>
+   </div>
+  </div><!-- Popup Modal -->
+  <div class="modal-overlay" id="modal-simples-nao">
+   <div class="modal-content">
+    <h3 class="modal-title">?? Atená?o</h3>
+    <p class="modal-text">O c†lculo do Fator R s¢ vale para empresas que est?o no Simples Nacional.<br><br>
+      Se a sua empresa n?o opta por esse regime, n?o se preocupe: vocà pode avaliar outras formas de planejamento tribut†rio para o seu neg¢cio chamando a gente!</p>
+    <div class="modal-buttons"><button class="modal-button modal-button-primary" onclick="window.open('https://wa.me/5511999999999', '_blank')"> FALAR COM ESPECIALISTA </button> <button class="modal-button modal-button-secondary" onclick="closeModal()"> FECHAR </button>
+    </div>
+   </div>
+  </div><!-- Container principal -->
+  <div class="main-container"><!-- Sidebar -->
+   <div class="sidebar">
+    <h1>CALCULADORA FATOR R</h1>
+    <p>Esta calculadora mostra em qual Anexo do Simples Nacional sua empresa se enquadra (III ou V), conforme a relaá?o entre folha de pagamento e receita bruta. O Fator R Ç fundamental para determinar a tributaá?o correta do seu neg¢cio e pode gerar economia significativa de impostos.</p>
+   </div><!-- Conte£do principal -->
+   <div class="content"><!-- Tela inicial -->
+    <div id="screen-initial" class="form-section">
+     <div class="question">
+      <div class="question-header">
+       <h3>Sua empresa opta pelo Simples Nacional?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Simples Nacional</strong><br>
+          ê um regime tribut†rio diferenciado que unifica o recolhimento de v†rios impostos (IRPJ, CSLL, PIS, COFINS, IPI, ICMS, ISS e CPP) em uma £nica guia mensal. Destinado Ös micro e pequenas empresas com faturamento anual de atÇ R$ 4,8 milh?es, oferece al°quotas reduzidas e simplificaá?o nas obrigaá?es acess¢rias.
+        </div>
+       </div>
+      </div>
+      <div class="checkbox-group">
+       <div class="checkbox-option"><input type="checkbox" id="simples-sim" name="simples" onchange="handleSimplesChange(this)"> <label for="simples-sim">Sim</label>
+       </div>
+       <div class="checkbox-option"><input type="checkbox" id="simples-nao" name="simples" onchange="handleSimplesChange(this)"> <label for="simples-nao">N?o</label>
+       </div>
+      </div>
+     </div>
+     <div class="question">
+      <div class="question-header">
+       <h3>Qual a atividade de sua empresa?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Atividade da Empresa</strong><br>
+          A atividade principal determina o anexo do Simples Nacional. Empresas de prestaá?o de serviáos intelectuais (consultoria, desenvolvimento, marketing, contabilidade, advocacia, etc.) podem se enquadrar no Anexo III (6% a 33%) ou Anexo V (15,5% a 30,5%), dependendo do Fator R calculado.
+        </div>
+       </div>
+      </div><select class="input-field" id="atividade"> <option value="">Selecione a atividade</option> <option value="consultoria">Consultoria</option> <option value="desenvolvimento">Desenvolvimento de Software</option> <option value="marketing">Marketing Digital</option> <option value="contabilidade">Contabilidade</option> <option value="advocacia">Advocacia</option> <option value="arquitetura">Arquitetura</option> <option value="engenharia">Engenharia</option> <option value="design">Design</option> <option value="educacao">Educaá?o</option> <option value="saude">Sa£de</option> <option value="outros">Outros</option> </select>
+     </div>
+     <div class="question">
+      <div class="question-header">
+       <h3>H† quanto tempo sua empresa est† em funcionamento?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Tempo de Funcionamento</strong><br>
+          Empresas com mais de 12 meses: usamos dados reais dos £ltimos 12 meses para c†lculo preciso. Empresas com menos de 12 meses: fazemos projeá?o anual baseada no per°odo de atividade para estimar o enquadramento tribut†rio correto.
+        </div>
+       </div>
+      </div>
+      <div class="radio-group">
+       <div class="radio-option"><input type="radio" id="tempo-menos" name="tempo" value="menos12" onchange="showMesesField()"> <label for="tempo-menos">Menos de 12 meses</label>
+       </div>
+       <div class="radio-option"><input type="radio" id="tempo-mais" name="tempo" value="mais12" onchange="hideMesesField()"> <label for="tempo-mais">Mais de 12 meses</label>
+       </div>
+      </div>
+     </div>
+     <div class="question hidden" id="meses-funcionamento">
+      <div class="question-header">
+       <h3>H† quantos meses sua empresa est† em funcionamento?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Meses de Funcionamento</strong><br>
+          Informe apenas meses completos de operaá?o (1 a 11 meses). Este dado Ç fundamental para projetar o faturamento anual e calcular corretamente o Fator R. Exemplo: se comeáou em julho e estamos em dezembro, s?o 6 meses completos.
+        </div>
+       </div>
+      </div><input type="number" class="input-field" id="meses-empresa" placeholder="Ex: 6" min="1" max="11">
+     </div>
+     <div class="question">
+      <div class="question-header">
+       <h3>Qual o seu faturamento bruto mensal?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Faturamento Bruto Mensal</strong><br>
+          ê o valor total das vendas ou serviáos prestados em um màs, antes de descontar custos, despesas ou impostos. Inclui todas as receitas operacionais: vendas, prestaá?o de serviáos, comiss?es, etc. Use a mÇdia mensal se houver variaá?o.
+        </div>
+       </div>
+      </div><input type="text" class="input-field currency-input" id="faturamento-inicial" placeholder="Ex: R$ 50.000,00" oninput="formatCurrency(this)">
+     </div><button class="calculate-button" onclick="nextStep()">CONTINUAR</button>
+    </div><!-- Tela de n?o eleg°vel -->
+    <div id="screen-not-eligible" class="form-section hidden">
+     <div class="alert alert-warning"><strong>O c†lculo do Fator R s¢ vale para empresas que est?o no Simples Nacional.</strong><br><br>
+       Se a sua empresa n?o opta por esse regime, n?o se preocupe: vocà pode avaliar outras formas de planejamento tribut†rio para o seu neg¢cio chamando a gente!
+     </div>
+     <div style="text-align: center; margin: 30px 0;">
+      <h3 style="color: #2563eb; margin-bottom: 15px;">?? Fale agora com um especialista!</h3>
+      <p style="color: #6b7280; margin-bottom: 20px;">Entre em contato conosco para avaliar outras formas de planejamento tribut†rio que podem reduzir significativamente seus impostos.</p><button class="calculate-button" onclick="window.open('https://wa.me/5511999999999', '_blank')"> FALAR COM ESPECIALISTA </button>
+     </div><button class="recalculate-button" onclick="resetCalculator()">VOLTAR AO IN?CIO</button>
+    </div><!-- Tela de alerta -->
+    <div id="screen-alert" class="form-section hidden">
+     <div class="alert alert-info"><strong>ATENÄ?O:</strong> O c†lculo do Fator R s¢ Ç v†lido para empresas que est?o enquadradas no Simples Nacional e exercem atividades de prestaá?o de serviáos. Certifique-se de que sua empresa atende a esses critÇrios antes de prosseguir.
+     </div><button class="calculate-button" onclick="showDetailedForm()">CONTINUAR C?LCULO</button> <button class="recalculate-button" onclick="goBackToInitial()" style="margin-top: 15px;">VOLTAR</button>
+    </div><!-- Tela mais de 12 meses -->
+    <div id="screen-mais12" class="form-section hidden">
+     <div class="question">
+      <div class="question-header">
+       <h3>Qual o seu faturamento bruto anual dos £ltimos 12 meses?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Faturamento Bruto Anual</strong><br>
+          Some o faturamento bruto dos £ltimos 12 meses completos. Inclui todas as receitas operacionais sem descontar custos, despesas ou impostos. Consulte o DRE (Demonstrativo de Resultado), relat¢rios financeiros ou notas fiscais emitidas no per°odo.
+        </div>
+       </div>
+      </div><input type="text" class="input-field currency-input" id="faturamento-anual" placeholder="Ex: R$ 600.000,00" oninput="formatCurrency(this)">
+     </div><button class="calculate-button" onclick="showDetailedFormAnual()">CALCULAR MEU FATOR R</button> <button class="recalculate-button" onclick="goBackToInitial()" style="margin-top: 15px;">VOLTAR</button>
+    </div><!-- Tela detalhada (pr¢-labore + funcion†rios) -->
+    <div id="screen-detailed" class="form-section hidden">
+     <div class="question">
+      <div class="question-header">
+       <h3>Vocà recebe pr¢-labore?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Pr¢-labore</strong><br>
+          ê a remuneraá?o mensal obrigat¢ria dos s¢cios que trabalham ativamente na empresa. Deve ser pelo menos um sal†rio m°nimo e incide INSS (11% ou 20%). ê fundamental para o Fator R pois representa custo com pessoal e afeta diretamente o enquadramento tribut†rio.
+        </div>
+       </div>
+      </div>
+      <div class="checkbox-group">
+       <div class="checkbox-option"><input type="checkbox" id="prolabore-det-sim" name="prolabore-det" onchange="handleProlaboreChange(this)"> <label for="prolabore-det-sim">Sim</label>
+       </div>
+       <div class="checkbox-option"><input type="checkbox" id="prolabore-det-nao" name="prolabore-det" onchange="handleProlaboreChange(this)"> <label for="prolabore-det-nao">N?o</label>
+       </div>
+      </div>
+     </div>
+     <div class="question hidden" id="valor-prolabore-section">
+      <div class="question-header">
+       <h3>Qual o valor do pr¢-labore mensal?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Valor do Pr¢-labore</strong><br>
+          Informe o valor bruto mensal total de todos os s¢cios somados, antes do desconto do INSS. Exemplo: se h† 2 s¢cios recebendo R$ 3.000 cada, informe R$ 6.000. Este valor ser† usado no c†lculo do Fator R junto com os encargos.
+        </div>
+       </div>
+      </div><input type="text" class="input-field currency-input" id="valor-prolabore" placeholder="Ex: R$ 5.000,00" oninput="formatCurrency(this)">
+     </div>
+     <div class="question">
+      <div class="question-header">
+       <h3>Vocà possui funcion†rios?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Funcion†rios CLT</strong><br>
+          Considere apenas empregados com carteira assinada (CLT), estagi†rios e aprendizes. N?O inclua: prestadores de serviáos (PJ), freelancers, terceirizados, consultores externos ou s¢cios. Apenas v°nculos empregat°cios formais contam para o Fator R.
+        </div>
+       </div>
+      </div>
+      <div class="checkbox-group">
+       <div class="checkbox-option"><input type="checkbox" id="func-det-sim" name="func-det" onchange="handleFuncionariosChange(this)"> <label for="func-det-sim">Sim</label>
+       </div>
+       <div class="checkbox-option"><input type="checkbox" id="func-det-nao" name="func-det" onchange="handleFuncionariosChange(this)"> <label for="func-det-nao">N?o</label>
+       </div>
+      </div>
+     </div>
+     <div class="question hidden" id="folha-pagamento-section">
+      <div class="question-header">
+       <h3>Qual seu gasto mÇdio com folha de pagamento mensal, incluindo impostos?</h3>
+       <div class="info-icon">
+        ? 
+        <div class="tooltip"><strong>Folha de Pagamento Total</strong><br>
+          Inclua TODOS os custos mensais com funcion†rios: sal†rios brutos, 13ß proporcional (1/12), fÇrias proporcionais (1/12), FGTS (8%), INSS patronal (20%), seguro acidente (1-3%), sal†rio educaá?o (2,5%), sistema S, vale transporte, vale refeiá?o, plano de sa£de, etc.
+        </div>
+       </div>
+      </div><input type="text" class="input-field currency-input" id="folha-pagamento" placeholder="Ex: R$ 8.000,00" oninput="formatCurrency(this)">
+     </div>
+     <div style="text-align: center; margin: 30px 0;">
+      <h3 style="color: #2563eb; margin-bottom: 15px;">?? Fale agora com um especialista!</h3>
+      <p style="color: #6b7280; margin-bottom: 20px;">Precisa de ajuda para calcular seus valores? Nossos especialistas podem te orientar!</p>
+     </div><button class="calculate-button" onclick="calculateFatorR()">CALCULAR MEU FATOR R</button> <button class="recalculate-button" onclick="goBackToPrevious()" style="margin-top: 15px;">VOLTAR</button>
+    </div><!-- Resultado Anexo III -->
+    <div id="result-anexo3" class="result-container hidden">
+     <h2 class="result-title">SEU NEG?CIO SE ENQUADRA NO ANEXO III</h2>
+     <p class="result-description">ParabÇns! Sua empresa est† enquadrada no Anexo III do Simples Nacional. Isso significa que a carga de impostos pode ser mais leve! O Anexo III Ç mais vantajoso para empresas de prestaá?o de serviáos com maior folha de pagamento.</p>
+     <div class="chart-container">
+      <h4 style="margin-bottom: 20px; color: #1f2937;">Distribuiá?o de Custos</h4>
+      <svg class="pie-chart" viewbox="0 0 200 200" id="pie-chart-anexo3"><!-- Gr†fico ser† gerado dinamicamente -->
+      </svg>
+     </div>
+     <div class="legend" id="legend-anexo3"><!-- Legenda ser† gerada dinamicamente -->
+     </div>
+     <div style="margin: 30px 0;">
+      <h4 style="color: #1f2937; margin-bottom: 15px;">Comparaá?o de Al°quotas</h4>
+      <div style="display: flex; justify-content: space-around; align-items: end; height: 150px; background: #f8fafc; padding: 20px; border-radius: 8px;">
+       <div style="text-align: center;">
+        <div style="width: 60px; height: 80px; background: #60a5fa; margin: 0 auto 10px; border-radius: 4px; display: flex; align-items: end; justify-content: center; color: white; font-weight: bold; padding-bottom: 10px;">
+         6%
+        </div><span style="font-size: 14px; color: #6b7280;">Anexo III</span>
+       </div>
+       <div style="text-align: center;">
+        <div style="width: 60px; height: 120px; background: #a855f7; margin: 0 auto 10px; border-radius: 4px; display: flex; align-items: end; justify-content: center; color: white; font-weight: bold; padding-bottom: 10px;">
+         15.5%
+        </div><span style="font-size: 14px; color: #6b7280;">Anexo V</span>
+       </div>
+      </div>
+     </div>
+     <div style="text-align: center; margin: 30px 0;">
+      <h3 style="color: #2563eb; margin-bottom: 15px;">?? Fale agora com um especialista!</h3>
+      <p style="color: #6b7280; margin-bottom: 20px;">Quer saber como aproveitar ao m†ximo essa vantagem tribut†ria? Nossos especialistas podem te ajudar a otimizar ainda mais!</p><button class="calculate-button" onclick="window.open('https://wa.me/5511999999999', '_blank')" style="margin-right: 15px;"> FALAR COM ESPECIALISTA </button>
+     </div><button class="recalculate-button" onclick="resetCalculator()">REFAZER C?LCULO</button>
+    </div><!-- Resultado Anexo V -->
+    <div id="result-anexo5" class="result-container hidden">
+     <h2 class="result-title">SEU NEG?CIO SE ENQUADRA NO ANEXO V</h2>
+     <p class="result-description">Sua empresa est† enquadrada no Anexo V do Simples Nacional. Isso pode pesar no bolso, mas com a orientaá?o cont†bil adequada, Ç poss°vel otimizar a tributaá?o e encontrar alternativas mais vantajosas.</p>
+     <div class="chart-container">
+      <h4 style="margin-bottom: 20px; color: #1f2937;">Distribuiá?o de Custos</h4>
+      <svg class="pie-chart" viewbox="0 0 200 200" id="pie-chart-anexo5"><!-- Gr†fico ser† gerado dinamicamente -->
+      </svg>
+     </div>
+     <div class="legend" id="legend-anexo5"><!-- Legenda ser† gerada dinamicamente -->
+     </div>
+     <div style="margin: 30px 0;">
+      <h4 style="color: #1f2937; margin-bottom: 15px;">Comparaá?o de Al°quotas</h4>
+      <div style="display: flex; justify-content: space-around; align-items: end; height: 150px; background: #f8fafc; padding: 20px; border-radius: 8px;">
+       <div style="text-align: center;">
+        <div style="width: 60px; height: 80px; background: #60a5fa; margin: 0 auto 10px; border-radius: 4px; display: flex; align-items: end; justify-content: center; color: white; font-weight: bold; padding-bottom: 10px;">
+         6%
+        </div><span style="font-size: 14px; color: #6b7280;">Anexo III</span>
+       </div>
+       <div style="text-align: center;">
+        <div style="width: 60px; height: 120px; background: #a855f7; margin: 0 auto 10px; border-radius: 4px; display: flex; align-items: end; justify-content: center; color: white; font-weight: bold; padding-bottom: 10px;">
+         15.5%
+        </div><span style="font-size: 14px; color: #6b7280;">Anexo V</span>
+       </div>
+      </div>
+     </div>
+     <div style="text-align: center; margin: 30px 0;">
+      <h3 style="color: #2563eb; margin-bottom: 15px;">?? Fale agora com um especialista!</h3>
+      <p style="color: #6b7280; margin-bottom: 20px;">N?o desanime! Nossos especialistas podem te ajudar a encontrar formas de otimizar sua tributaá?o e reduzir seus impostos.</p><button class="calculate-button" onclick="window.open('https://wa.me/5511999999999', '_blank')" style="margin-right: 15px;"> FALAR COM ESPECIALISTA </button>
+     </div><button class="recalculate-button" onclick="resetCalculator()">REFAZER C?LCULO</button>
+    </div><!-- Tela de erro -->
+    <div id="screen-error" class="form-section hidden">
+     <div class="alert alert-error"><strong>EXISTEM VALORES INSERIDOS INCORRETAMENTE</strong><br><br>
+       Verifique os valores preenchidos para obter um resultado eficiente. Certifique-se de que: 
+      <ul style="margin-top: 15px;">
+       <li>O valor do pr¢-labore est† correto</li>
+       <li>O valor da folha de pagamento inclui todos os custos</li>
+       <li>O faturamento informado est† preciso</li>
+       <li>Os valores s?o proporcionais e realistas</li>
+      </ul>
+     </div>
+     <div style="text-align: center; margin: 30px 0;">
+      <h3 style="color: #2563eb; margin-bottom: 15px;">?? Fale agora com um especialista!</h3>
+      <p style="color: #6b7280; margin-bottom: 20px;">Est† com d£vidas sobre os valores? Nossos especialistas podem te ajudar a preencher corretamente e calcular seu Fator R!</p><button class="calculate-button" onclick="window.open('https://wa.me/5511999999999', '_blank')" style="margin-right: 15px;"> FALAR COM ESPECIALISTA </button>
+     </div><button class="calculate-button" onclick="goBackToDetailed()">CORRIGIR DADOS</button>
+    </div>
+   </div>
+  </div>
+  <script>
+        // Funá?o para formatar valores monet†rios
+        function formatCurrency(input) {
+            let value = input.value.replace(/\D/g, ''); // Remove tudo que n?o Ç d°gito
+            
+            if (value === '') {
+                input.value = '';
+                return;
+            }
+            
+            // Converte para n£mero e formata
+            value = parseInt(value);
+            
+            // Formata como moeda brasileira
+            const formatted = new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2
+            }).format(value / 100);
+            
+            input.value = formatted;
+        }
+
+        // Funá?o para extrair valor numÇrico de campo formatado
+        function getNumericValue(input) {
+            if (!input.value) return 0;
+            
+            // Remove formataá?o e converte para n£mero
+            const numericValue = input.value
+                .replace(/[R$\s]/g, '') // Remove R$ e espaáos
+                .replace(/\./g, '') // Remove pontos (milhares)
+                .replace(',', '.'); // Substitui v°rgula por ponto
+            
+            return parseFloat(numericValue) || 0;
+        }
+
+        function handleSimplesChange(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="simples"]');
+            checkboxes.forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+
+            // Se selecionou "N?o", mostrar popup
+            if (checkbox.id === 'simples-nao' && checkbox.checked) {
+                showModal();
+            }
+        }
+
+        function handleCheckboxChange(checkbox, groupName) {
+            const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+            checkboxes.forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+        }
+
+        function showMesesField() {
+            document.getElementById('meses-funcionamento').classList.remove('hidden');
+        }
+
+        function hideMesesField() {
+            document.getElementById('meses-funcionamento').classList.add('hidden');
+            document.getElementById('meses-empresa').value = '';
+        }
+
+        function handleProlaboreChange(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="prolabore-det"]');
+            checkboxes.forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+
+            const valorSection = document.getElementById('valor-prolabore-section');
+            if (checkbox.id === 'prolabore-det-sim' && checkbox.checked) {
+                valorSection.classList.remove('hidden');
+            } else {
+                valorSection.classList.add('hidden');
+                document.getElementById('valor-prolabore').value = '';
+            }
+        }
+
+        function handleFuncionariosChange(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="func-det"]');
+            checkboxes.forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
+            });
+
+            const folhaSection = document.getElementById('folha-pagamento-section');
+            if (checkbox.id === 'func-det-sim' && checkbox.checked) {
+                folhaSection.classList.remove('hidden');
+            } else {
+                folhaSection.classList.add('hidden');
+                document.getElementById('folha-pagamento').value = '';
+            }
+        }
+
+        function nextStep() {
+            const simplesChecked = document.querySelector('input[name="simples"]:checked');
+            const atividade = document.getElementById('atividade').value.trim();
+            const tempoChecked = document.querySelector('input[name="tempo"]:checked');
+            const faturamentoInput = document.getElementById('faturamento-inicial');
+            const faturamento = getNumericValue(faturamentoInput);
+
+            if (!simplesChecked || !atividade || !tempoChecked || !faturamento || faturamento <= 0) {
+                const message = document.createElement('div');
+                message.className = 'alert alert-warning';
+                message.innerHTML = '<strong>Atená?o!</strong> Por favor, preencha todos os campos obrigat¢rios com valores v†lidos.';
+                
+                const existingAlert = document.querySelector('#screen-initial .alert');
+                if (existingAlert) existingAlert.remove();
+                
+                document.getElementById('screen-initial').insertBefore(message, document.getElementById('screen-initial').firstChild);
+                return;
+            }
+
+            if (simplesChecked.id === 'simples-nao') {
+                hideAllScreens();
+                document.getElementById('screen-not-eligible').classList.remove('hidden');
+                return;
+            }
+
+            // Validar meses se necess†rio
+            if (tempoChecked.value === 'menos12') {
+                const meses = parseInt(document.getElementById('meses-empresa').value);
+                if (!meses || meses < 1 || meses > 11) {
+                    const message = document.createElement('div');
+                    message.className = 'alert alert-warning';
+                    message.innerHTML = '<strong>Atená?o!</strong> Por favor, informe h† quantos meses sua empresa est† funcionando (1-11 meses).';
+                    
+                    const existingAlert = document.querySelector('#screen-initial .alert');
+                    if (existingAlert) existingAlert.remove();
+                    
+                    document.getElementById('screen-initial').insertBefore(message, document.getElementById('screen-initial').firstChild);
+                    return;
+                }
+                // Para menos de 12 meses, ir direto para o alerta
+                hideAllScreens();
+                document.getElementById('screen-alert').classList.remove('hidden');
+            } else {
+                // Copiar o faturamento formatado para o campo anual
+                document.getElementById('faturamento-anual').value = faturamentoInput.value;
+                hideAllScreens();
+                document.getElementById('screen-mais12').classList.remove('hidden');
+            }
+        }
+
+
+
+        function showDetailedForm() {
+            hideAllScreens();
+            document.getElementById('screen-detailed').classList.remove('hidden');
+        }
+
+        function showDetailedFormAnual() {
+            const faturamentoInput = document.getElementById('faturamento-anual');
+            const faturamento = getNumericValue(faturamentoInput);
+
+            if (!faturamento || faturamento <= 0) {
+                const message = document.createElement('div');
+                message.className = 'alert alert-warning';
+                message.innerHTML = '<strong>Atená?o!</strong> Por favor, preencha o faturamento anual com um valor v†lido.';
+                
+                const existingAlert = document.querySelector('#screen-mais12 .alert');
+                if (existingAlert) existingAlert.remove();
+                
+                document.getElementById('screen-mais12').insertBefore(message, document.getElementById('screen-mais12').firstChild);
+                return;
+            }
+
+            hideAllScreens();
+            document.getElementById('screen-detailed').classList.remove('hidden');
+        }
+
+        function calculateFatorR() {
+            const prolaboreChecked = document.querySelector('input[name="prolabore-det"]:checked');
+            const funcionariosChecked = document.querySelector('input[name="func-det"]:checked');
+
+            if (!prolaboreChecked || !funcionariosChecked) {
+                const message = document.createElement('div');
+                message.className = 'alert alert-warning';
+                message.innerHTML = '<strong>Atená?o!</strong> Por favor, responda todas as perguntas.';
+                
+                const existingAlert = document.querySelector('#screen-detailed .alert');
+                if (existingAlert) existingAlert.remove();
+                
+                document.getElementById('screen-detailed').insertBefore(message, document.getElementById('screen-detailed').firstChild);
+                return;
+            }
+
+            const prolaboreInput = document.getElementById('valor-prolabore');
+            const folhaPagamentoInput = document.getElementById('folha-pagamento');
+            const faturamentoInicialInput = document.getElementById('faturamento-inicial');
+            const faturamentoAnualInput = document.getElementById('faturamento-anual');
+
+            const prolabore = getNumericValue(prolaboreInput);
+            const folhaPagamento = getNumericValue(folhaPagamentoInput);
+            let faturamento = getNumericValue(faturamentoInicialInput) || getNumericValue(faturamentoAnualInput);
+
+            // Validaá?es
+            if (faturamento <= 0) {
+                const message = document.createElement('div');
+                message.className = 'alert alert-warning';
+                message.innerHTML = '<strong>Atená?o!</strong> Por favor, informe um faturamento v†lido.';
+                
+                const existingAlert = document.querySelector('#screen-detailed .alert');
+                if (existingAlert) existingAlert.remove();
+                
+                document.getElementById('screen-detailed').insertBefore(message, document.getElementById('screen-detailed').firstChild);
+                return;
+            }
+
+            // Se o faturamento for anual, converter para mensal para o c†lculo
+            const tempoChecked = document.querySelector('input[name="tempo"]:checked');
+            if (tempoChecked && tempoChecked.value === 'mais12') {
+                faturamento = faturamento / 12; // Converter anual para mensal
+            }
+
+            const totalFolha = prolabore + folhaPagamento;
+            
+            // Verificar se os valores fazem sentido
+            if (totalFolha > faturamento * 1.5) {
+                showError();
+                return;
+            }
+
+            const fatorR = faturamento > 0 ? totalFolha / faturamento : 0;
+
+            hideAllScreens();
+
+            // Fator R >= 0.28 = Anexo III, < 0.28 = Anexo V
+            if (fatorR >= 0.28) {
+                generatePieChart('anexo3', faturamento, totalFolha);
+                document.getElementById('result-anexo3').classList.remove('hidden');
+            } else {
+                generatePieChart('anexo5', faturamento, totalFolha);
+                document.getElementById('result-anexo5').classList.remove('hidden');
+            }
+        }
+
+        function generatePieChart(anexo, faturamento, totalFolha) {
+            const impostos = anexo === 'anexo3' ? faturamento * 0.06 : faturamento * 0.155;
+            const rendaBruta = faturamento - totalFolha - impostos;
+            
+            const total = faturamento;
+            const folhaPercent = (totalFolha / total) * 100;
+            const impostosPercent = (impostos / total) * 100;
+            const rendaPercent = (rendaBruta / total) * 100;
+
+            // Gerar SVG com fatias de pizza
+            const svg = document.getElementById(`pie-chart-${anexo}`);
+            const centerX = 100;
+            const centerY = 100;
+            const radius = 80;
+            
+            const gradients = [
+                { id: 'gradient-renda', colors: ['#10b981', '#059669'] },
+                { id: 'gradient-folha', colors: ['#f59e0b', '#d97706'] },
+                { id: 'gradient-impostos', colors: ['#ef4444', '#dc2626'] }
+            ];
+            const labels = ['Renda L°quida', 'Folha de Pagamento', 'Impostos'];
+            const values = [rendaPercent, folhaPercent, impostosPercent];
+
+            svg.innerHTML = '';
+
+            // Criar definiá?es de gradientes
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            gradients.forEach(gradient => {
+                const linearGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+                linearGradient.setAttribute('id', gradient.id);
+                linearGradient.setAttribute('x1', '0%');
+                linearGradient.setAttribute('y1', '0%');
+                linearGradient.setAttribute('x2', '100%');
+                linearGradient.setAttribute('y2', '100%');
+                
+                const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                stop1.setAttribute('offset', '0%');
+                stop1.setAttribute('stop-color', gradient.colors[0]);
+                
+                const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                stop2.setAttribute('offset', '100%');
+                stop2.setAttribute('stop-color', gradient.colors[1]);
+                
+                linearGradient.appendChild(stop1);
+                linearGradient.appendChild(stop2);
+                defs.appendChild(linearGradient);
+            });
+            svg.appendChild(defs);
+
+            let currentAngle = 0;
+
+            values.forEach((percent, index) => {
+                if (percent > 0) {
+                    const sliceAngle = (percent / 100) * 360;
+                    const startAngle = currentAngle;
+                    const endAngle = currentAngle + sliceAngle;
+                    
+                    // Converter Éngulos para radianos
+                    const startRad = (startAngle * Math.PI) / 180;
+                    const endRad = (endAngle * Math.PI) / 180;
+                    
+                    // Calcular pontos da fatia
+                    const x1 = centerX + radius * Math.cos(startRad);
+                    const y1 = centerY + radius * Math.sin(startRad);
+                    const x2 = centerX + radius * Math.cos(endRad);
+                    const y2 = centerY + radius * Math.sin(endRad);
+                    
+                    // Determinar se Ç um arco grande
+                    const largeArc = sliceAngle > 180 ? 1 : 0;
+                    
+                    // Criar o path da fatia
+                    const pathData = [
+                        `M ${centerX} ${centerY}`,
+                        `L ${x1} ${y1}`,
+                        `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+                        'Z'
+                    ].join(' ');
+                    
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', pathData);
+                    path.setAttribute('fill', `url(#${gradients[index].id})`);
+                    path.setAttribute('stroke', '#ffffff');
+                    path.setAttribute('stroke-width', '2');
+                    path.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))';
+                    
+                    // Adicionar efeito hover
+                    path.style.transition = 'transform 0.2s ease';
+                    path.addEventListener('mouseenter', function() {
+                        this.style.transform = 'scale(1.05)';
+                        this.style.transformOrigin = `${centerX}px ${centerY}px`;
+                    });
+                    path.addEventListener('mouseleave', function() {
+                        this.style.transform = 'scale(1)';
+                    });
+                    
+                    svg.appendChild(path);
+                    
+                    // Adicionar texto com porcentagem no centro da fatia
+                    if (percent > 8) { // S¢ mostrar texto se a fatia for grande o suficiente
+                        const midAngle = (startAngle + endAngle) / 2;
+                        const midRad = (midAngle * Math.PI) / 180;
+                        const textX = centerX + (radius * 0.7) * Math.cos(midRad);
+                        const textY = centerY + (radius * 0.7) * Math.sin(midRad);
+                        
+                        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                        text.setAttribute('x', textX);
+                        text.setAttribute('y', textY);
+                        text.setAttribute('text-anchor', 'middle');
+                        text.setAttribute('dominant-baseline', 'middle');
+                        text.setAttribute('fill', 'white');
+                        text.setAttribute('font-size', '12');
+                        text.setAttribute('font-weight', 'bold');
+                        text.style.textShadow = '1px 1px 2px rgba(0,0,0,0.5)';
+                        text.textContent = `${percent.toFixed(1)}%`;
+                        
+                        svg.appendChild(text);
+                    }
+                    
+                    currentAngle += sliceAngle;
+                }
+            });
+
+            // Gerar legenda
+            const legend = document.getElementById(`legend-${anexo}`);
+            legend.innerHTML = '';
+            
+            values.forEach((percent, index) => {
+                if (percent > 0) {
+                    const item = document.createElement('div');
+                    item.className = 'legend-item';
+                    item.innerHTML = `
+                        <div class="legend-color" style="background: linear-gradient(135deg, ${gradients[index].colors[0]}, ${gradients[index].colors[1]}); box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+                        <span style="font-weight: 500;">${labels[index]} (${percent.toFixed(1)}%)</span>
+                    `;
+                    legend.appendChild(item);
+                }
+            });
+        }
+
+        function showError() {
+            hideAllScreens();
+            document.getElementById('screen-error').classList.remove('hidden');
+        }
+
+        function goBackToDetailed() {
+            hideAllScreens();
+            document.getElementById('screen-detailed').classList.remove('hidden');
+        }
+
+        function goBackToInitial() {
+            hideAllScreens();
+            document.getElementById('screen-initial').classList.remove('hidden');
+        }
+
+
+
+        function goBackToPrevious() {
+            const tempoChecked = document.querySelector('input[name="tempo"]:checked');
+            
+            hideAllScreens();
+            
+            if (tempoChecked && tempoChecked.value === 'menos12') {
+                document.getElementById('screen-alert').classList.remove('hidden');
+            } else {
+                document.getElementById('screen-mais12').classList.remove('hidden');
+            }
+        }
+
+        function resetCalculator() {
+            // Limpar todos os campos
+            document.querySelectorAll('input').forEach(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+
+            // Limpar selects
+            document.querySelectorAll('select').forEach(select => {
+                select.value = '';
+            });
+
+            // Remover todos os alertas
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.remove();
+            });
+
+            // Esconder campos condicionais
+            document.getElementById('meses-funcionamento').classList.add('hidden');
+            document.getElementById('valor-prolabore-section').classList.add('hidden');
+            document.getElementById('folha-pagamento-section').classList.add('hidden');
+
+            hideAllScreens();
+            document.getElementById('screen-initial').classList.remove('hidden');
+        }
+
+        function hideAllScreens() {
+            const screens = [
+                'screen-initial', 'screen-not-eligible', 'screen-alert', 
+                'screen-mais12', 'screen-detailed', 'result-anexo3', 'result-anexo5', 'screen-error'
+            ];
+            
+            screens.forEach(screenId => {
+                const element = document.getElementById(screenId);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+        }
+
+
+
+        function showModal() {
+            const modal = document.getElementById('modal-simples-nao');
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal-simples-nao');
+            modal.classList.remove('show');
+            
+            // Desmarcar o checkbox "N?o"
+            document.getElementById('simples-nao').checked = false;
+        }
+
+        // Fechar modal ao clicar no overlay
+        document.getElementById('modal-simples-nao').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+
+
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99a76d0e66eff1f2',t:'MTc2MjQ2MTgzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

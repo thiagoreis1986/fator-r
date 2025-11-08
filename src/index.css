@@ -1,0 +1,78 @@
+:root{
+      --blue-700:#2c51d8; /* primário aproximado */
+      --blue-600:#0d80d2;
+      --blue-500:#1367ab;
+      --cyan-500:#0fa5d7;
+      --yellow-400:#f0c347; /* CTA */
+      --ink:#102236;
+      --ink-2:#1f2b3a;
+      --muted:#6b7a90;
+      --bg:#f5f7fb;
+      --white:#ffffff;
+      --radius:16px;
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+      --transition: 180ms cubic-bezier(.2,.8,.2,1);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'; color:var(--ink); background:var(--white)}
+    a{color:inherit; text-decoration:none}
+    .container{max-width:1200px; margin:0 auto; padding:0 20px}
+
+    /* HEADER */
+    .site-header{position:sticky; top:0; z-index:50; background:var(--white); border-bottom:1px solid #e9eef6}
+    .nav{display:flex; align-items:center; gap:24px; height:72px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+    .brand-mark{width:24px;height:24px; border-radius:6px; background:linear-gradient(135deg,var(--blue-700),var(--cyan-500))}
+
+    .nav-links{display:flex; align-items:center; gap:18px; margin-left:28px}
+    .nav-item{position:relative; font-weight:600; color:var(--ink-2)}
+
+    /* animated underline on hover */
+    .nav-item > a{position:relative; padding:6px 6px; display:inline-flex; align-items:center; gap:6px}
+    .nav-item > a::after{content:''; position:absolute; left:10%; right:10%; bottom:-2px; height:2px; background:currentColor; transform:scaleX(0); transform-origin:center; transition:transform var(--transition), opacity var(--transition); opacity:.0}
+    .nav-item:hover > a::after{transform:scaleX(1); opacity:.35}
+
+    /* dropdown */
+    .dropdown{position:absolute; top:100%; left:0; min-width:260px; padding:10px; opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity var(--transition), transform var(--transition);
+      background:var(--white); border:1px solid #e6ecf5; border-radius:14px; box-shadow:var(--shadow)}
+    .nav-item:hover .dropdown{opacity:1; transform:translateY(0); pointer-events:auto}
+    .dropdown a{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 14px; border-radius:10px; color:var(--ink-2)}
+    .dropdown a:hover{background:var(--bg)}
+
+    .spacer{flex:1}
+    .login{font-weight:700}
+    .cta{background:var(--yellow-400); color:#0f172a; border:0; padding:10px 18px; border-radius:12px; font-weight:800; box-shadow:0 4px 0 rgba(0,0,0,.08); transition: filter var(--transition), transform var(--transition)}
+    .cta:hover{filter:brightness(1.05); transform:translateY(-1px)}
+
+    /* HERO */
+    .hero{background:var(--blue-700); color:#fff; padding:56px 0}
+    .hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:32px; align-items:center}
+    .hero h1{font-size:48px; line-height:1.08; margin:.2em 0 .4em; font-weight:900}
+    .hero p{opacity:.95}
+    .hero .actions{display:flex; gap:14px; margin-top:24px}
+    .btn{border-radius:12px; padding:12px 18px; font-weight:800; border:2px solid transparent}
+    .btn-primary{background:var(--yellow-400); color:#0f172a}
+    .btn-secondary{background:transparent; color:#fff; border-color:#7fb4ff}
+    .screen{background:#fff; border:1px solid #e6ecf5; height:280px; border-radius:18px; box-shadow:var(--shadow)}
+
+    /* FOOTER STRIP */
+    .strip{background:#0f60c9; color:#fff; padding:12px 0; font-weight:700; text-align:center}
+
+    /* MAIN placeholder pages */
+    main{padding:40px 0}
+    .card{background:#fff; border:1px solid #e6ecf5; border-radius:16px; padding:22px; box-shadow:var(--shadow)}
+    .muted{color:var(--muted)}
+
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns:1fr}
+      .nav-links{display:none}
+      .menu-toggle{display:inline-flex}
+    }
+    .menu-toggle{display:none; border:1px solid #e6ecf5; border-radius:10px; padding:8px}
+
+    /* simple mobile menu */
+    .mobile-menu{display:none; padding:12px 0}
+    .mobile-menu.open{display:block}
+    .mobile-block{padding:10px 0; border-top:1px solid #eef2f8}
+    .mobile-block strong{display:block; margin-bottom:8px}
+    .mobile-block a{display:block; padding:10px 0; color:var(--ink-2)}
