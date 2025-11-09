@@ -1,563 +1,519 @@
 import { useState } from "react";
 
+function parseCurrencyToNumber(value) {
+  if (!value) return 0;
+  return (
+    parseFloat(
+      value
+        .toString()
+        .replace(/[R$\s.]/g, "")
+        .replace(",", ".")
+    ) || 0
+  );
+}
+
+function formatCurrencyBRL(value) {
+  if (isNaN(value)) return "";
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+  });
+}
+
 export default function FatorRCalculator() {
-  const [simples, setSimples] = useState(null);
+  const [simples, setSimples] = useState(null); // true / false
   const [atividade, setAtividade] = useState("");
-  const [tempo, setTempo] = useState(null);
-  const [meses, setMeses] = useState("");
-  const [faturamentoMensal, setFaturamentoMensal] = useState("");
-  const [faturamentoMensalBase, setFaturamentoMensalBase] = useState(0);
+  const [tempo, setTempo] = useState(""); // "menos12" | "mais12"
+  const [mesesEmpresa, setMesesEmpresa] = useState("");
+  const [faturamentoMensalMedio, setFaturamentoMensalMedio] = useState("");
   const [faturamentoAnual, setFaturamentoAnual] = useState("");
-  const [tela, setTela] = useState("initial");
-  const [mensagemAlerta, setMensagemAlerta] = useState("");
 
-  const [prolaboreTem, setProlaboreTem] = useState(null);
-  const [prolaboreValor, setProlaboreValor] = useState("");
+  const [temProlabore, setTemProlabore] = useState(null);
+  const [valorProlabore, setValorProlabore] = useState("");
   const [temFuncionarios, setTemFuncionarios] = useState(null);
-  const [folhaPagamento, setFolhaPagamento] = useState("");
-  const [fatorR, setFatorR] = useState(null);
+  const [folhaMensal, setFolhaMensal] = useState("");
 
-  // Helpers moeda
-  const parseCurrency = (value) => {
-    if (!value) return 0;
-    const digits = value.replace(/[^\d]/g, "");
-    if (!digits) return 0;
-    return Number(digits) / 100;
-  };
+  const [alert, setAlert] = useState(null);
+  const [resultado, setResultado] = useState(null);
 
-  const formatBRL = (number) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 2,
-    }).format(number);
+  function resetResultado() {
+    setResultado(null);
+    setAlert(null);
+  }
 
-  const handleMoeda = (setter) => (e) => {
-    const numeric = parseCurrency(e.target.value);
-    if (!numeric) {
-      setter("");
+  function handleSimplesChange(value) {
+    setSimples(value);
+    resetResultado();
+    if (!value) {
+      // se "Não é Simples", já mostra orientação
+      setAlert({
+        type: "info",
+        title: "Fator R é exclusivo para empresas do Simples Nacional",
+        message:
+          "Se a empresa não é optante pelo Simples Nacional, essa calculadora não se aplica. O ideal é uma análise personalizada do regime tributário.",
+      });
+    } else {
+      setAlert(null);
+    }
+  }
+
+  function handleTempoChange(value) {
+    setTempo(value);
+    setMesesEmpresa("");
+    setFaturamentoAnual("");
+    resetResultado();
+  }
+
+  function handleTemProlabore(value) {
+    setTemProlabore(value);
+    if (!value) setValorProlabore("");
+    resetResultado();
+  }
+
+  function handleTemFuncionarios(value) {
+    setTemFuncionarios(value);
+    if (!value) setFolhaMensal("");
+    resetResultado();
+  }
+
+  function calcularFatorR(e) {
+    e.preventDefault();
+    setAlert(null);
+    setResultado(null);
+
+    // Validações principais
+    if (simples !== true) {
+      setAlert({
+        type: "warning",
+        title: "Verifique o enquadramento",
+        message:
+          "O Fator R só é aplicável para empresas optantes pelo Simples Nacional. Confirme essa informação antes de prosseguir.",
+      });
       return;
     }
-    setter(formatBRL(numeric));
-  };
 
-  const handleFaturamentoMensalChange = handleMoeda(setFaturamentoMensal);
-  const handleFaturamentoAnualChange = handleMoeda(setFaturamentoAnual);
-  const handleProlaboreValorChange = handleMoeda(setProlaboreValor);
-  const handleFolhaPagamentoChange = handleMoeda(setFolhaPagamento);
-
-  // Fluxo inicial
-  const resetAlerta = () => setMensagemAlerta("");
-
-  const handleSimplesClick = (valor) => {
-    setSimples((prev) => (prev === valor ? null : valor));
-  };
-
-  const handleTempoClick = (valor) => {
-    setTempo(valor);
-    setMeses("");
-  };
-
-  const handleNextStep = () => {
-    resetAlerta();
-    const fatNum = parseCurrency(faturamentoMensal);
-
-    if (!simples || !atividade || !tempo || !fatNum || fatNum <= 0) {
-      setMensagemAlerta(
-        "Por favor, preencha todos os campos obrigatórios com valores válidos."
-      );
+    if (!atividade) {
+      setAlert({
+        type: "warning",
+        title: "Informe a atividade",
+        message:
+          "Selecione a atividade principal da empresa. Isso ajuda a orientar o enquadramento entre Anexo III ou V.",
+      });
       return;
     }
 
-    setFaturamentoMensalBase(fatNum);
-
-    if (simples === "nao") {
-      setTela("notEligible");
+    if (!tempo) {
+      setAlert({
+        type: "warning",
+        title: "Informe o tempo de atividade",
+        message:
+          "Marque se a empresa tem menos de 12 meses ou mais de 12 meses de funcionamento.",
+      });
       return;
     }
+
+    let faturamento12 = 0;
 
     if (tempo === "menos12") {
-      const m = Number(meses);
-      if (!m || m < 1 || m > 11) {
-        setMensagemAlerta(
-          "Informe há quantos meses sua empresa está em funcionamento (1 a 11 meses)."
-        );
+      const meses = Number(mesesEmpresa);
+      const fatMensal = parseCurrencyToNumber(faturamentoMensalMedio);
+
+      if (!meses || meses < 1 || meses > 11) {
+        setAlert({
+          type: "warning",
+          title: "Meses de funcionamento inválidos",
+          message: "Informe um número de meses entre 1 e 11.",
+        });
         return;
       }
-      setTela("alert");
-      return;
+
+      if (fatMensal <= 0) {
+        setAlert({
+          type: "warning",
+          title: "Faturamento médio mensal inválido",
+          message:
+            "Informe o faturamento bruto médio mensal para projetarmos o faturamento anual.",
+        });
+        return;
+      }
+
+      faturamento12 = fatMensal * 12; // projeção anual
     }
 
     if (tempo === "mais12") {
-      setTela("mais12");
+      const fatAnual = parseCurrencyToNumber(faturamentoAnual);
+      if (fatAnual <= 0) {
+        setAlert({
+          type: "warning",
+          title: "Faturamento anual inválido",
+          message:
+            "Informe o faturamento bruto dos últimos 12 meses para seguir com o cálculo.",
+        });
+        return;
+      }
+      faturamento12 = fatAnual;
     }
-  };
 
-  const fromAlertContinuar = () => {
-    if (!faturamentoMensalBase) {
-      setMensagemAlerta(
-        "Volte e informe o faturamento mensal antes de continuar."
-      );
-      setTela("initial");
+    // Pro-labore / folha
+    if (temProlabore === null || temFuncionarios === null) {
+      setAlert({
+        type: "warning",
+        title: "Responda todas as questões",
+        message:
+          "Informe se há pró-labore e se há funcionários CLT para calcular corretamente o Fator R.",
+      });
       return;
     }
-    setTela("detailed");
-  };
 
-  const fromMais12Continuar = () => {
-    resetAlerta();
-    const fatAnual = parseCurrency(faturamentoAnual);
-    if (!fatAnual || fatAnual <= 0) {
-      setMensagemAlerta(
-        "Informe o faturamento bruto anual dos últimos 12 meses."
-      );
+    const prolaboreMensal = temProlabore
+      ? parseCurrencyToNumber(valorProlabore)
+      : 0;
+
+    const folhaMensalValor = temFuncionarios
+      ? parseCurrencyToNumber(folhaMensal)
+      : 0;
+
+    if (temProlabore && prolaboreMensal <= 0) {
+      setAlert({
+        type: "warning",
+        title: "Pró-labore inválido",
+        message:
+          "Informe o valor mensal total de pró-labore (somando todos os sócios).",
+      });
       return;
     }
-    const mensal = fatAnual / 12;
-    setFaturamentoMensalBase(mensal);
-    setTela("detailed");
-  };
 
-  const resetar = () => {
+    if (temFuncionarios && folhaMensalValor <= 0) {
+      setAlert({
+        type: "warning",
+        title: "Folha de pagamento inválida",
+        message:
+          "Informe o custo mensal total com funcionários (salários + encargos).",
+      });
+      return;
+    }
+
+    const folha12 = (prolaboreMensal + folhaMensalValor) * 12;
+
+    if (faturamento12 <= 0 || folha12 <= 0) {
+      setAlert({
+        type: "warning",
+        title: "Dados insuficientes",
+        message:
+          "Verifique se faturamento e custos com pessoal foram preenchidos corretamente.",
+      });
+      return;
+    }
+
+    // Regra oficial: Fator R = folha_12 / receita_12
+    const fatorR = folha12 / faturamento12;
+    const fatorRPercent = fatorR * 100;
+
+    // Decisão: >= 28% => Anexo III, senão Anexo V
+    const anexoIII = fatorR >= 0.28;
+
+    setResultado({
+      fatorR,
+      fatorRPercent,
+      faturamento12,
+      folha12,
+      anexo: anexoIII ? "III" : "V",
+      mensagem: anexoIII
+        ? "Com Fator R igual ou superior a 28%, a tendência é enquadrar no Anexo III, que costuma ter carga tributária mais leve para prestação de serviços."
+        : "Com Fator R abaixo de 28%, a tendência é enquadrar no Anexo V, que geralmente resulta em carga tributária maior. É importante revisar estrutura de pró-labore e folha.",
+    });
+  }
+
+  function limparTudo() {
     setSimples(null);
     setAtividade("");
-    setTempo(null);
-    setMeses("");
-    setFaturamentoMensal("");
-    setFaturamentoMensalBase(0);
+    setTempo("");
+    setMesesEmpresa("");
+    setFaturamentoMensalMedio("");
     setFaturamentoAnual("");
-    setMensagemAlerta("");
-    setProlaboreTem(null);
-    setProlaboreValor("");
+    setTemProlabore(null);
+    setValorProlabore("");
     setTemFuncionarios(null);
-    setFolhaPagamento("");
-    setFatorR(null);
-    setTela("initial");
-  };
-
-  // Cálculo Fator R
-  const handleCalcularFatorR = () => {
-    resetAlerta();
-
-    if (prolaboreTem === null || temFuncionarios === null) {
-      setMensagemAlerta(
-        "Responda se há pró-labore e se há funcionários registrados."
-      );
-      return;
-    }
-
-    const prolabore = prolaboreTem ? parseCurrency(prolaboreValor) : 0;
-    const folha = temFuncionarios ? parseCurrency(folhaPagamento) : 0;
-
-    if (prolaboreTem && prolabore <= 0) {
-      setMensagemAlerta("Informe um valor válido de pró-labore.");
-      return;
-    }
-
-    if (temFuncionarios && folha <= 0) {
-      setMensagemAlerta(
-        "Informe um valor válido para o total da folha de pagamento."
-      );
-      return;
-    }
-
-    if (!faturamentoMensalBase || faturamentoMensalBase <= 0) {
-      setMensagemAlerta(
-        "Houve um problema com o faturamento. Volte ao início e preencha novamente."
-      );
-      return;
-    }
-
-    const totalFolha = prolabore + folha;
-
-    if (totalFolha <= 0) {
-      setMensagemAlerta(
-        "É necessário ter algum gasto com pró-labore ou folha para calcular o Fator R."
-      );
-      return;
-    }
-
-    if (totalFolha > faturamentoMensalBase * 1.5) {
-      setTela("error");
-      return;
-    }
-
-    const fator = totalFolha / faturamentoMensalBase;
-    setFatorR(fator);
-
-    if (fator >= 0.28) {
-      setTela("result3");
-    } else {
-      setTela("result5");
-    }
-  };
+    setFolhaMensal("");
+    setAlert(null);
+    setResultado(null);
+  }
 
   return (
     <div className="fr-layout">
-      {/* Sidebar da ferramenta */}
+      {/* Lateral explicativa */}
       <aside className="fr-sidebar">
         <h2>Calculadora Fator R</h2>
         <p>
-          Esta ferramenta ajuda você a identificar se o seu negócio se enquadra
-          no Anexo III ou V do Simples Nacional com base na relação entre folha
-          de pagamento e faturamento.
+          Ferramenta desenvolvida para apoiar empresas do{" "}
+          <strong>Simples Nacional</strong> na análise do Fator R e definição do
+          enquadramento entre <strong>Anexo III</strong> ou{" "}
+          <strong>Anexo V</strong>.
+        </p>
+        <p style={{ marginTop: 10, fontSize: 13 }}>
+          Preencha os dados abaixo e veja o resultado de forma clara, com
+          explicação e orientação pensada no padrão Conta Ágil.
         </p>
       </aside>
 
-      {/* Conteúdo dinâmico */}
+      {/* Conteúdo principal */}
       <main className="fr-content">
-        {/* ALERTA GLOBAL */}
-        {mensagemAlerta && (
-          <div className="fr-alert fr-alert-warning">
-            <strong>Atenção!</strong> {mensagemAlerta}
-          </div>
-        )}
+        <header className="fr-header">
+          <div className="fr-brand">ContaÁgil · Widget Fator R</div>
+          <div className="fr-badge">Versão beta para avaliação interna</div>
+        </header>
 
-        {/* TELA INICIAL */}
-        {tela === "initial" && (
-          <div className="fr-form">
-            {/* Simples */}
-            <div className="fr-question">
-              <h3>Sua empresa opta pelo Simples Nacional?</h3>
-              <div className="fr-options-row">
-                <label className="fr-option">
-                  <input
-                    type="checkbox"
-                    checked={simples === "sim"}
-                    onChange={() => handleSimplesClick("sim")}
-                  />
-                  <span>Sim</span>
-                </label>
-                <label className="fr-option">
-                  <input
-                    type="checkbox"
-                    checked={simples === "nao"}
-                    onChange={() => handleSimplesClick("nao")}
-                  />
-                  <span>Não</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Atividade */}
-            <div className="fr-question">
-              <h3>Qual a atividade de sua empresa?</h3>
-              <select
-                className="fr-input"
-                value={atividade}
-                onChange={(e) => setAtividade(e.target.value)}
-              >
-                <option value="">Selecione a atividade</option>
-                <option value="consultoria">Consultoria</option>
-                <option value="desenvolvimento">
-                  Desenvolvimento de Software
-                </option>
-                <option value="marketing">Marketing Digital</option>
-                <option value="contabilidade">Contabilidade</option>
-                <option value="advocacia">Advocacia</option>
-                <option value="arquitetura">Arquitetura</option>
-                <option value="engenharia">Engenharia</option>
-                <option value="design">Design</option>
-                <option value="educacao">Educação</option>
-                <option value="saude">Saúde</option>
-                <option value="outros">Outros</option>
-              </select>
-            </div>
-
-            {/* Tempo */}
-            <div className="fr-question">
-              <h3>Há quanto tempo sua empresa está em funcionamento?</h3>
-              <div className="fr-options-col">
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    checked={tempo === "menos12"}
-                    onChange={() => handleTempoClick("menos12")}
-                  />
-                  <span>Menos de 12 meses</span>
-                </label>
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    checked={tempo === "mais12"}
-                    onChange={() => handleTempoClick("mais12")}
-                  />
-                  <span>Mais de 12 meses</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Meses se < 12 */}
-            {tempo === "menos12" && (
-              <div className="fr-question">
-                <h3>
-                  Há quantos meses sua empresa está em funcionamento? (1 a 11)
-                </h3>
+        <form className="fr-form" onSubmit={calcularFatorR}>
+          {/* Simples Nacional */}
+          <section className="fr-question">
+            <h3>Sua empresa é optante pelo Simples Nacional?</h3>
+            <div className="fr-options-row">
+              <label className="fr-option">
                 <input
-                  type="number"
+                  type="radio"
+                  name="simples"
+                  checked={simples === true}
+                  onChange={() => handleSimplesChange(true)}
+                />
+                Sim
+              </label>
+              <label className="fr-option">
+                <input
+                  type="radio"
+                  name="simples"
+                  checked={simples === false}
+                  onChange={() => handleSimplesChange(false)}
+                />
+                Não
+              </label>
+            </div>
+          </section>
+
+          {/* Atividade */}
+          <section className="fr-question">
+            <h3>Qual é a atividade principal?</h3>
+            <select
+              className="fr-input"
+              value={atividade}
+              onChange={(e) => {
+                setAtividade(e.target.value);
+                resetResultado();
+              }}
+            >
+              <option value="">Selecione</option>
+              <option value="consultoria">Consultoria</option>
+              <option value="desenvolvimento">Desenvolvimento de Software</option>
+              <option value="marketing">Marketing / Tráfego</option>
+              <option value="contabilidade">Contabilidade</option>
+              <option value="advocacia">Advocacia</option>
+              <option value="saude">Saúde</option>
+              <option value="engenharia">Engenharia / Arquitetura</option>
+              <option value="educacao">Educação / Treinamentos</option>
+              <option value="outros">Outros serviços intelectuais</option>
+            </select>
+          </section>
+
+          {/* Tempo de atividade */}
+          <section className="fr-question">
+            <h3>Há quanto tempo a empresa está em funcionamento?</h3>
+            <div className="fr-options-row">
+              <label className="fr-option">
+                <input
+                  type="radio"
+                  name="tempo"
+                  checked={tempo === "menos12"}
+                  onChange={() => handleTempoChange("menos12")}
+                />
+                Menos de 12 meses
+              </label>
+              <label className="fr-option">
+                <input
+                  type="radio"
+                  name="tempo"
+                  checked={tempo === "mais12"}
+                  onChange={() => handleTempoChange("mais12")}
+                />
+                12 meses ou mais
+              </label>
+            </div>
+          </section>
+
+          {/* Campos condicionais de faturamento */}
+          {tempo === "menos12" && (
+            <>
+              <section className="fr-question">
+                <h3>Meses completos de operação</h3>
+                <input
                   className="fr-input"
-                  value={meses}
-                  onChange={(e) => setMeses(e.target.value)}
+                  type="number"
                   min="1"
                   max="11"
+                  value={mesesEmpresa}
+                  onChange={(e) => {
+                    setMesesEmpresa(e.target.value);
+                    resetResultado();
+                  }}
                   placeholder="Ex: 6"
                 />
-              </div>
-            )}
+              </section>
 
-            {/* Faturamento mensal */}
-            <div className="fr-question">
-              <h3>Qual o seu faturamento bruto mensal?</h3>
+              <section className="fr-question">
+                <h3>Faturamento bruto médio mensal</h3>
+                <input
+                  className="fr-input"
+                  value={faturamentoMensalMedio}
+                  onChange={(e) => {
+                    setFaturamentoMensalMedio(e.target.value);
+                    resetResultado();
+                  }}
+                  placeholder="Ex: R$ 50.000,00"
+                />
+              </section>
+            </>
+          )}
+
+          {tempo === "mais12" && (
+            <section className="fr-question">
+              <h3>Faturamento bruto dos últimos 12 meses</h3>
               <input
-                type="text"
-                className="fr-input"
-                value={faturamentoMensal}
-                onChange={handleFaturamentoMensalChange}
-                placeholder="Ex: R$ 50.000,00"
-              />
-            </div>
-
-            <button className="fr-btn-primary" onClick={handleNextStep}>
-              CONTINUAR
-            </button>
-          </div>
-        )}
-
-        {/* NÃO ELEGÍVEL */}
-        {tela === "notEligible" && (
-          <div className="fr-box">
-            <div className="fr-alert fr-alert-warning">
-              <strong>Importante:</strong> O Fator R só se aplica a empresas do
-              Simples Nacional.
-            </div>
-            <p>
-              Caso sua empresa não seja optante, existem outras estratégias
-              tributárias que podem ser avaliadas.
-            </p>
-            <button
-              className="fr-btn-primary"
-              onClick={() =>
-                window.open("https://wa.me/5511999999999", "_blank")
-              }
-            >
-              FALAR COM ESPECIALISTA
-            </button>
-            <button className="fr-btn-outline" onClick={resetar}>
-              VOLTAR AO INÍCIO
-            </button>
-          </div>
-        )}
-
-        {/* ALERT (<12) */}
-        {tela === "alert" && (
-          <div className="fr-box">
-            <div className="fr-alert fr-alert-info">
-              Para empresas com menos de 12 meses, o cálculo é estimado com base
-              no cenário atual. Use como referência e valide com seu contador.
-            </div>
-            <button
-              className="fr-btn-primary"
-              onClick={fromAlertContinuar}
-            >
-              CONTINUAR CÁLCULO
-            </button>
-            <button className="fr-btn-outline" onClick={resetar}>
-              VOLTAR AO INÍCIO
-            </button>
-          </div>
-        )}
-
-        {/* MAIS DE 12 MESES */}
-        {tela === "mais12" && (
-          <div className="fr-form">
-            <div className="fr-question">
-              <h3>
-                Qual o seu faturamento bruto anual dos últimos 12 meses?
-              </h3>
-              <input
-                type="text"
                 className="fr-input"
                 value={faturamentoAnual}
-                onChange={handleFaturamentoAnualChange}
+                onChange={(e) => {
+                  setFaturamentoAnual(e.target.value);
+                  resetResultado();
+                }}
                 placeholder="Ex: R$ 600.000,00"
               />
-            </div>
-            <button
-              className="fr-btn-primary"
-              onClick={fromMais12Continuar}
-            >
-              CONTINUAR CÁLCULO
-            </button>
-            <button className="fr-btn-outline" onClick={resetar}>
-              VOLTAR AO INÍCIO
-            </button>
-          </div>
-        )}
+            </section>
+          )}
 
-        {/* DETALHADO */}
-        {tela === "detailed" && (
-          <div className="fr-form">
-            {/* pró-labore */}
-            <div className="fr-question">
-              <h3>Você recebe pró-labore?</h3>
-              <div className="fr-options-row">
-                <label className="fr-option">
-                  <input
-                    type="checkbox"
-                    checked={prolaboreTem === true}
-                    onChange={() =>
-                      setProlaboreTem(
-                        prolaboreTem === true ? null : true
-                      )
-                    }
-                  />
-                  <span>Sim</span>
-                </label>
-                <label className="fr-option">
-                  <input
-                    type="checkbox"
-                    checked={prolaboreTem === false}
-                    onChange={() =>
-                      setProlaboreTem(
-                        prolaboreTem === false ? null : false
-                      )
-                    }
-                  />
-                  <span>Não</span>
-                </label>
-              </div>
-            </div>
-
-            {prolaboreTem === true && (
-              <div className="fr-question">
-                <h3>Qual o valor total mensal do pró-labore?</h3>
+          {/* Pró-labore */}
+          <section className="fr-question">
+            <h3>Os sócios recebem pró-labore?</h3>
+            <div className="fr-options-row">
+              <label className="fr-option">
                 <input
-                  type="text"
-                  className="fr-input"
-                  value={prolaboreValor}
-                  onChange={handleProlaboreValorChange}
-                  placeholder="Ex: R$ 5.000,00"
+                  type="radio"
+                  name="prolabore"
+                  checked={temProlabore === true}
+                  onChange={() => handleTemProlabore(true)}
                 />
-              </div>
-            )}
-
-            {/* funcionários */}
-            <div className="fr-question">
-              <h3>Você possui funcionários CLT?</h3>
-              <div className="fr-options-row">
-                <label className="fr-option">
-                  <input
-                    type="checkbox"
-                    checked={temFuncionarios === true}
-                    onChange={() =>
-                      setTemFuncionarios(
-                        temFuncionarios === true ? null : true
-                      )
-                    }
-                  />
-                  <span>Sim</span>
-                </label>
-                <label className="fr-option">
-                  <input
-                    type="checkbox"
-                    checked={temFuncionarios === false}
-                    onChange={() =>
-                      setTemFuncionarios(
-                        temFuncionarios === false ? null : false
-                      )
-                    }
-                  />
-                  <span>Não</span>
-                </label>
-              </div>
-            </div>
-
-            {temFuncionarios === true && (
-              <div className="fr-question">
-                <h3>
-                  Qual seu gasto médio mensal com folha completa (salários +
-                  encargos)?
-                </h3>
+                Sim
+              </label>
+              <label className="fr-option">
                 <input
-                  type="text"
-                  className="fr-input"
-                  value={folhaPagamento}
-                  onChange={handleFolhaPagamentoChange}
-                  placeholder="Ex: R$ 8.000,00"
+                  type="radio"
+                  name="prolabore"
+                  checked={temProlabore === false}
+                  onChange={() => handleTemProlabore(false)}
                 />
-              </div>
+                Não
+              </label>
+            </div>
+            {temProlabore && (
+              <input
+                className="fr-input"
+                value={valorProlabore}
+                onChange={(e) => {
+                  setValorProlabore(e.target.value);
+                  resetResultado();
+                }}
+                placeholder="Valor total mensal de pró-labore (R$)"
+              />
             )}
+          </section>
 
-            <button
-              className="fr-btn-primary"
-              onClick={handleCalcularFatorR}
-            >
-              CALCULAR MEU FATOR R
-            </button>
-            <button className="fr-btn-outline" onClick={resetar}>
-              VOLTAR AO INÍCIO
-            </button>
-          </div>
-        )}
+          {/* Funcionários */}
+          <section className="fr-question">
+            <h3>Possui funcionários CLT ou estagiários?</h3>
+            <div className="fr-options-row">
+              <label className="fr-option">
+                <input
+                  type="radio"
+                  name="funcionarios"
+                  checked={temFuncionarios === true}
+                  onChange={() => handleTemFuncionarios(true)}
+                />
+                Sim
+              </label>
+              <label className="fr-option">
+                <input
+                  type="radio"
+                  name="funcionarios"
+                  checked={temFuncionarios === false}
+                  onChange={() => handleTemFuncionarios(false)}
+                />
+                Não
+              </label>
+            </div>
+            {temFuncionarios && (
+              <input
+                className="fr-input"
+                value={folhaMensal}
+                onChange={(e) => {
+                  setFolhaMensal(e.target.value);
+                  resetResultado();
+                }}
+                placeholder="Custo mensal total com folha (R$)"
+              />
+            )}
+          </section>
 
-        {/* RESULTADO III */}
-        {tela === "result3" && fatorR !== null && (
-          <div className="fr-box">
-            <h3>Seu negócio se enquadra no Anexo III</h3>
-            <p>
-              Seu Fator R é{" "}
-              <strong>{(fatorR * 100).toFixed(1)}%</strong> (≥ 28%). Esse cenário
-              tende a ser mais vantajoso na tributação.
-            </p>
-            <button
-              className="fr-btn-primary"
-              onClick={() =>
-                window.open("https://wa.me/5511999999999", "_blank")
+          {/* Alertas */}
+          {alert && (
+            <div
+              className={
+                "fr-alert " +
+                (alert.type === "warning"
+                  ? "fr-alert-warning"
+                  : "fr-alert-info")
               }
             >
-              FALAR COM ESPECIALISTA
-            </button>
-            <button className="fr-btn-outline" onClick={resetar}>
-              REFAZER CÁLCULO
-            </button>
-          </div>
-        )}
+              <strong>{alert.title}</strong>
+              <div>{alert.message}</div>
+            </div>
+          )}
 
-        {/* RESULTADO V */}
-        {tela === "result5" && fatorR !== null && (
-          <div className="fr-box">
-            <h3>Seu negócio se enquadra no Anexo V</h3>
-            <p>
-              Seu Fator R é{" "}
-              <strong>{(fatorR * 100).toFixed(1)}%</strong> (&lt; 28%). Ainda assim, é
-              possível planejar ajustes para melhorar esse índice.
-            </p>
+          {/* Botões */}
+          <div className="fr-actions">
+            <button type="submit" className="fr-btn-primary">
+              Calcular Fator R
+            </button>
             <button
-              className="fr-btn-primary"
-              onClick={() =>
-                window.open("https://wa.me/5511999999999", "_blank")
-              }
+              type="button"
+              className="fr-btn-outline"
+              onClick={limparTudo}
             >
-              FALAR COM ESPECIALISTA
-            </button>
-            <button className="fr-btn-outline" onClick={resetar}>
-              REFAZER CÁLCULO
+              Limpar dados
             </button>
           </div>
-        )}
+        </form>
 
-        {/* ERRO */}
-        {tela === "error" && (
-          <div className="fr-box">
-            <h3>Revise os valores informados</h3>
+        {/* Resultado */}
+        {resultado && (
+          <section className="fr-box" style={{ marginTop: 20 }}>
+            <h3>
+              Resultado: tendência ao Anexo {resultado.anexo} do Simples
+              Nacional
+            </h3>
             <p>
-              A soma de pró-labore e folha está muito acima do faturamento.
-              Ajuste os dados para obter um resultado mais realista.
+              <strong>Fator R calculado:</strong>{" "}
+              {resultado.fatorRPercent.toFixed(2)}%
             </p>
-            <button className="fr-btn-outline" onClick={resetar}>
-              VOLTAR E AJUSTAR
-            </button>
-          </div>
+            <p>
+              <strong>Folha (12 meses):</strong>{" "}
+              {formatCurrencyBRL(resultado.folha12)} |{" "}
+              <strong>Faturamento (12 meses):</strong>{" "}
+              {formatCurrencyBRL(resultado.faturamento12)}
+            </p>
+            <p>{resultado.mensagem}</p>
+            <p style={{ fontSize: 13, color: "#6b7280", marginTop: 6 }}>
+              Importante: este cálculo é uma simulação. A Conta Ágil sempre
+              recomenda análise detalhada do contrato social, CNAE, histórico e
+              faixas do Simples antes de uma decisão definitiva.
+            </p>
+          </section>
         )}
       </main>
     </div>
