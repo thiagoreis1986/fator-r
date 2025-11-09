@@ -57,6 +57,42 @@ export default function FatorRCalculator() {
     setResultado(null);
   }
 
+// Converte string "10.000,00" -> número 10000
+function parseCurrencyBR(str) {
+  if (!str) return 0;
+  return (
+    parseFloat(
+      str
+        .toString()
+        .replace(/\./g, "") // remove pontos
+        .replace(",", ".")  // troca vírgula por ponto
+    ) || 0
+  );
+}
+
+// Formata enquanto digita: deixa sempre no padrão 0.000,00
+function handleCurrencyChange(e, setter) {
+  const raw = e.target.value;
+
+  // mantém só dígitos
+  const digits = raw.replace(/\D/g, "");
+
+  if (!digits) {
+    setter("");
+    return;
+  }
+
+  const number = Number(digits) / 100;
+
+  const formatted = number.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  setter(formatted);
+}
+
+
   function calcular(e) {
     e.preventDefault();
     setAlert(null);
@@ -359,16 +395,14 @@ export default function FatorRCalculator() {
             )}
 
             <section className="fr-question">
-              <h3>Qual o seu faturamento bruto mensal?</h3>
-              <input
-                className="fr-input"
-                value={faturamentoMensal}
-                onChange={(e) => {
-                  setFaturamentoMensal(e.target.value);
-                  resetFeedback();
-                }}
-                placeholder="R$ 0,00"
-              />
+             <h3>Qual o seu faturamento bruto mensal?</h3>
+             <input
+              className="fr-input"
+              type="text"
+              value={faturamentoMensal}
+              onChange={(e) => handleCurrencyChange(e, setFaturamentoMensal)}
+              placeholder="R$ 0,00"
+            />
             </section>
 
             {tempo === "mais12" && (
