@@ -449,16 +449,18 @@ function handleCurrencyChange(e, setter) {
                 </label>
               </div>
               {temProlabore && (
-                <input
-                  className="fr-input"
-                  value={valorProlabore}
-                  onChange={(e) => {
-                    setValorProlabore(e.target.value);
+                  <input
+                   className="fr-input"
+                   type="text"
+                   value={valorProlabore}
+                   onChange={(e) => {
+                    handleCurrencyChange(e, setValorProlabore);
                     resetFeedback();
-                  }}
-                  placeholder="Valor total mensal de pró-labore (R$)"
-                />
-              )}
+                   }}
+                    placeholder="Valor total mensal de pró-labore (R$)"
+                  />
+               )}
+
             </section>
 
             {/* Funcionários */}
