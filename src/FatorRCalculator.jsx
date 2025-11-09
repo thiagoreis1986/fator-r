@@ -494,16 +494,18 @@ function handleCurrencyChange(e, setter) {
                 </label>
               </div>
               {temFuncionarios && (
-                <input
-                  className="fr-input"
-                  value={folhaMensal}
-                  onChange={(e) => {
-                    setFolhaMensal(e.target.value);
+                  <input
+                   className="fr-input"
+                   type="text"
+                   value={folhaMensal}
+                   onChange={(e) => {
+                    handleCurrencyChange(e, setFolhaMensal);
                     resetFeedback();
-                  }}
-                  placeholder="Gasto mensal com folha (R$)"
-                />
-              )}
+                 }}
+                    placeholder="Gasto mensal com folha (R$)"
+                  />
+               )}
+
             </section>
 
             {/* Alertas */}
