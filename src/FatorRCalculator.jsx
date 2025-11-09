@@ -190,15 +190,53 @@ export default function FatorRCalculator() {
     const fatorRPercent = fatorR * 100;
     const anexoIII = fatorR >= 0.28;
 
+       const aliquotaAnexo3 = 0.06;   // 6%
+    const aliquotaAnexo5 = 0.155;  // 15,5%
+
+    const impostoAnexo3 = receita12 * aliquotaAnexo3;
+    const impostoAnexo5 = receita12 * aliquotaAnexo5;
+
+    const usarAnexo3 = fatorR >= 0.28;
+
+    const anexoRecomendado = usarAnexo3 ? "III" : "V";
+    const aliquotaRecomendada = usarAnexo3 ? aliquotaAnexo3 : aliquotaAnexo5;
+    const aliquotaAlternativa = usarAnexo3 ? aliquotaAnexo5 : aliquotaAnexo3;
+    const impostoRecomendado = usarAnexo3 ? impostoAnexo3 : impostoAnexo5;
+    const impostoAlternativo = usarAnexo3 ? impostoAnexo5 : impostoAnexo3;
+
+    const folhaPercent = (folha12 / receita12) * 100;
+    const impostosPercent = (impostoRecomendado / receita12) * 100;
+    const rendaPercent = Math.max(0, 100 - folhaPercent - impostosPercent);
+
+    hideNaN:
+    if (!isFinite(folhaPercent) || folhaPercent < 0) {
+      setAlert({
+        type: "warning",
+        title: "Não foi possível montar o resultado",
+        message:
+          "Revise os valores de faturamento e custos com pessoal e tente novamente.",
+      });
+      return;
+    }
+
     setResultado({
       fatorRPercent,
       folha12,
       receita12,
-      anexo: anexoIII ? "III" : "V",
-      mensagem: anexoIII
-        ? "Com Fator R igual ou superior a 28%, a tributação tende a ser pelo Anexo III, geralmente mais vantajoso para serviços."
-        : "Com Fator R abaixo de 28%, a tributação tende a ser pelo Anexo V. É importante revisar estrutura de pró-labore e folha com um especialista.",
+      anexoRecomendado,
+      aliquotaRecomendada,
+      aliquotaAlternativa,
+      impostoRecomendado,
+      impostoAlternativo,
+      folhaPercent,
+      impostosPercent,
+      rendaPercent,
+      mensagem:
+        usarAnexo3
+          ? "Com Fator R igual ou superior a 28%, a tributação tende a ser pelo Anexo III, geralmente mais vantajoso para serviços."
+          : "Com Fator R abaixo de 28%, a tributação tende a ser pelo Anexo V. É importante revisar pró-labore e folha com um especialista.",
     });
+
   }
 
   return (
