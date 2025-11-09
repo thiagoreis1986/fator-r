@@ -114,9 +114,31 @@ body {
 }
 
 .fr-option input[type="radio"] {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--fr-blue2);
+  appearance: none;                /* remove o estilo padrão */
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #1f3a66;       /* azul escuro, igual ao das bordas */
+  border-radius: 4px;              /* quadradinho levemente arredondado */
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+.fr-option input[type="radio"]:checked {
+  background-color: #2563eb;       /* azul do "check" */
+  border-color: #2563eb;
+}
+
+.fr-option input[type="radio"]:checked::after {
+  content: "✔";                    /* o "V" dentro */
+  position: absolute;
+  color: #fff;
+  font-size: 14px;
+  top: 0px;
+  left: 4px;
 }
 
 .fr-input {
