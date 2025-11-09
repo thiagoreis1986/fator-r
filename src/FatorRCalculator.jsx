@@ -406,18 +406,16 @@ function handleCurrencyChange(e, setter) {
             </section>
 
             {tempo === "mais12" && (
-              <section className="fr-question">
-                <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
-                <input
-                  className="fr-input"
-                  value={faturamentoAnual}
-                  onChange={(e) => {
-                    setFaturamentoAnual(e.target.value);
-                    resetFeedback();
-                  }}
-                  placeholder="Opcional - R$ 0,00"
-                />
-              </section>
+             <section className="fr-question">
+             <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
+             <input
+              className="fr-input"
+              type="text"
+              value={faturamentoAnual}
+              onChange={(e) => handleCurrencyChange(e, setFaturamentoAnual)}
+              placeholder="Opcional - R$ 0,00"
+            />
+            </section>
             )}
 
             {/* Pró-labore */}
