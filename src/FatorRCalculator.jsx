@@ -8,7 +8,7 @@ export default function FatorRCalculator() {
   const [faturamentoMensal, setFaturamentoMensal] = useState("");
   const [faturamentoMensalBase, setFaturamentoMensalBase] = useState(0);
   const [faturamentoAnual, setFaturamentoAnual] = useState("");
-  const [tela, setTela] = useState("initial"); // initial, notEligible, alert, mais12, detailed, result3, result5, error
+  const [tela, setTela] = useState("initial");
   const [mensagemAlerta, setMensagemAlerta] = useState("");
 
   const [prolaboreTem, setProlaboreTem] = useState(null);
@@ -17,7 +17,7 @@ export default function FatorRCalculator() {
   const [folhaPagamento, setFolhaPagamento] = useState("");
   const [fatorR, setFatorR] = useState(null);
 
-  // --- Helpers moeda ---
+  // Helpers moeda
   const parseCurrency = (value) => {
     if (!value) return 0;
     const digits = value.replace(/[^\d]/g, "");
@@ -46,7 +46,9 @@ export default function FatorRCalculator() {
   const handleProlaboreValorChange = handleMoeda(setProlaboreValor);
   const handleFolhaPagamentoChange = handleMoeda(setFolhaPagamento);
 
-  // --- Controles iniciais ---
+  // Fluxo inicial
+  const resetAlerta = () => setMensagemAlerta("");
+
   const handleSimplesClick = (valor) => {
     setSimples((prev) => (prev === valor ? null : valor));
   };
@@ -55,8 +57,6 @@ export default function FatorRCalculator() {
     setTempo(valor);
     setMeses("");
   };
-
-  const resetAlerta = () => setMensagemAlerta("");
 
   const handleNextStep = () => {
     resetAlerta();
@@ -135,7 +135,7 @@ export default function FatorRCalculator() {
     setTela("initial");
   };
 
-  // --- Cálculo Fator R ---
+  // Cálculo Fator R
   const handleCalcularFatorR = () => {
     resetAlerta();
 
@@ -192,37 +192,35 @@ export default function FatorRCalculator() {
     }
   };
 
-  // --- UI ---
   return (
-    <div className="main-container">
-      {/* Sidebar fixa da calculadora */}
-      <aside className="sidebar">
-        <h1>CALCULADORA FATOR R</h1>
+    <div className="fr-layout">
+      {/* Sidebar da ferramenta */}
+      <aside className="fr-sidebar">
+        <h2>Calculadora Fator R</h2>
         <p>
-          Descubra se sua empresa se enquadra no Anexo III ou V do Simples
-          Nacional, considerando a relação entre folha de pagamento e receita
-          bruta.
+          Esta ferramenta ajuda você a identificar se o seu negócio se enquadra
+          no Anexo III ou V do Simples Nacional com base na relação entre folha
+          de pagamento e faturamento.
         </p>
       </aside>
 
       {/* Conteúdo dinâmico */}
-      <main className="content">
+      <main className="fr-content">
+        {/* ALERTA GLOBAL */}
+        {mensagemAlerta && (
+          <div className="fr-alert fr-alert-warning">
+            <strong>Atenção!</strong> {mensagemAlerta}
+          </div>
+        )}
+
         {/* TELA INICIAL */}
         {tela === "initial" && (
-          <div className="form-section">
-            {mensagemAlerta && (
-              <div className="alert alert-warning">
-                <strong>Atenção!</strong> {mensagemAlerta}
-              </div>
-            )}
-
+          <div className="fr-form">
             {/* Simples */}
-            <div className="question">
-              <div className="question-header">
-                <h3>Sua empresa opta pelo Simples Nacional?</h3>
-              </div>
-              <div className="checkbox-group">
-                <label className="checkbox-option">
+            <div className="fr-question">
+              <h3>Sua empresa opta pelo Simples Nacional?</h3>
+              <div className="fr-options-row">
+                <label className="fr-option">
                   <input
                     type="checkbox"
                     checked={simples === "sim"}
@@ -230,7 +228,7 @@ export default function FatorRCalculator() {
                   />
                   <span>Sim</span>
                 </label>
-                <label className="checkbox-option">
+                <label className="fr-option">
                   <input
                     type="checkbox"
                     checked={simples === "nao"}
@@ -242,12 +240,10 @@ export default function FatorRCalculator() {
             </div>
 
             {/* Atividade */}
-            <div className="question">
-              <div className="question-header">
-                <h3>Qual a atividade de sua empresa?</h3>
-              </div>
+            <div className="fr-question">
+              <h3>Qual a atividade de sua empresa?</h3>
               <select
-                className="input-field"
+                className="fr-input"
                 value={atividade}
                 onChange={(e) => setAtividade(e.target.value)}
               >
@@ -269,12 +265,10 @@ export default function FatorRCalculator() {
             </div>
 
             {/* Tempo */}
-            <div className="question">
-              <div className="question-header">
-                <h3>Há quanto tempo sua empresa está em funcionamento?</h3>
-              </div>
-              <div className="radio-group">
-                <label className="radio-option">
+            <div className="fr-question">
+              <h3>Há quanto tempo sua empresa está em funcionamento?</h3>
+              <div className="fr-options-col">
+                <label className="fr-option">
                   <input
                     type="radio"
                     checked={tempo === "menos12"}
@@ -282,7 +276,7 @@ export default function FatorRCalculator() {
                   />
                   <span>Menos de 12 meses</span>
                 </label>
-                <label className="radio-option">
+                <label className="fr-option">
                   <input
                     type="radio"
                     checked={tempo === "mais12"}
@@ -295,15 +289,13 @@ export default function FatorRCalculator() {
 
             {/* Meses se < 12 */}
             {tempo === "menos12" && (
-              <div className="question">
-                <div className="question-header">
-                  <h3>
-                    Há quantos meses sua empresa está em funcionamento?
-                  </h3>
-                </div>
+              <div className="fr-question">
+                <h3>
+                  Há quantos meses sua empresa está em funcionamento? (1 a 11)
+                </h3>
                 <input
                   type="number"
-                  className="input-field"
+                  className="fr-input"
                   value={meses}
                   onChange={(e) => setMeses(e.target.value)}
                   min="1"
@@ -314,20 +306,18 @@ export default function FatorRCalculator() {
             )}
 
             {/* Faturamento mensal */}
-            <div className="question">
-              <div className="question-header">
-                <h3>Qual o seu faturamento bruto mensal?</h3>
-              </div>
+            <div className="fr-question">
+              <h3>Qual o seu faturamento bruto mensal?</h3>
               <input
                 type="text"
-                className="input-field"
+                className="fr-input"
                 value={faturamentoMensal}
                 onChange={handleFaturamentoMensalChange}
                 placeholder="Ex: R$ 50.000,00"
               />
             </div>
 
-            <button className="calculate-button" onClick={handleNextStep}>
+            <button className="fr-btn-primary" onClick={handleNextStep}>
               CONTINUAR
             </button>
           </div>
@@ -335,106 +325,83 @@ export default function FatorRCalculator() {
 
         {/* NÃO ELEGÍVEL */}
         {tela === "notEligible" && (
-          <div className="form-section">
-            <div className="alert alert-warning">
-              <strong>
-                O cálculo do Fator R só vale para empresas que estão no Simples
-                Nacional.
-              </strong>
-              <br />
-              <br />
-              Avalie outras estratégias com um especialista tributário.
+          <div className="fr-box">
+            <div className="fr-alert fr-alert-warning">
+              <strong>Importante:</strong> O Fator R só se aplica a empresas do
+              Simples Nacional.
             </div>
+            <p>
+              Caso sua empresa não seja optante, existem outras estratégias
+              tributárias que podem ser avaliadas.
+            </p>
             <button
-              className="calculate-button"
+              className="fr-btn-primary"
               onClick={() =>
                 window.open("https://wa.me/5511999999999", "_blank")
               }
             >
               FALAR COM ESPECIALISTA
             </button>
-            <div style={{ marginTop: 15 }}>
-              <button className="recalculate-button" onClick={resetar}>
-                VOLTAR AO INÍCIO
-              </button>
-            </div>
+            <button className="fr-btn-outline" onClick={resetar}>
+              VOLTAR AO INÍCIO
+            </button>
           </div>
         )}
 
-        {/* ALERTA (< 12 meses) */}
+        {/* ALERT (<12) */}
         {tela === "alert" && (
-          <div className="form-section">
-            <div className="alert alert-info">
-              <strong>ATENÇÃO:</strong> Para empresas com menos de 12 meses,
-              usamos projeções. Recomendamos validar os resultados com seu
-              contador.
+          <div className="fr-box">
+            <div className="fr-alert fr-alert-info">
+              Para empresas com menos de 12 meses, o cálculo é estimado com base
+              no cenário atual. Use como referência e valide com seu contador.
             </div>
             <button
-              className="calculate-button"
+              className="fr-btn-primary"
               onClick={fromAlertContinuar}
             >
               CONTINUAR CÁLCULO
             </button>
-            <div style={{ marginTop: 15 }}>
-              <button className="recalculate-button" onClick={resetar}>
-                VOLTAR AO INÍCIO
-              </button>
-            </div>
+            <button className="fr-btn-outline" onClick={resetar}>
+              VOLTAR AO INÍCIO
+            </button>
           </div>
         )}
 
-        {/* MAIS DE 12 MESES → FATURAMENTO ANUAL */}
+        {/* MAIS DE 12 MESES */}
         {tela === "mais12" && (
-          <div className="form-section">
-            {mensagemAlerta && (
-              <div className="alert alert-warning">
-                <strong>Atenção!</strong> {mensagemAlerta}
-              </div>
-            )}
-            <div className="question">
-              <div className="question-header">
-                <h3>
-                  Qual o seu faturamento bruto anual dos últimos 12 meses?
-                </h3>
-              </div>
+          <div className="fr-form">
+            <div className="fr-question">
+              <h3>
+                Qual o seu faturamento bruto anual dos últimos 12 meses?
+              </h3>
               <input
                 type="text"
-                className="input-field"
+                className="fr-input"
                 value={faturamentoAnual}
                 onChange={handleFaturamentoAnualChange}
                 placeholder="Ex: R$ 600.000,00"
               />
             </div>
             <button
-              className="calculate-button"
+              className="fr-btn-primary"
               onClick={fromMais12Continuar}
             >
               CONTINUAR CÁLCULO
             </button>
-            <div style={{ marginTop: 15 }}>
-              <button className="recalculate-button" onClick={resetar}>
-                VOLTAR AO INÍCIO
-              </button>
-            </div>
+            <button className="fr-btn-outline" onClick={resetar}>
+              VOLTAR AO INÍCIO
+            </button>
           </div>
         )}
 
-        {/* DETALHAMENTO */}
+        {/* DETALHADO */}
         {tela === "detailed" && (
-          <div className="form-section">
-            {mensagemAlerta && (
-              <div className="alert alert-warning">
-                <strong>Atenção!</strong> {mensagemAlerta}
-              </div>
-            )}
-
-            {/* Pró-labore */}
-            <div className="question">
-              <div className="question-header">
-                <h3>Você recebe pró-labore?</h3>
-              </div>
-              <div className="checkbox-group">
-                <label className="checkbox-option">
+          <div className="fr-form">
+            {/* pró-labore */}
+            <div className="fr-question">
+              <h3>Você recebe pró-labore?</h3>
+              <div className="fr-options-row">
+                <label className="fr-option">
                   <input
                     type="checkbox"
                     checked={prolaboreTem === true}
@@ -446,7 +413,7 @@ export default function FatorRCalculator() {
                   />
                   <span>Sim</span>
                 </label>
-                <label className="checkbox-option">
+                <label className="fr-option">
                   <input
                     type="checkbox"
                     checked={prolaboreTem === false}
@@ -462,13 +429,11 @@ export default function FatorRCalculator() {
             </div>
 
             {prolaboreTem === true && (
-              <div className="question">
-                <div className="question-header">
-                  <h3>Qual o valor total mensal do pró-labore?</h3>
-                </div>
+              <div className="fr-question">
+                <h3>Qual o valor total mensal do pró-labore?</h3>
                 <input
                   type="text"
-                  className="input-field"
+                  className="fr-input"
                   value={prolaboreValor}
                   onChange={handleProlaboreValorChange}
                   placeholder="Ex: R$ 5.000,00"
@@ -476,13 +441,11 @@ export default function FatorRCalculator() {
               </div>
             )}
 
-            {/* Funcionários */}
-            <div className="question">
-              <div className="question-header">
-                <h3>Você possui funcionários CLT?</h3>
-              </div>
-              <div className="checkbox-group">
-                <label className="checkbox-option">
+            {/* funcionários */}
+            <div className="fr-question">
+              <h3>Você possui funcionários CLT?</h3>
+              <div className="fr-options-row">
+                <label className="fr-option">
                   <input
                     type="checkbox"
                     checked={temFuncionarios === true}
@@ -494,7 +457,7 @@ export default function FatorRCalculator() {
                   />
                   <span>Sim</span>
                 </label>
-                <label className="checkbox-option">
+                <label className="fr-option">
                   <input
                     type="checkbox"
                     checked={temFuncionarios === false}
@@ -510,16 +473,14 @@ export default function FatorRCalculator() {
             </div>
 
             {temFuncionarios === true && (
-              <div className="question">
-                <div className="question-header">
-                  <h3>
-                    Qual seu gasto médio mensal com folha completa
-                    (salários + encargos)?
-                  </h3>
-                </div>
+              <div className="fr-question">
+                <h3>
+                  Qual seu gasto médio mensal com folha completa (salários +
+                  encargos)?
+                </h3>
                 <input
                   type="text"
-                  className="input-field"
+                  className="fr-input"
                   value={folhaPagamento}
                   onChange={handleFolhaPagamentoChange}
                   placeholder="Ex: R$ 8.000,00"
@@ -528,87 +489,73 @@ export default function FatorRCalculator() {
             )}
 
             <button
-              className="calculate-button"
+              className="fr-btn-primary"
               onClick={handleCalcularFatorR}
             >
               CALCULAR MEU FATOR R
             </button>
-
-            <div style={{ marginTop: 15 }}>
-              <button className="recalculate-button" onClick={resetar}>
-                VOLTAR AO INÍCIO
-              </button>
-            </div>
+            <button className="fr-btn-outline" onClick={resetar}>
+              VOLTAR AO INÍCIO
+            </button>
           </div>
         )}
 
-        {/* RESULTADO ANEXO III */}
+        {/* RESULTADO III */}
         {tela === "result3" && fatorR !== null && (
-          <div className="result-container">
-            <h2 className="result-title">
-              Seu negócio se enquadra no Anexo III
-            </h2>
-            <p className="result-description">
+          <div className="fr-box">
+            <h3>Seu negócio se enquadra no Anexo III</h3>
+            <p>
               Seu Fator R é{" "}
-              <strong>{(fatorR * 100).toFixed(1)}%</strong>, igual ou acima de
-              28%. Isso indica um enquadramento mais vantajoso no Anexo III.
+              <strong>{(fatorR * 100).toFixed(1)}%</strong> (≥ 28%). Esse cenário
+              tende a ser mais vantajoso na tributação.
             </p>
             <button
-              className="calculate-button"
+              className="fr-btn-primary"
               onClick={() =>
                 window.open("https://wa.me/5511999999999", "_blank")
               }
             >
               FALAR COM ESPECIALISTA
             </button>
-            <div style={{ marginTop: 15 }}>
-              <button className="recalculate-button" onClick={resetar}>
-                REFAZER CÁLCULO
-              </button>
-            </div>
+            <button className="fr-btn-outline" onClick={resetar}>
+              REFAZER CÁLCULO
+            </button>
           </div>
         )}
 
-        {/* RESULTADO ANEXO V */}
+        {/* RESULTADO V */}
         {tela === "result5" && fatorR !== null && (
-          <div className="result-container">
-            <h2 className="result-title">
-              Seu negócio se enquadra no Anexo V
-            </h2>
-            <p className="result-description">
+          <div className="fr-box">
+            <h3>Seu negócio se enquadra no Anexo V</h3>
+            <p>
               Seu Fator R é{" "}
-              <strong>{(fatorR * 100).toFixed(1)}%</strong>, abaixo de 28%.
-              Isso indica enquadramento no Anexo V, mas existem estratégias
-              para melhorar esse índice e reduzir a carga tributária.
+              <strong>{(fatorR * 100).toFixed(1)}%</strong> (&lt; 28%). Ainda assim, é
+              possível planejar ajustes para melhorar esse índice.
             </p>
             <button
-              className="calculate-button"
+              className="fr-btn-primary"
               onClick={() =>
                 window.open("https://wa.me/5511999999999", "_blank")
               }
             >
               FALAR COM ESPECIALISTA
             </button>
-            <div style={{ marginTop: 15 }}>
-              <button className="recalculate-button" onClick={resetar}>
-                REFAZER CÁLCULO
-              </button>
-            </div>
+            <button className="fr-btn-outline" onClick={resetar}>
+              REFAZER CÁLCULO
+            </button>
           </div>
         )}
 
         {/* ERRO */}
         {tela === "error" && (
-          <div className="result-container">
-            <h2 className="result-title">
-              Verifique os valores informados
-            </h2>
-            <p className="result-description">
-              Os valores de pró-labore e/ou folha parecem muito altos em relação
-              ao faturamento. Ajuste para obter um cálculo mais realista.
+          <div className="fr-box">
+            <h3>Revise os valores informados</h3>
+            <p>
+              A soma de pró-labore e folha está muito acima do faturamento.
+              Ajuste os dados para obter um resultado mais realista.
             </p>
-            <button className="recalculate-button" onClick={resetar}>
-              VOLTAR E AJUSTAR DADOS
+            <button className="fr-btn-outline" onClick={resetar}>
+              VOLTAR E AJUSTAR
             </button>
           </div>
         )}
