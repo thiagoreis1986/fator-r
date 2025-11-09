@@ -1,5 +1,5 @@
 {
+  "installCommand": "npm install --ignore-scripts",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "framework": "vite"
+  "outputDirectory": "dist"
 }
