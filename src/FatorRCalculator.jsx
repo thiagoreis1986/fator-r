@@ -504,27 +504,177 @@ export default function FatorRCalculator() {
 
           {/* Resultado */}
           {resultado && (
-            <section className="fr-box">
-              <h3>
-                SEU FATOR R É {resultado.fatorRPercent.toFixed(2)}%
-              </h3>
-              <p>
-                <strong>Tendência de enquadramento:</strong> Anexo{" "}
-                {resultado.anexo} do Simples Nacional.
-              </p>
-              <p>
-                <strong>Folha (12 meses):</strong>{" "}
-                {formatCurrencyBRL(resultado.folha12)} &nbsp;|&nbsp;
-                <strong> Receita (12 meses):</strong>{" "}
-                {formatCurrencyBRL(resultado.receita12)}
-              </p>
-              <p>{resultado.mensagem}</p>
-              <p className="fr-box-note">
-                Este é um simulador. A Conta Ágil recomenda validação completa
-                considerando CNAE, faixas, atividades e legislação atual.
-              </p>
-            </section>
-          )}
+  <section className="fr-result">
+    <h2 className="fr-result-title">
+      SEU NEGÓCIO SE ENQUADRA NO ANEXO {resultado.anexoRecomendado}
+    </h2>
+
+    <p className="fr-result-text">
+      Isso significa que a sua carga de impostos pode ser mais{" "}
+      {resultado.anexoRecomendado === "III" ? "leve" : "elevada"}, impactando
+      diretamente o crescimento do negócio. Utilize estes números como base
+      para avaliar, junto com a Conta Ágil, o melhor planejamento tributário.
+    </p>
+
+    {/* Gráfico de barras horizontais: comparação de alíquotas */}
+    <div className="fr-bars">
+      <div className="fr-bar-label">
+        Anexo {resultado.anexoRecomendado}
+      </div>
+      <div className="fr-bar-track">
+        <div
+          className="fr-bar-fill fr-bar-fill-main"
+          style={{
+            width: `${
+              (resultado.aliquotaRecomendada /
+                Math.max(
+                  resultado.aliquotaRecomendada,
+                  resultado.aliquotaAlternativa
+                )) * 100
+            }%`,
+          }}
+        >
+          {(resultado.aliquotaRecomendada * 100).toFixed(2)}%
+        </div>
+      </div>
+
+      <div className="fr-bar-label">
+        Anexo {resultado.anexoRecomendado === "III" ? "V" : "III"}
+      </div>
+      <div className="fr-bar-track">
+        <div
+          className="fr-bar-fill fr-bar-fill-alt"
+          style={{
+            width: `${
+              (resultado.aliquotaAlternativa /
+                Math.max(
+                  resultado.aliquotaRecomendada,
+                  resultado.aliquotaAlternativa
+                )) * 100
+            }%`,
+          }}
+        >
+          {(resultado.aliquotaAlternativa * 100).toFixed(2)}%
+        </div>
+      </div>
+    </div>
+
+    {/* Bloco com pizza + legendas */}
+    <div className="fr-pie-section">
+      <div className="fr-pie-wrapper">
+        <svg
+          viewBox="0 0 200 200"
+          className="fr-pie-chart"
+          aria-label="Distribuição de receita: folha, impostos e renda líquida"
+        >
+          {(() => {
+            const center = 100;
+            const r = 80;
+            const segments = [
+              { value: resultado.impostosPercent, color: "#f97316" }, // impostos
+              { value: resultado.folhaPercent, color: "#2563eb" }, // folha
+              { value: resultado.rendaPercent, color: "#8b5cf6" }, // renda líquida
+            ];
+
+            let currentAngle = -90; // começa em cima
+            const paths = [];
+
+            segments.forEach((seg, i) => {
+              if (seg.value <= 0) return;
+              const angle = (seg.value / 100) * 360;
+              const start = (currentAngle * Math.PI) / 180;
+              const end = ((currentAngle + angle) * Math.PI) / 180;
+
+              const x1 = center + r * Math.cos(start);
+              const y1 = center + r * Math.sin(start);
+              const x2 = center + r * Math.cos(end);
+              const y2 = center + r * Math.sin(end);
+
+              const largeArc = angle > 180 ? 1 : 0;
+
+              const d = [
+                `M ${center} ${center}`,
+                `L ${x1} ${y1}`,
+                `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
+                "Z",
+              ].join(" ");
+
+              paths.push(
+                <path
+                  key={i}
+                  d={d}
+                  fill={seg.color}
+                  stroke="#ffffff"
+                  strokeWidth="2"
+                />
+              );
+
+              currentAngle += angle;
+            });
+
+            return paths;
+          })()}
+        </svg>
+      </div>
+
+      <div className="fr-pie-legend">
+        <div className="fr-legend-item">
+          <span
+            className="fr-legend-color"
+            style={{ backgroundColor: "#f97316" }}
+          />
+          <span>Impostos ({resultado.impostosPercent.toFixed(1)}%)</span>
+        </div>
+        <div className="fr-legend-item">
+          <span
+            className="fr-legend-color"
+            style={{ backgroundColor: "#2563eb" }}
+          />
+          <span>Folha de Pagamento ({resultado.folhaPercent.toFixed(1)}%)</span>
+        </div>
+        <div className="fr-legend-item">
+          <span
+            className="fr-legend-color"
+            style={{ backgroundColor: "#8b5cf6" }}
+          />
+          <span>Renda Líquida ({resultado.rendaPercent.toFixed(1)}%)</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Resumo numérico */}
+    <div className="fr-summary">
+      <p>
+        <strong>Folha (12 meses):</strong>{" "}
+        {formatCurrencyBRL(resultado.folha12)} &nbsp; | &nbsp;
+        <strong> Receita (12 meses):</strong>{" "}
+        {formatCurrencyBRL(resultado.receita12)}
+      </p>
+      <p>
+        <strong>Impostos no Anexo {resultado.anexoRecomendado}:</strong>{" "}
+        {formatCurrencyBRL(resultado.impostoRecomendado)} &nbsp; | &nbsp;
+        <strong>No outro anexo:</strong>{" "}
+        {formatCurrencyBRL(resultado.impostoAlternativo)}
+      </p>
+      <p className="fr-box-note">
+        Este simulador é uma referência. A Conta Ágil recomenda análise completa
+        do enquadramento, CNAE, benefícios e legislação vigente antes de tomar
+        decisões.
+      </p>
+    </div>
+
+    <div className="fr-actions-bottom">
+      <button
+        type="button"
+        className="fr-btn-primary"
+        onClick={limparTudo}
+      >
+        REFAZER CÁLCULO
+      </button>
+    </div>
+  </section>
+)}
+
         </div>
       </main>
     </div>
