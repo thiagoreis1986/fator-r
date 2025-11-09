@@ -124,9 +124,14 @@ body {
   padding: 14px 22px;
   border-radius: 999px;
   border: 2px solid #1f3a66;
+  background-color: #ffffff;
   font-size: 16px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fr-input::placeholder {
+  color: #c4c4c4;                     /* placeholder cinza claro */
 }
 
 .fr-input:focus {
