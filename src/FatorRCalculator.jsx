@@ -37,6 +37,8 @@ export default function FatorRCalculator() {
   const [alert, setAlert] = useState(null);
   const [resultado, setResultado] = useState(null);
 
+  const bloqueado = simples === false;
+
   function resetFeedback() {
     setAlert(null);
     setResultado(null);
@@ -276,6 +278,37 @@ function handleCurrencyChange(e, setter) {
   }
 
   return (
+    {/* Modal de aviso quando NÃO é Simples */}
+      {simples === false && (
+        <div className="fr-modal-overlay">
+          <div className="fr-modal">
+            <button
+              className="fr-modal-close"
+              onClick={() => {
+                // Ao fechar, voltamos o simples para null e liberamos a calculadora
+                setSimples(null);
+              }}
+              type="button"
+            >
+              ×
+            </button>
+
+            <h3>OPS, ATENÇÃO!</h3>
+            <p>
+              O cálculo do Fator R só vale para empresas que estão
+              <br />
+              no Simples Nacional.
+            </p>
+            <p>
+              Se a sua empresa não opta por esse regime, não se preocupe:
+              <br />
+              você pode avaliar outras formas de planejamento tributário para
+              <br />
+              o seu negócio chamando a gente!
+            </p>
+          </div>
+        </div>
+      )}
     <div className="fr-layout">
       {/* Coluna azul */}
       <aside className="fr-sidebar">
@@ -300,34 +333,50 @@ function handleCurrencyChange(e, setter) {
           <form className="fr-form" onSubmit={calcular}>
             {/* Simples Nacional */}
             <section className="fr-question">
-              <h3>Sua empresa opta pelo Simples Nacional?</h3>
-              <div className="fr-options-row">
+    <h3>Sua empresa opta pelo Simples Nacional?</h3>
+    <div className="fr-options-row">
+      <label className="fr-option">
+        <input
+          type="radio"
+          name="simples"
+          checked={simples === true}
+          onChange={() => {
+            setSimples(true);
+            setAlert(null);
+            setResultado(null);
+          }}
+        />
+        Sim
+      </label>
                 <label className="fr-option">
-                  <input
-                    type="radio"
-                    name="simples"
-                    checked={simples === true}
-                    onChange={() => {
-                      setSimples(true);
-                      resetFeedback();
-                    }}
-                  />
-                  Sim
-                </label>
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    name="simples"
-                    checked={simples === false}
-                    onChange={() => {
-                      setSimples(false);
-                      resetFeedback();
-                    }}
-                  />
-                  Não
-                </label>
-              </div>
-            </section>
+        <input
+          type="radio"
+          name="simples"
+          checked={simples === false}
+          onChange={() => {
+            setSimples(false);
+            setAlert(null);
+            setResultado(null);
+          }}
+        />
+        Não
+      </label>
+    </div>
+  </section>
+
+  {/* Tudo abaixo só funciona se NÃO estiver bloqueado */}
+  <fieldset disabled={bloqueado} className={bloqueado ? "fr-disabled" : ""}>
+    {/* Aqui ficam TODAS as outras perguntas e o botão CALCULAR:
+        - atividade
+        - tempo de empresa
+        - faturamento mensal/anual
+        - pró-labore
+        - funcionários
+        - botão de calcular
+        - etc.
+    */}
+  </fieldset>
+</form>
 
             {/* Atividade */}
             <section className="fr-question">
@@ -335,9 +384,20 @@ function handleCurrencyChange(e, setter) {
               <input
                 className="fr-input"
                 value={atividade}
-                onChange={(e) => {
-                  setAtividade(e.target.value);
-                  resetFeedback();
+                onChange={() => {
+                 setSimples(false);
+                 setResultado(null);  // limpa qualquer resultado anterior
+                 setAlert({
+                  type: "warning",
+                  title: "OPS, ATENÇÃO!",
+                  message:
+                   "O cálculo do Fator R só vale para empresas que estão\n" +
+                   "no Simples Nacional.\n" +
+                   "Se a sua empresa não opta por esse regime, não se preocupe:\n" +
+                   "você pode avaliar outras formas de planejamento tributário para\n" +
+                   "o seu negócio chamando a gente!",
+                 });
+                 resetFeedback();
                 }}
                 placeholder="Escreva a área de atuação do seu negócio!"
               />

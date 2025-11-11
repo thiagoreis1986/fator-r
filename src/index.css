@@ -412,3 +412,51 @@ body {
     align-items: flex-start;
   }
 }
+.fr-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 999;
+}
+
+.fr-modal {
+  background: #44f4f0;
+  padding: 32px 40px;
+  border-radius: 16px;
+  max-width: 720px;
+  text-align: center;
+  color: #004466;
+  font-weight: 500;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+  position: relative;
+}
+
+.fr-modal h3 {
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.fr-modal p {
+  margin: 4px 0;
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+.fr-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  color: #006b7a;
+}
+
+.fr-disabled {
+  opacity: 0.45;
+}
