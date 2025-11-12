@@ -526,7 +526,19 @@ export default function FatorRCalculator() {
 
                 {/* Pró-labore */}
                 <section className="fr-question">
-                  <h3>Os sócios recebem pró-labore?</h3>
+                  <h3 className="fr-label">
+                   Os sócios recebem pró-labore?
+                    <span className="fr-help" tabIndex={0} aria-describedby="hint-prolabore">
+                    <span className="fr-help-icon">?</span>
+                    <span id="hint-prolabore" className="fr-help-bubble" role="tooltip">
+                     O <strong>pró-labore</strong> é a remuneração mensal dos sócios que
+                       atuam na empresa.  
+                       Deve ser declarado mesmo que não haja retirada formal — e serve como
+                       base para o cálculo de encargos como <strong>INSS</strong> e <strong>IRPF</strong>.
+                    </span>
+                    </span>
+                  </h3>
+
                   <div className="fr-options-row">
                     <label className="fr-option">
                       <input
