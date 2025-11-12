@@ -395,14 +395,17 @@ export default function FatorRCalculator() {
               >
                 {/* Atividade */}
                 <section className="fr-question">
-                  <h3>Qual a atividade de sua empresa?
-                   <span
-                    className="fr-help"
-                    data-tip="Informe a atividade principal (CNAE) ou descreva sucintamente o serviço principal. Isso ajuda a orientar o enquadramento."
-                    tabIndex={0}
-                    aria-label="Ajuda sobre atividade da empresa"
-                    >?</span>
+                  <h3 className="fr-label">
+                   Qual a atividade de sua empresa?
+                    <span className="fr-help" tabIndex={0} aria-describedby="hint-atividade">
+                    <span className="fr-help-icon">?</span>
+                    <span id="hint-atividade" className="fr-help-bubble" role="tooltip">
+                     Informe a atividade principal (CNAE) ou descreva sucintamente o serviço
+                     principal. Isso ajuda a orientar o enquadramento.
+                    </span>
+                    </span>
                   </h3>
+
                   <input
                     className="fr-input"
                     value={atividade}
