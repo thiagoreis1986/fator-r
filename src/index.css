@@ -494,51 +494,57 @@ body {
   margin-bottom: 0;
 }
 
-/* ===== Tooltips de ajuda ===== */
+/* ===== Tooltip de ajuda (sem setinha) ===== */
 .fr-help {
   position: relative;
   display: inline-flex;
   align-items: center;
+  margin-left: 8px;
+  cursor: help;
+  outline: none;
+}
+
+.fr-help-icon {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
-  margin-left: .5rem;
-  border: 2px solid #223a5c;    /* azul do tema */
-  color: #223a5c;
+  width: 26px;
+  height: 26px;
+  border: 2px solid #1f2a44;    /* azul escuro do seu tema */
+  color: #1f2a44;
   border-radius: 50%;
   font-weight: 700;
-  font-size: 12px;
   line-height: 1;
-  cursor: default;
+  background: #fff;
   user-select: none;
 }
 
 /* Balão */
-.fr-help::after {
-  content: attr(data-tip);
+.fr-help-bubble {
   position: absolute;
+  top: calc(100% + 10px);        /* abaixo do “?” */
   left: 50%;
-  top: calc(100% + 10px);
-  transform: translateX(-50%) translateY(6px);
-  min-width: 240px;
-  max-width: 420px;
-  padding: 12px 14px;
-  background: #eaf2ff;
-  color: #0d223e;
-  border: 1px solid #c7d7ff;
-  border-radius: 10px;
-  box-shadow: 0 8px 22px rgba(0,0,0,.08);
-  font-size: 14px;
-  line-height: 1.35;
-  white-space: normal;
+  transform: translate(-50%, -6px);  /* leve subida ao esconder */
+  min-width: 280px;
+  max-width: min(560px, 86vw);
+  background: #eaf1ff;          /* azul bem claro */
+  color: #0f1a2b;
+  padding: 14px 16px;
+  border: 1px solid #a8b6da;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
   opacity: 0;
-  pointer-events: none;
+  pointer-events: none;          /* não captura clique quando escondido */
   transition: opacity .15s ease, transform .15s ease;
-  z-index: 40;
+  z-index: 50;
 }
 
-/* Acessibilidade: foco visível em teclado */
-.fr-help:focus-visible {
-  outline: 2px solid #6aa2ff;
-  outline-offset: 2px;
+/* Mostrar no hover e no foco (acessível teclado) */
+.fr-help:hover .fr-help-bubble,
+.fr-help:focus-within .fr-help-bubble {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
 }
+
+/* Removido qualquer triangulinho */
