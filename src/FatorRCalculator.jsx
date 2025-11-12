@@ -1,17 +1,20 @@
 import { useState } from "react";
 
+/* Util: converte "R$ 10.000,00" -> 10000 */
 function parseCurrencyToNumber(value) {
   if (!value) return 0;
+
   return (
     parseFloat(
       value
         .toString()
-        .replace(/[R$\s.]/g, "")
-        .replace(",", ".")
+        .replace(/[R$\s.]/g, "") // remove R$, espaços e pontos
+        .replace(",", ".") // vírgula decimal
     ) || 0
   );
 }
 
+/* Util: formata número em BRL para exibição no resultado */
 function formatCurrencyBRL(value) {
   if (isNaN(value)) return "";
   return value.toLocaleString("pt-BR", {
@@ -26,17 +29,20 @@ export default function FatorRCalculator() {
   const [atividade, setAtividade] = useState("");
   const [tempo, setTempo] = useState(""); // "mais12" | "menos12"
   const [mesesEmpresa, setMesesEmpresa] = useState("");
+
   const [faturamentoMensal, setFaturamentoMensal] = useState("");
   const [faturamentoAnual, setFaturamentoAnual] = useState("");
 
   const [temProlabore, setTemProlabore] = useState(null);
   const [valorProlabore, setValorProlabore] = useState("");
+
   const [temFuncionarios, setTemFuncionarios] = useState(null);
   const [folhaMensal, setFolhaMensal] = useState("");
 
   const [alert, setAlert] = useState(null);
   const [resultado, setResultado] = useState(null);
 
+  // Quando simples === false, bloqueia toda a calculadora
   const bloqueado = simples === false;
 
   function resetFeedback() {
@@ -59,47 +65,33 @@ export default function FatorRCalculator() {
     setResultado(null);
   }
 
-// Converte string "10.000,00" -> número 10000
-function parseCurrencyBR(str) {
-  if (!str) return 0;
-  return (
-    parseFloat(
-      str
-        .toString()
-        .replace(/\./g, "") // remove pontos
-        .replace(",", ".")  // troca vírgula por ponto
-    ) || 0
-  );
-}
+  // Máscara de moeda enquanto digita
+  function handleCurrencyChange(e, setter) {
+    const raw = e.target.value || "";
+    const digits = raw.replace(/\D/g, "");
 
-// Formata enquanto digita: deixa sempre no padrão 0.000,00
-function handleCurrencyChange(e, setter) {
-  const raw = e.target.value;
+    if (!digits) {
+      setter("");
+      return;
+    }
 
-  // mantém só dígitos
-  const digits = raw.replace(/\D/g, "");
+    const number = Number(digits) / 100;
 
-  if (!digits) {
-    setter("");
-    return;
+    const formatted = number.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    setter(formatted);
+    resetFeedback();
   }
-
-  const number = Number(digits) / 100;
-
-  const formatted = number.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
-  setter(formatted);
-}
-
 
   function calcular(e) {
     e.preventDefault();
     setAlert(null);
     setResultado(null);
 
+    // Só calcula se for Simples Nacional
     if (simples !== true) {
       setAlert({
         type: "warning",
@@ -132,23 +124,35 @@ function handleCurrencyChange(e, setter) {
 
     let receita12 = 0;
 
+    // Empresa com mais de 12 meses
     if (tempo === "mais12") {
-      const valor = parseCurrencyToNumber(faturamentoMensal);
-      if (valor <= 0) {
+      const mensal = parseCurrencyToNumber(faturamentoMensal);
+
+      if (mensal <= 0 && !faturamentoAnual) {
         setAlert({
           type: "warning",
           title: "Faturamento bruto mensal inválido",
           message:
-            "Informe o faturamento bruto mensal para projetarmos corretamente.",
+            "Informe o faturamento bruto mensal ou o total dos últimos 12 meses.",
         });
         return;
       }
-      receita12 = valor * 12;
+
+      if (faturamentoAnual) {
+        const anual = parseCurrencyToNumber(faturamentoAnual);
+        if (anual > 0) receita12 = anual;
+      }
+
+      if (receita12 <= 0 && mensal > 0) {
+        receita12 = mensal * 12;
+      }
     }
 
+    // Empresa com menos de 12 meses: projeta
     if (tempo === "menos12") {
       const meses = Number(mesesEmpresa);
-      const valor = parseCurrencyToNumber(faturamentoMensal);
+      const mensal = parseCurrencyToNumber(faturamentoMensal);
+
       if (!meses || meses < 1 || meses > 11) {
         setAlert({
           type: "warning",
@@ -157,7 +161,8 @@ function handleCurrencyChange(e, setter) {
         });
         return;
       }
-      if (valor <= 0) {
+
+      if (mensal <= 0) {
         setAlert({
           type: "warning",
           title: "Faturamento bruto mensal inválido",
@@ -166,13 +171,19 @@ function handleCurrencyChange(e, setter) {
         });
         return;
       }
-      receita12 = valor * 12;
+
+      // projeção simples: usa o mensal informado * 12
+      receita12 = mensal * 12;
     }
 
-    if (tempo === "mais12" && faturamentoAnual) {
-      // se quiser usar diretamente os 12 meses em vez do mensal
-      const direto = parseCurrencyToNumber(faturamentoAnual);
-      if (direto > 0) receita12 = direto;
+    if (receita12 <= 0) {
+      setAlert({
+        type: "warning",
+        title: "Faturamento não informado",
+        message:
+          "Revise os campos de faturamento mensal/anual antes de continuar.",
+      });
+      return;
     }
 
     if (temProlabore === null || temFuncionarios === null) {
@@ -188,6 +199,7 @@ function handleCurrencyChange(e, setter) {
     const prolabore = temProlabore
       ? parseCurrencyToNumber(valorProlabore)
       : 0;
+
     const folha = temFuncionarios
       ? parseCurrencyToNumber(folhaMensal)
       : 0;
@@ -197,7 +209,7 @@ function handleCurrencyChange(e, setter) {
         type: "warning",
         title: "Pró-labore inválido",
         message:
-          "Informe o valor mensal total de pró-labore dos sócios (antes de INSS).",
+          "Informe o valor mensal total de pró-labore dos sócios (antes do INSS).",
       });
       return;
     }
@@ -214,22 +226,21 @@ function handleCurrencyChange(e, setter) {
 
     const folha12 = (prolabore + folha) * 12;
 
-    if (receita12 <= 0 || folha12 <= 0) {
+    if (folha12 <= 0) {
       setAlert({
         type: "warning",
         title: "Dados insuficientes",
         message:
-          "Verifique se o faturamento e os custos com pessoal foram informados corretamente.",
+          "Verifique se pró-labore e folha foram preenchidos corretamente.",
       });
       return;
     }
 
     const fatorR = folha12 / receita12;
     const fatorRPercent = fatorR * 100;
-    const anexoIII = fatorR >= 0.28;
 
-       const aliquotaAnexo3 = 0.06;   // 6%
-    const aliquotaAnexo5 = 0.155;  // 15,5%
+    const aliquotaAnexo3 = 0.06; // 6%
+    const aliquotaAnexo5 = 0.155; // 15,5%
 
     const impostoAnexo3 = receita12 * aliquotaAnexo3;
     const impostoAnexo5 = receita12 * aliquotaAnexo5;
@@ -237,17 +248,32 @@ function handleCurrencyChange(e, setter) {
     const usarAnexo3 = fatorR >= 0.28;
 
     const anexoRecomendado = usarAnexo3 ? "III" : "V";
-    const aliquotaRecomendada = usarAnexo3 ? aliquotaAnexo3 : aliquotaAnexo5;
-    const aliquotaAlternativa = usarAnexo3 ? aliquotaAnexo5 : aliquotaAnexo3;
-    const impostoRecomendado = usarAnexo3 ? impostoAnexo3 : impostoAnexo5;
-    const impostoAlternativo = usarAnexo3 ? impostoAnexo5 : impostoAnexo3;
+    const aliquotaRecomendada = usarAnexo3
+      ? aliquotaAnexo3
+      : aliquotaAnexo5;
+    const aliquotaAlternativa = usarAnexo3
+      ? aliquotaAnexo5
+      : aliquotaAnexo3;
+    const impostoRecomendado = usarAnexo3
+      ? impostoAnexo3
+      : impostoAnexo5;
+    const impostoAlternativo = usarAnexo3
+      ? impostoAnexo5
+      : impostoAnexo3;
 
     const folhaPercent = (folha12 / receita12) * 100;
     const impostosPercent = (impostoRecomendado / receita12) * 100;
-    const rendaPercent = Math.max(0, 100 - folhaPercent - impostosPercent);
+    const rendaPercent = Math.max(
+      0,
+      100 - folhaPercent - impostosPercent
+    );
 
-    hideNaN:
-    if (!isFinite(folhaPercent) || folhaPercent < 0) {
+    if (
+      !isFinite(folhaPercent) ||
+      !isFinite(impostosPercent) ||
+      folhaPercent < 0 ||
+      impostosPercent < 0
+    ) {
       setAlert({
         type: "warning",
         title: "Não foi possível montar o resultado",
@@ -269,26 +295,25 @@ function handleCurrencyChange(e, setter) {
       folhaPercent,
       impostosPercent,
       rendaPercent,
-      mensagem:
-        usarAnexo3
-          ? "Com Fator R igual ou superior a 28%, a tributação tende a ser pelo Anexo III, geralmente mais vantajoso para serviços."
-          : "Com Fator R abaixo de 28%, a tributação tende a ser pelo Anexo V. É importante revisar pró-labore e folha com um especialista.",
+      mensagem: usarAnexo3
+        ? "Com Fator R igual ou superior a 28%, a tributação tende a ser pelo Anexo III, geralmente mais vantajoso para serviços."
+        : "Com Fator R abaixo de 28%, a tributação tende a ser pelo Anexo V. É importante revisar pró-labore e folha com um especialista.",
     });
-
   }
 
   return (
-    {/* Modal de aviso quando NÃO é Simples */}
+    <>
+      {/* Modal de aviso quando NÃO é Simples */}
       {simples === false && (
         <div className="fr-modal-overlay">
           <div className="fr-modal">
             <button
               className="fr-modal-close"
+              type="button"
               onClick={() => {
                 // Ao fechar, voltamos o simples para null e liberamos a calculadora
                 setSimples(null);
               }}
-              type="button"
             >
               ×
             </button>
@@ -309,470 +334,501 @@ function handleCurrencyChange(e, setter) {
           </div>
         </div>
       )}
-    <div className="fr-layout">
-      {/* Coluna azul */}
-      <aside className="fr-sidebar">
-        <h1 className="fr-sidebar-title">
-          CALCULADORA
-          <br />
-          FATOR R
-        </h1>
-        <p>
-          Calcule em instantes o Fator R da sua empresa e descubra se a
-          tributação será pelo Anexo III ou V do Simples Nacional. Com nossa
-          análise, você consegue planejar melhor seus impostos e encontrar
-          oportunidades reais de economia para o seu negócio.
-        </p>
-      </aside>
 
-      {/* Card branco */}
-      <main className="fr-content">
-        <div className="fr-card">
-          <h2 className="fr-title">CALCULADORA FATOR R</h2>
+      <div className="fr-layout">
+        {/* Coluna azul */}
+        <aside className="fr-sidebar">
+          <h1 className="fr-sidebar-title">
+            CALCULADORA
+            <br />
+            FATOR R
+          </h1>
+          <p>
+            Calcule em instantes o Fator R da sua empresa e descubra se a
+            tributação será pelo Anexo III ou V do Simples Nacional. Com nossa
+            análise, você consegue planejar melhor seus impostos e encontrar
+            oportunidades reais de economia para o seu negócio.
+          </p>
+        </aside>
 
-          <form className="fr-form" onSubmit={calcular}>
-            {/* Simples Nacional */}
-            <section className="fr-question">
-    <h3>Sua empresa opta pelo Simples Nacional?</h3>
-    <div className="fr-options-row">
-      <label className="fr-option">
-        <input
-          type="radio"
-          name="simples"
-          checked={simples === true}
-          onChange={() => {
-            setSimples(true);
-            setAlert(null);
-            setResultado(null);
-          }}
-        />
-        Sim
-      </label>
-                <label className="fr-option">
-        <input
-          type="radio"
-          name="simples"
-          checked={simples === false}
-          onChange={() => {
-            setSimples(false);
-            setAlert(null);
-            setResultado(null);
-          }}
-        />
-        Não
-      </label>
-    </div>
-  </section>
+        {/* Card branco */}
+        <main className="fr-content">
+          <div className="fr-card">
+            <h2 className="fr-title">CALCULADORA FATOR R</h2>
 
-  {/* Tudo abaixo só funciona se NÃO estiver bloqueado */}
-  <fieldset disabled={bloqueado} className={bloqueado ? "fr-disabled" : ""}>
-    {/* Aqui ficam TODAS as outras perguntas e o botão CALCULAR:
-        - atividade
-        - tempo de empresa
-        - faturamento mensal/anual
-        - pró-labore
-        - funcionários
-        - botão de calcular
-        - etc.
-    */}
-  </fieldset>
-</form>
-
-            {/* Atividade */}
-            <section className="fr-question">
-              <h3>Qual a atividade de sua empresa?</h3>
-              <input
-                className="fr-input"
-                value={atividade}
-                onChange={() => {
-                 setSimples(false);
-                 setResultado(null);  // limpa qualquer resultado anterior
-                 setAlert({
-                  type: "warning",
-                  title: "OPS, ATENÇÃO!",
-                  message:
-                   "O cálculo do Fator R só vale para empresas que estão\n" +
-                   "no Simples Nacional.\n" +
-                   "Se a sua empresa não opta por esse regime, não se preocupe:\n" +
-                   "você pode avaliar outras formas de planejamento tributário para\n" +
-                   "o seu negócio chamando a gente!",
-                 });
-                 resetFeedback();
-                }}
-                placeholder="Escreva a área de atuação do seu negócio!"
-              />
-            </section>
-
-            {/* Tempo de funcionamento */}
-            <section className="fr-question">
-              <h3>Há quanto tempo sua empresa está em funcionamento?</h3>
-              <div className="fr-options-row">
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    name="tempo"
-                    checked={tempo === "mais12"}
-                    onChange={() => {
-                      setTempo("mais12");
-                      setMesesEmpresa("");
-                      resetFeedback();
-                    }}
-                  />
-                  Mais de 12 meses
-                </label>
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    name="tempo"
-                    checked={tempo === "menos12"}
-                    onChange={() => {
-                      setTempo("menos12");
-                      resetFeedback();
-                    }}
-                  />
-                  Menos de 12 meses
-                </label>
-              </div>
-            </section>
-
-            {/* Campos condicionais */}
-            {tempo === "menos12" && (
+            <form className="fr-form" onSubmit={calcular}>
+              {/* Simples Nacional */}
               <section className="fr-question">
-                <h3>Há quantos meses sua empresa está em funcionamento?</h3>
-                <input
-                  className="fr-input"
-                  type="number"
-                  min="1"
-                  max="11"
-                  value={mesesEmpresa}
-                  onChange={(e) => {
-                    setMesesEmpresa(e.target.value);
-                    resetFeedback();
-                  }}
-                  placeholder="Ex: 6"
-                />
+                <h3>Sua empresa opta pelo Simples Nacional?</h3>
+                <div className="fr-options-row">
+                  <label className="fr-option">
+                    <input
+                      type="radio"
+                      name="simples"
+                      checked={simples === true}
+                      onChange={() => {
+                        setSimples(true);
+                        resetFeedback();
+                      }}
+                    />
+                    Sim
+                  </label>
+                  <label className="fr-option">
+                    <input
+                      type="radio"
+                      name="simples"
+                      checked={simples === false}
+                      onChange={() => {
+                        setSimples(false);
+                        resetFeedback();
+                      }}
+                    />
+                    Não
+                  </label>
+                </div>
+              </section>
+
+              {/* Tudo abaixo fica desabilitado se marcar "Não" */}
+              <fieldset
+                disabled={bloqueado}
+                className={bloqueado ? "fr-disabled" : ""}
+              >
+                {/* Atividade */}
+                <section className="fr-question">
+                  <h3>Qual a atividade de sua empresa?</h3>
+                  <input
+                    className="fr-input"
+                    value={atividade}
+                    onChange={(e) => {
+                      setAtividade(e.target.value);
+                      resetFeedback();
+                    }}
+                    placeholder="Escreva a área de atuação do seu negócio!"
+                  />
+                </section>
+
+                {/* Tempo de funcionamento */}
+                <section className="fr-question">
+                  <h3>
+                    Há quanto tempo sua empresa está em funcionamento?
+                  </h3>
+                  <div className="fr-options-row">
+                    <label className="fr-option">
+                      <input
+                        type="radio"
+                        name="tempo"
+                        checked={tempo === "mais12"}
+                        onChange={() => {
+                          setTempo("mais12");
+                          setMesesEmpresa("");
+                          resetFeedback();
+                        }}
+                      />
+                      Mais de 12 meses
+                    </label>
+                    <label className="fr-option">
+                      <input
+                        type="radio"
+                        name="tempo"
+                        checked={tempo === "menos12"}
+                        onChange={() => {
+                          setTempo("menos12");
+                          resetFeedback();
+                        }}
+                      />
+                      Menos de 12 meses
+                    </label>
+                  </div>
+                </section>
+
+                {/* Meses de funcionamento (para menos de 12) */}
+                {tempo === "menos12" && (
+                  <section className="fr-question">
+                    <h3>
+                      Há quantos meses sua empresa está em funcionamento?
+                    </h3>
+                    <input
+                      className="fr-input"
+                      type="number"
+                      min="1"
+                      max="11"
+                      value={mesesEmpresa}
+                      onChange={(e) => {
+                        setMesesEmpresa(e.target.value);
+                        resetFeedback();
+                      }}
+                      placeholder="Ex: 6"
+                    />
+                  </section>
+                )}
+
+                {/* Faturamento mensal */}
+                <section className="fr-question">
+                  <h3>Qual o seu faturamento bruto mensal?</h3>
+                  <input
+                    className="fr-input"
+                    type="text"
+                    value={faturamentoMensal}
+                    onChange={(e) =>
+                      handleCurrencyChange(e, setFaturamentoMensal)
+                    }
+                    placeholder="R$ 0,00"
+                  />
+                </section>
+
+                {/* Faturamento 12 meses (opcional p/ mais de 12 meses) */}
+                {tempo === "mais12" && (
+                  <section className="fr-question">
+                    <h3>
+                      Ou informe o faturamento bruto dos últimos 12 meses:
+                    </h3>
+                    <input
+                      className="fr-input"
+                      type="text"
+                      value={faturamentoAnual}
+                      onChange={(e) =>
+                        handleCurrencyChange(e, setFaturamentoAnual)
+                      }
+                      placeholder="Opcional - R$ 0,00"
+                    />
+                  </section>
+                )}
+
+                {/* Pró-labore */}
+                <section className="fr-question">
+                  <h3>Os sócios recebem pró-labore?</h3>
+                  <div className="fr-options-row">
+                    <label className="fr-option">
+                      <input
+                        type="radio"
+                        name="prolabore"
+                        checked={temProlabore === true}
+                        onChange={() => {
+                          setTemProlabore(true);
+                          resetFeedback();
+                        }}
+                      />
+                      Sim
+                    </label>
+                    <label className="fr-option">
+                      <input
+                        type="radio"
+                        name="prolabore"
+                        checked={temProlabore === false}
+                        onChange={() => {
+                          setTemProlabore(false);
+                          setValorProlabore("");
+                          resetFeedback();
+                        }}
+                      />
+                      Não
+                    </label>
+                  </div>
+                  {temProlabore && (
+                    <input
+                      className="fr-input"
+                      type="text"
+                      value={valorProlabore}
+                      onChange={(e) =>
+                        handleCurrencyChange(e, setValorProlabore)
+                      }
+                      placeholder="Valor total mensal de pró-labore (R$)"
+                    />
+                  )}
+                </section>
+
+                {/* Funcionários */}
+                <section className="fr-question">
+                  <h3>Você possui funcionários?</h3>
+                  <div className="fr-options-row">
+                    <label className="fr-option">
+                      <input
+                        type="radio"
+                        name="funcionarios"
+                        checked={temFuncionarios === true}
+                        onChange={() => {
+                          setTemFuncionarios(true);
+                          resetFeedback();
+                        }}
+                      />
+                      Sim
+                    </label>
+                    <label className="fr-option">
+                      <input
+                        type="radio"
+                        name="funcionarios"
+                        checked={temFuncionarios === false}
+                        onChange={() => {
+                          setTemFuncionarios(false);
+                          setFolhaMensal("");
+                          resetFeedback();
+                        }}
+                      />
+                      Não
+                    </label>
+                  </div>
+                  {temFuncionarios && (
+                    <input
+                      className="fr-input"
+                      type="text"
+                      value={folhaMensal}
+                      onChange={(e) =>
+                        handleCurrencyChange(e, setFolhaMensal)
+                      }
+                      placeholder="Gasto mensal com folha (R$)"
+                    />
+                  )}
+                </section>
+              </fieldset>
+
+              {/* Alertas */}
+              {alert && (
+                <div
+                  className={
+                    "fr-alert " +
+                    (alert.type === "warning"
+                      ? "fr-alert-warning"
+                      : "fr-alert-info")
+                  }
+                >
+                  <strong>{alert.title}</strong>
+                  <div>{alert.message}</div>
+                </div>
+              )}
+
+              {/* Botões */}
+              <div className="fr-actions">
+                <button type="submit" className="fr-btn-primary">
+                  CALCULAR
+                </button>
+                <button
+                  type="button"
+                  className="fr-btn-outline"
+                  onClick={limparTudo}
+                >
+                  LIMPAR
+                </button>
+              </div>
+            </form>
+
+            {/* Resultado */}
+            {resultado && (
+              <section className="fr-result">
+                <h2 className="fr-result-title">
+                  SEU NEGÓCIO SE ENQUADRA NO ANEXO{" "}
+                  {resultado.anexoRecomendado}
+                </h2>
+
+                <p className="fr-result-text">
+                  Isso significa que a sua carga de impostos pode ser mais{" "}
+                  {resultado.anexoRecomendado === "III"
+                    ? "leve"
+                    : "elevada"}
+                  , impactando diretamente o crescimento do negócio. Utilize
+                  estes números como base para avaliar, junto com a Conta
+                  Ágil, o melhor planejamento tributário.
+                </p>
+
+                {/* Gráfico de barras horizontais */}
+                <div className="fr-bars">
+                  <div className="fr-bar-label">
+                    Anexo {resultado.anexoRecomendado}
+                  </div>
+                  <div className="fr-bar-track">
+                    <div
+                      className="fr-bar-fill fr-bar-fill-main"
+                      style={{
+                        width: `${
+                          (resultado.aliquotaRecomendada /
+                            Math.max(
+                              resultado.aliquotaRecomendada,
+                              resultado.aliquotaAlternativa
+                            )) * 100
+                        }%`,
+                      }}
+                    >
+                      {(resultado.aliquotaRecomendada * 100).toFixed(
+                        2
+                      )}
+                      %
+                    </div>
+                  </div>
+
+                  <div className="fr-bar-label">
+                    Anexo{" "}
+                    {resultado.anexoRecomendado === "III" ? "V" : "III"}
+                  </div>
+                  <div className="fr-bar-track">
+                    <div
+                      className="fr-bar-fill fr-bar-fill-alt"
+                      style={{
+                        width: `${
+                          (resultado.aliquotaAlternativa /
+                            Math.max(
+                              resultado.aliquotaRecomendada,
+                              resultado.aliquotaAlternativa
+                            )) * 100
+                        }%`,
+                      }}
+                    >
+                      {(resultado.aliquotaAlternativa * 100).toFixed(
+                        2
+                      )}
+                      %
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pizza simples: folha x impostos x renda líquida */}
+                <div className="fr-pie-section">
+                  <div className="fr-pie-wrapper">
+                    <svg
+                      viewBox="0 0 200 200"
+                      className="fr-pie-chart"
+                      aria-label="Distribuição de receita: folha, impostos e renda líquida"
+                    >
+                      {(() => {
+                        const center = 100;
+                        const r = 80;
+                        const segments = [
+                          {
+                            value: resultado.impostosPercent,
+                            color: "#f97316",
+                          },
+                          {
+                            value: resultado.folhaPercent,
+                            color: "#2563eb",
+                          },
+                          {
+                            value: resultado.rendaPercent,
+                            color: "#8b5cf6",
+                          },
+                        ];
+
+                        let currentAngle = -90;
+                        const paths = [];
+
+                        segments.forEach((seg, i) => {
+                          if (seg.value <= 0) return;
+
+                          const angle = (seg.value / 100) * 360;
+                          const start =
+                            (currentAngle * Math.PI) / 180;
+                          const end =
+                            ((currentAngle + angle) * Math.PI) / 180;
+
+                          const x1 =
+                            center + r * Math.cos(start);
+                          const y1 =
+                            center + r * Math.sin(start);
+                          const x2 =
+                            center + r * Math.cos(end);
+                          const y2 =
+                            center + r * Math.sin(end);
+
+                          const largeArc = angle > 180 ? 1 : 0;
+
+                          const d = [
+                            `M ${center} ${center}`,
+                            `L ${x1} ${y1}`,
+                            `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
+                            "Z",
+                          ].join(" ");
+
+                          paths.push(
+                            <path
+                              key={i}
+                              d={d}
+                              fill={seg.color}
+                              stroke="#ffffff"
+                              strokeWidth="2"
+                            />
+                          );
+
+                          currentAngle += angle;
+                        });
+
+                        return paths;
+                      })()}
+                    </svg>
+                  </div>
+
+                  <div className="fr-pie-legend">
+                    <div className="fr-legend-item">
+                      <span
+                        className="fr-legend-color"
+                        style={{ backgroundColor: "#f97316" }}
+                      />
+                      <span>
+                        Impostos (
+                        {resultado.impostosPercent.toFixed(1)}%)
+                      </span>
+                    </div>
+                    <div className="fr-legend-item">
+                      <span
+                        className="fr-legend-color"
+                        style={{ backgroundColor: "#2563eb" }}
+                      />
+                      <span>
+                        Folha de Pagamento (
+                        {resultado.folhaPercent.toFixed(1)}%)
+                      </span>
+                    </div>
+                    <div className="fr-legend-item">
+                      <span
+                        className="fr-legend-color"
+                        style={{ backgroundColor: "#8b5cf6" }}
+                      />
+                      <span>
+                        Renda Líquida (
+                        {resultado.rendaPercent.toFixed(1)}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Resumo numérico */}
+                <div className="fr-summary">
+                  <p>
+                    <strong>Folha (12 meses):</strong>{" "}
+                    {formatCurrencyBRL(resultado.folha12)} &nbsp; | &nbsp;
+                    <strong>Receita (12 meses):</strong>{" "}
+                    {formatCurrencyBRL(resultado.receita12)}
+                  </p>
+                  <p>
+                    <strong>
+                      Impostos no Anexo {resultado.anexoRecomendado}:
+                    </strong>{" "}
+                    {formatCurrencyBRL(
+                      resultado.impostoRecomendado
+                    )}{" "}
+                    &nbsp; | &nbsp;
+                    <strong>No outro anexo:</strong>{" "}
+                    {formatCurrencyBRL(
+                      resultado.impostoAlternativo
+                    )}
+                  </p>
+                  <p className="fr-box-note">
+                    Este simulador é uma referência. A Conta Ágil recomenda
+                    análise completa do enquadramento, CNAE, benefícios e
+                    legislação vigente antes de tomar decisões.
+                  </p>
+                </div>
+
+                <div className="fr-actions-bottom">
+                  <button
+                    type="button"
+                    className="fr-btn-primary"
+                    onClick={limparTudo}
+                  >
+                    REFAZER CÁLCULO
+                  </button>
+                </div>
               </section>
             )}
-
-            <section className="fr-question">
-             <h3>Qual o seu faturamento bruto mensal?</h3>
-             <input
-              className="fr-input"
-              type="text"
-              value={faturamentoMensal}
-              onChange={(e) => handleCurrencyChange(e, setFaturamentoMensal)}
-              placeholder="R$ 0,00"
-            />
-            </section>
-
-            {tempo === "mais12" && (
-             <section className="fr-question">
-             <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
-             <input
-              className="fr-input"
-              type="text"
-              value={faturamentoAnual}
-              onChange={(e) => handleCurrencyChange(e, setFaturamentoAnual)}
-              placeholder="Opcional - R$ 0,00"
-            />
-            </section>
-            )}
-
-            {/* Pró-labore */}
-            <section className="fr-question">
-              <h3>Os sócios recebem pró-labore?</h3>
-              <div className="fr-options-row">
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    name="prolabore"
-                    checked={temProlabore === true}
-                    onChange={() => {
-                      setTemProlabore(true);
-                      resetFeedback();
-                    }}
-                  />
-                  Sim
-                </label>
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    name="prolabore"
-                    checked={temProlabore === false}
-                    onChange={() => {
-                      setTemProlabore(false);
-                      setValorProlabore("");
-                      resetFeedback();
-                    }}
-                  />
-                  Não
-                </label>
-              </div>
-              {temProlabore && (
-                  <input
-                   className="fr-input"
-                   type="text"
-                   value={valorProlabore}
-                   onChange={(e) => {
-                    handleCurrencyChange(e, setValorProlabore);
-                    resetFeedback();
-                   }}
-                    placeholder="Valor total mensal de pró-labore (R$)"
-                  />
-               )}
-
-            </section>
-
-            {/* Funcionários */}
-            <section className="fr-question">
-              <h3>Você possui funcionários?</h3>
-              <div className="fr-options-row">
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    name="funcionarios"
-                    checked={temFuncionarios === true}
-                    onChange={() => {
-                      setTemFuncionarios(true);
-                      resetFeedback();
-                    }}
-                  />
-                  Sim
-                </label>
-                <label className="fr-option">
-                  <input
-                    type="radio"
-                    name="funcionarios"
-                    checked={temFuncionarios === false}
-                    onChange={() => {
-                      setTemFuncionarios(false);
-                      setFolhaMensal("");
-                      resetFeedback();
-                    }}
-                  />
-                  Não
-                </label>
-              </div>
-              {temFuncionarios && (
-                  <input
-                   className="fr-input"
-                   type="text"
-                   value={folhaMensal}
-                   onChange={(e) => {
-                    handleCurrencyChange(e, setFolhaMensal);
-                    resetFeedback();
-                 }}
-                    placeholder="Gasto mensal com folha (R$)"
-                  />
-               )}
-
-            </section>
-
-            {/* Alertas */}
-            {alert && (
-              <div
-                className={
-                  "fr-alert " +
-                  (alert.type === "warning"
-                    ? "fr-alert-warning"
-                    : "fr-alert-info")
-                }
-              >
-                <strong>{alert.title}</strong>
-                <div>{alert.message}</div>
-              </div>
-            )}
-
-            {/* Botões */}
-            <div className="fr-actions">
-              <button type="submit" className="fr-btn-primary">
-                CALCULAR
-              </button>
-              <button
-                type="button"
-                className="fr-btn-outline"
-                onClick={limparTudo}
-              >
-                LIMPAR
-              </button>
-            </div>
-          </form>
-
-          {/* Resultado */}
-          {resultado && (
-  <section className="fr-result">
-    <h2 className="fr-result-title">
-      SEU NEGÓCIO SE ENQUADRA NO ANEXO {resultado.anexoRecomendado}
-    </h2>
-
-    <p className="fr-result-text">
-      Isso significa que a sua carga de impostos pode ser mais{" "}
-      {resultado.anexoRecomendado === "III" ? "leve" : "elevada"}, impactando
-      diretamente o crescimento do negócio. Utilize estes números como base
-      para avaliar, junto com a Conta Ágil, o melhor planejamento tributário.
-    </p>
-
-    {/* Gráfico de barras horizontais: comparação de alíquotas */}
-    <div className="fr-bars">
-      <div className="fr-bar-label">
-        Anexo {resultado.anexoRecomendado}
+          </div>
+        </main>
       </div>
-      <div className="fr-bar-track">
-        <div
-          className="fr-bar-fill fr-bar-fill-main"
-          style={{
-            width: `${
-              (resultado.aliquotaRecomendada /
-                Math.max(
-                  resultado.aliquotaRecomendada,
-                  resultado.aliquotaAlternativa
-                )) * 100
-            }%`,
-          }}
-        >
-          {(resultado.aliquotaRecomendada * 100).toFixed(2)}%
-        </div>
-      </div>
-
-      <div className="fr-bar-label">
-        Anexo {resultado.anexoRecomendado === "III" ? "V" : "III"}
-      </div>
-      <div className="fr-bar-track">
-        <div
-          className="fr-bar-fill fr-bar-fill-alt"
-          style={{
-            width: `${
-              (resultado.aliquotaAlternativa /
-                Math.max(
-                  resultado.aliquotaRecomendada,
-                  resultado.aliquotaAlternativa
-                )) * 100
-            }%`,
-          }}
-        >
-          {(resultado.aliquotaAlternativa * 100).toFixed(2)}%
-        </div>
-      </div>
-    </div>
-
-    {/* Bloco com pizza + legendas */}
-    <div className="fr-pie-section">
-      <div className="fr-pie-wrapper">
-        <svg
-          viewBox="0 0 200 200"
-          className="fr-pie-chart"
-          aria-label="Distribuição de receita: folha, impostos e renda líquida"
-        >
-          {(() => {
-            const center = 100;
-            const r = 80;
-            const segments = [
-              { value: resultado.impostosPercent, color: "#f97316" }, // impostos
-              { value: resultado.folhaPercent, color: "#2563eb" }, // folha
-              { value: resultado.rendaPercent, color: "#8b5cf6" }, // renda líquida
-            ];
-
-            let currentAngle = -90; // começa em cima
-            const paths = [];
-
-            segments.forEach((seg, i) => {
-              if (seg.value <= 0) return;
-              const angle = (seg.value / 100) * 360;
-              const start = (currentAngle * Math.PI) / 180;
-              const end = ((currentAngle + angle) * Math.PI) / 180;
-
-              const x1 = center + r * Math.cos(start);
-              const y1 = center + r * Math.sin(start);
-              const x2 = center + r * Math.cos(end);
-              const y2 = center + r * Math.sin(end);
-
-              const largeArc = angle > 180 ? 1 : 0;
-
-              const d = [
-                `M ${center} ${center}`,
-                `L ${x1} ${y1}`,
-                `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
-                "Z",
-              ].join(" ");
-
-              paths.push(
-                <path
-                  key={i}
-                  d={d}
-                  fill={seg.color}
-                  stroke="#ffffff"
-                  strokeWidth="2"
-                />
-              );
-
-              currentAngle += angle;
-            });
-
-            return paths;
-          })()}
-        </svg>
-      </div>
-
-      <div className="fr-pie-legend">
-        <div className="fr-legend-item">
-          <span
-            className="fr-legend-color"
-            style={{ backgroundColor: "#f97316" }}
-          />
-          <span>Impostos ({resultado.impostosPercent.toFixed(1)}%)</span>
-        </div>
-        <div className="fr-legend-item">
-          <span
-            className="fr-legend-color"
-            style={{ backgroundColor: "#2563eb" }}
-          />
-          <span>Folha de Pagamento ({resultado.folhaPercent.toFixed(1)}%)</span>
-        </div>
-        <div className="fr-legend-item">
-          <span
-            className="fr-legend-color"
-            style={{ backgroundColor: "#8b5cf6" }}
-          />
-          <span>Renda Líquida ({resultado.rendaPercent.toFixed(1)}%)</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Resumo numérico */}
-    <div className="fr-summary">
-      <p>
-        <strong>Folha (12 meses):</strong>{" "}
-        {formatCurrencyBRL(resultado.folha12)} &nbsp; | &nbsp;
-        <strong> Receita (12 meses):</strong>{" "}
-        {formatCurrencyBRL(resultado.receita12)}
-      </p>
-      <p>
-        <strong>Impostos no Anexo {resultado.anexoRecomendado}:</strong>{" "}
-        {formatCurrencyBRL(resultado.impostoRecomendado)} &nbsp; | &nbsp;
-        <strong>No outro anexo:</strong>{" "}
-        {formatCurrencyBRL(resultado.impostoAlternativo)}
-      </p>
-      <p className="fr-box-note">
-        Este simulador é uma referência. A Conta Ágil recomenda análise completa
-        do enquadramento, CNAE, benefícios e legislação vigente antes de tomar
-        decisões.
-      </p>
-    </div>
-
-    <div className="fr-actions-bottom">
-      <button
-        type="button"
-        className="fr-btn-primary"
-        onClick={limparTudo}
-      >
-        REFAZER CÁLCULO
-      </button>
-    </div>
-  </section>
-)}
-
-        </div>
-      </main>
-    </div>
+    </>
   );
 }
