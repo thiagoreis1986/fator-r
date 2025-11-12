@@ -470,3 +470,26 @@ body {
 .fr-form fieldset:disabled {
   border: none;
 }
+
+/* === Ajuste uniforme de espaçamento entre perguntas === */
+.fr-question {
+  margin-top: 2.2rem;   /* distância superior padrão entre perguntas */
+  margin-bottom: 0;     /* evita espaçamento duplo com o próximo elemento */
+}
+
+/* === Espaçamento entre as caixinhas de opções (Sim / Não) === */
+.fr-options-row {
+  margin-top: 0.6rem;   /* distância entre o texto da pergunta e as opções */
+  margin-bottom: 0;     /* remove espaço extra abaixo */
+}
+
+/* === Melhora a consistência visual quando há inputs logo abaixo === */
+.fr-question + .fr-question {
+  margin-top: 2.2rem;   /* mantém mesma distância entre campos consecutivos */
+}
+
+/* === Opcional: ajusta o espaçamento entre inputs e textos internos === */
+.fr-input {
+  margin-top: 0.6rem;
+  margin-bottom: 0;
+}
