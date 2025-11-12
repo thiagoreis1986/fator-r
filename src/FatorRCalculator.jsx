@@ -483,7 +483,18 @@ export default function FatorRCalculator() {
 
                 {/* Faturamento mensal */}
                 <section className="fr-question">
-                  <h3>Qual o seu faturamento bruto mensal?</h3>
+                  <h3 className="fr-label">
+                   Qual o seu faturamento bruto mensal?
+                    <span className="fr-help" tabIndex={0} aria-describedby="hint-faturamento">
+                    <span className="fr-help-icon">?</span>
+                    <span id="hint-faturamento" className="fr-help-bubble" role="tooltip">
+                     Informe o valor médio de faturamento bruto mensal da empresa —
+                      <strong> sem deduzir impostos, custos ou despesas</strong>.  
+                        Se houver variação entre os meses, utilize uma média aproximada.
+                    </span>
+                    </span>
+                  </h3>
+
                   <input
                     className="fr-input"
                     type="text"
