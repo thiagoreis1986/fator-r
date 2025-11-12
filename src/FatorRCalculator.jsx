@@ -581,7 +581,26 @@ export default function FatorRCalculator() {
 
                 {/* Funcionários */}
                 <section className="fr-question">
-                  <h3>Você possui funcionários?</h3>
+                  <h3 className="fr-label">
+                    Você possui funcionários?
+                      <span
+                        className="fr-help fr-help-right"
+                        tabIndex={0}
+                        aria-describedby="hint-funcionarios"
+                      >
+                      <span className="fr-help-icon">?</span>
+                      <span
+                        id="hint-funcionarios"
+                        className="fr-help-bubble fr-help-bubble-right"
+                        role="tooltip"
+                      >
+                        Inclua todos os colaboradores com vínculo CLT, estagiários ou autônomos
+                        pagos mensalmente.  
+                        Use o custo total da folha: salários + encargos sociais (INSS, FGTS, etc.).
+                      </span>
+                      </span>
+                  </h3>
+
                   <div className="fr-options-row">
                     <label className="fr-option">
                       <input
