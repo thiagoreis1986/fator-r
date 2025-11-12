@@ -419,9 +419,18 @@ export default function FatorRCalculator() {
 
                 {/* Tempo de funcionamento */}
                 <section className="fr-question">
-                  <h3>
-                    Há quanto tempo sua empresa está em funcionamento?
+                  <h3 className="fr-label">
+                   Há quanto tempo sua empresa está em funcionamento?
+                    <span className="fr-help" tabIndex={0} aria-describedby="hint-tempo">
+                    <span className="fr-help-icon">?</span>
+                    <span id="hint-tempo" className="fr-help-bubble" role="tooltip">
+                      Escolha “Mais de 12 meses” se a empresa já completou 1 ano de atividade
+                      (ou seja, já possui histórico anual completo).  
+                      Escolha “Menos de 12 meses” se ainda está em operação há menos de 1 ano.
+                    </span>
+                    </span>
                   </h3>
+
                   <div className="fr-options-row">
                     <label className="fr-option">
                       <input
