@@ -359,7 +359,19 @@ export default function FatorRCalculator() {
             <form className="fr-form" onSubmit={calcular}>
               {/* Simples Nacional */}
               <section className="fr-question">
-                <h3>Sua empresa opta pelo Simples Nacional?</h3>
+                <h3 className="fr-label">
+                  Sua empresa opta pelo Simples Nacional?
+                   <span className="fr-help" tabIndex={0} aria-describedby="hint-simples">
+                   <span className="fr-help-icon">?</span>
+                   <span id="hint-simples" className="fr-help-bubble" role="tooltip">
+                     Selecione <strong>“Sim”</strong> apenas se sua empresa estiver formalmente
+                     enquadrada no regime do <strong>Simples Nacional</strong> junto à Receita
+                     Federal.  
+                     Essa calculadora é exclusiva para empresas optantes por esse regime.
+                   </span>
+                   </span>
+                </h3>
+
                 <div className="fr-options-row">
                   <label className="fr-option">
                     <input
