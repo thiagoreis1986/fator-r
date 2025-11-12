@@ -460,3 +460,14 @@ body {
 .fr-disabled {
   opacity: 0.45;
 }
+/* Remove a borda padrão do fieldset da calculadora */
+.fr-form fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Garante que não apareça contorno esquisito */
+.fr-form fieldset:disabled {
+  border: none;
+}
