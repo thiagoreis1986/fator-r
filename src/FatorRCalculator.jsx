@@ -964,34 +964,9 @@ export default function FatorRCalculator() {
 
                   <div className="fr-pie-legend">
                     <div className="fr-legend-item">
-                      <span
-                        className="fr-legend-color"
-                        style={{ backgroundColor: "#f97316" }}
-                      />
-                      <span>
-                        Impostos (
-                        {resultado.impostosPercent.toFixed(1)}%)
-                      </span>
-                    </div>
-                    <div className="fr-legend-item">
-                      <span
-                        className="fr-legend-color"
-                        style={{ backgroundColor: "#2563eb" }}
-                      />
-                      <span>
-                        Folha de Pagamento (
-                        {resultado.folhaPercent.toFixed(1)}%)
-                      </span>
-                    </div>
-                    <div className="fr-legend-item">
-                      <span
-                        className="fr-legend-color"
-                        style={{ backgroundColor: "#8b5cf6" }}
-                      />
-                      <span>
-                        Renda Líquida (
-                        {resultado.rendaPercent.toFixed(1)}%)
-                      </span>
+                      <span className="fr-legend-color" style={{ backgroundColor: "#F97316" }} />
+                      <span className="fr-legend-color" style={{ backgroundColor: "#52B788" }} />
+                      <span className="fr-legend-color" style={{ backgroundColor: "#D00084" }} />
                     </div>
                   </div>
                 </div>
