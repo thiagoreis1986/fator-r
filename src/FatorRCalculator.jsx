@@ -897,80 +897,91 @@ export default function FatorRCalculator() {
                   </div>
                 </div>
 
-                {/* Pizza simples: folha x impostos x renda líquida */}
-                <div className="fr-pie-section">
-                  <div className="fr-pie-wrapper">
-                    <svg
-                      viewBox="0 0 200 200"
-                      className="fr-pie-chart"
-                      style={{ filter: "drop-shadow(1px 2px 5px rgba(0,0,0,0.15))" }}
-                      aria-label="Distribuição de receita: folha, impostos e renda líquida"
-                    >
-                      {(() => {
-                        const center = 100;
-                        const r = 80;
-                        const segments = [
-                         { value: resultado.impostosPercent, color: "#F97316" }, // Impostos — Laranja
-                         { value: resultado.folhaPercent, color: "#52B788" }, // Folha — Verde Limão
-                         { value: resultado.rendaPercent, color: "#D00084" }, // Renda — Magenta forte
-                        ];
+                {/* Bloco com pizza + legendas */}
+<div className="fr-pie-section">
+  <div className="fr-pie-wrapper">
+    <svg
+      viewBox="0 0 200 200"
+      className="fr-pie-chart"
+      aria-label="Distribuição de receita: folha, impostos e renda líquida"
+      style={{ filter: "drop-shadow(1px 2px 5px rgba(0,0,0,0.15))" }}
+    >
+      {(() => {
+        const center = 100;
+        const r = 80;
+        const segments = [
+          { value: resultado.impostosPercent, color: "#F97316" }, // Impostos — laranja
+          { value: resultado.folhaPercent, color: "#52B788" },   // Folha — verde
+          { value: resultado.rendaPercent, color: "#D00084" },   // Renda — magenta
+        ];
 
-                        let currentAngle = -90;
-                        const paths = [];
+        let currentAngle = -90; // começa em cima
+        const paths = [];
 
-                        segments.forEach((seg, i) => {
-                          if (seg.value <= 0) return;
+        segments.forEach((seg, i) => {
+          if (seg.value <= 0) return;
+          const angle = (seg.value / 100) * 360;
+          const start = (currentAngle * Math.PI) / 180;
+          const end = ((currentAngle + angle) * Math.PI) / 180;
 
-                          const angle = (seg.value / 100) * 360;
-                          const start =
-                            (currentAngle * Math.PI) / 180;
-                          const end =
-                            ((currentAngle + angle) * Math.PI) / 180;
+          const x1 = center + r * Math.cos(start);
+          const y1 = center + r * Math.sin(start);
+          const x2 = center + r * Math.cos(end);
+          const y2 = center + r * Math.sin(end);
 
-                          const x1 =
-                            center + r * Math.cos(start);
-                          const y1 =
-                            center + r * Math.sin(start);
-                          const x2 =
-                            center + r * Math.cos(end);
-                          const y2 =
-                            center + r * Math.sin(end);
+          const largeArc = angle > 180 ? 1 : 0;
 
-                          const largeArc = angle > 180 ? 1 : 0;
+          const d = [
+            `M ${center} ${center}`,
+            `L ${x1} ${y1}`,
+            `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
+            "Z",
+          ].join(" ");
 
-                          const d = [
-                            `M ${center} ${center}`,
-                            `L ${x1} ${y1}`,
-                            `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
-                            "Z",
-                          ].join(" ");
+          paths.push(
+            <path
+              key={i}
+              d={d}
+              fill={seg.color}
+              stroke="#ffffff"
+              strokeWidth="2"
+            />
+          );
 
-                          paths.push(
-                            <path
-                              key={i}
-                              d={d}
-                              fill={seg.color}
-                              stroke="#ffffff"
-                              strokeWidth="2"
-                            />
-                          );
+          currentAngle += angle;
+        });
 
-                          currentAngle += angle;
-                        });
+        return paths;
+      })()}
+    </svg>
+  </div>
 
-                        return paths;
-                      })()}
-                    </svg>
-                  </div>
+  <div className="fr-pie-legend">
+    <div className="fr-legend-item">
+      <span
+        className="fr-legend-color"
+        style={{ backgroundColor: "#F97316" }}
+      />
+      <span>Impostos ({resultado.impostosPercent.toFixed(1)}%)</span>
+    </div>
 
-                  <div className="fr-pie-legend">
-                    <div className="fr-legend-item">
-                      <span className="fr-legend-color" style={{ backgroundColor: "#F97316" }} />
-                      <span className="fr-legend-color" style={{ backgroundColor: "#52B788" }} />
-                      <span className="fr-legend-color" style={{ backgroundColor: "#D00084" }} />
-                    </div>
-                  </div>
-                </div>
+    <div className="fr-legend-item">
+      <span
+        className="fr-legend-color"
+        style={{ backgroundColor: "#52B788" }}
+      />
+      <span>Folha de Pagamento ({resultado.folhaPercent.toFixed(1)}%)</span>
+    </div>
+
+    <div className="fr-legend-item">
+      <span
+        className="fr-legend-color"
+        style={{ backgroundColor: "#D00084" }}
+      />
+      <span>Renda Líquida ({resultado.rendaPercent.toFixed(1)}%)</span>
+    </div>
+  </div>
+</div>
 
                 {/* Resumo numérico */}
                 <div className="fr-summary">
