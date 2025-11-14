@@ -89,24 +89,41 @@ export default function FatorRCalculator() {
 
   // Máscara de moeda enquanto digita
   function handleCurrencyChange(e, setter) {
-    const raw = e.target.value || "";
-    const digits = raw.replace(/\D/g, "");
+  let value = e.target.value;
 
-    if (!digits) {
-      setter("");
-      return;
-    }
+  // salva posição do cursor antes de tudo
+  const input = e.target;
+  const selectionStart = input.selectionStart;
 
-    const number = Number(digits) / 100;
+  // remove tudo exceto dígitos
+  const digits = value.replace(/\D/g, "");
 
-    const formatted = number.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
-    setter(formatted);
-    resetFeedback();
+  if (!digits) {
+    setter("");
+    return;
   }
+
+  // converte para número real
+  const number = Number(digits) / 100;
+
+  // formata no padrão brasileiro
+  const formatted = number.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  setter(formatted);
+
+  // reposiciona cursor no local correto
+  setTimeout(() => {
+    const diff = formatted.length - value.length;
+    const newPos = Math.max(selectionStart + diff, 0);
+    input.setSelectionRange(newPos, newPos);
+  }, 0);
+
+  resetFeedback();
+}
+
 
   function calcular(e) {
     e.preventDefault();
