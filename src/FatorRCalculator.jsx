@@ -24,6 +24,33 @@ function formatCurrencyBRL(value) {
   });
 }
 
+import { useState, useEffect } from "react";
+
+// …
+
+useEffect(() => {
+  // fecha com ESC
+  function onKey(e) {
+    if (e.key === "Escape" && simples === false) {
+      setSimples(null);
+    }
+  }
+  window.addEventListener("keydown", onKey);
+
+  // trava scroll caso :has() não esteja disponível
+  if (simples === false) {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }
+
+  return () => window.removeEventListener("keydown", onKey);
+}, [simples]);
+
+
 export default function FatorRCalculator() {
   const [simples, setSimples] = useState(null);
   const [atividade, setAtividade] = useState("");
