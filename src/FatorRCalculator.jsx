@@ -909,18 +909,9 @@ export default function FatorRCalculator() {
                         const center = 100;
                         const r = 80;
                         const segments = [
-                          {
-                            value: resultado.impostosPercent,
-                            color: "#f97316",
-                          },
-                          {
-                            value: resultado.folhaPercent,
-                            color: "#2563eb",
-                          },
-                          {
-                            value: resultado.rendaPercent,
-                            color: "#8b5cf6",
-                          },
+                         { value: resultado.impostosPercent, color: "#F97316" }, // Impostos — Laranja
+                         { value: resultado.folhaPercent, color: "#52B788" }, // Folha — Verde Limão
+                         { value: resultado.rendaPercent, color: "#D00084" }, // Renda — Magenta forte
                         ];
 
                         let currentAngle = -90;
