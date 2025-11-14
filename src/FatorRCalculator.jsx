@@ -1,15 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /* Util: converte "R$ 10.000,00" -> 10000 */
 function parseCurrencyToNumber(value) {
   if (!value) return 0;
-
   return (
     parseFloat(
-      value
-        .toString()
-        .replace(/[R$\s.]/g, "") // remove R$, espaços e pontos
-        .replace(",", ".") // vírgula decimal
+      value.toString().replace(/[R$\s.]/g, "").replace(",", ".")
     ) || 0
   );
 }
@@ -24,31 +20,35 @@ function formatCurrencyBRL(value) {
   });
 }
 
-import { useState, useEffect } from "react";
+export default function FatorRCalculator() {
+  // --- seus useState existentes aqui ---
+  const [simples, setSimples] = useState(null);
+  // ... (demais states)
 
-// …
-
-useEffect(() => {
-  // fecha com ESC
-  function onKey(e) {
-    if (e.key === "Escape" && simples === false) {
-      setSimples(null);
+  // 🔽 coloque o useEffect AQUI, dentro do componente
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape" && simples === false) {
+        setSimples(null);
+      }
     }
-  }
-  window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey);
 
-  // trava scroll caso :has() não esteja disponível
-  if (simples === false) {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }
+    // trava scroll (fallback caso :has() não funcione)
+    if (simples === false) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+        window.removeEventListener("keydown", onKey);
+      };
+    }
 
-  return () => window.removeEventListener("keydown", onKey);
-}, [simples]);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [simples]);
+
+  // ... resto do JSX do componente
+}
 
 
 export default function FatorRCalculator() {
