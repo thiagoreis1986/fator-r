@@ -15,7 +15,6 @@ function parseCurrencyToNumber(value) {
   );
 }
 
-
 /* Util: formata número em BRL para exibição no resultado */
 function formatCurrencyBRL(value) {
   if (isNaN(value)) return "";
@@ -44,7 +43,7 @@ export default function FatorRCalculator() {
   const [alert, setAlert] = useState(null);
   const [resultado, setResultado] = useState(null);
 
-  // 🔽 NOVO: refs para controle de foco
+  // 🔽 refs para controle de foco
   const atividadeRef = useRef(null);
   const mesesEmpresaRef = useRef(null);
   const faturamentoMensalRef = useRef(null);
@@ -103,66 +102,62 @@ export default function FatorRCalculator() {
 
   // Máscara de moeda enquanto digita
   function handleCurrencyChange(e, setter) {
-  const input = e.target;
-  let value = input.value;
+    const input = e.target;
+    let value = input.value;
 
-  // salva a posição original do cursor
-  const oldCursor = input.selectionStart;
+    // salva a posição original do cursor
+    const oldCursor = input.selectionStart;
 
-  // remove tudo que não for número, vírgula ou ponto
-  let cleaned = value.replace(/[^\d.,]/g, "");
+    // remove tudo que não for número, vírgula ou ponto
+    let cleaned = value.replace(/[^\d.,]/g, "");
 
-  // Se tiver ponto, troca por vírgula — mantém padrão PT-BR
-  cleaned = cleaned.replace(/\./g, ",");
+    // Se tiver ponto, troca por vírgula — mantém padrão PT-BR
+    cleaned = cleaned.replace(/\./g, ",");
 
-  // se houver MAIS DE UMA vírgula → mantém só a primeira
-  const parts = cleaned.split(",");
-  if (parts.length > 2) {
-    cleaned = parts[0] + "," + parts.slice(1).join("").replace(/,/g, "");
+    // se houver MAIS DE UMA vírgula → mantém só a primeira
+    const parts = cleaned.split(",");
+    if (parts.length > 2) {
+      cleaned = parts[0] + "," + parts.slice(1).join("").replace(/,/g, "");
+    }
+
+    // remove zeros à esquerda do inteiro, preservando se for "0,xx"
+    if (cleaned !== "" && !cleaned.startsWith("0,")) {
+      cleaned = cleaned.replace(/^0+(?=\d)/, "");
+    }
+
+    // agora remove tudo que não for dígito para montar número puro
+    const digits = cleaned.replace(/\D/g, "");
+
+    if (!digits) {
+      setter("");
+      return;
+    }
+
+    // número real
+    const number = Number(digits) / 100;
+
+    // formatação PT-BR
+    const formatted = number.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    setter(formatted);
+
+    // recoloca o cursor corretamente
+    setTimeout(() => {
+      const diff = formatted.length - value.length;
+      const newPos = Math.max(oldCursor + diff, 0);
+      input.setSelectionRange(newPos, newPos);
+    }, 0);
+
+    resetFeedback();
   }
-
-  // remove zeros à esquerda do inteiro, preservando se for "0,xx"
-  if (cleaned !== "" && !cleaned.startsWith("0,")) {
-    cleaned = cleaned.replace(/^0+(?=\d)/, "");
-  }
-
-  // agora remove tudo que não for dígito para montar número puro
-  const digits = cleaned.replace(/\D/g, "");
-
-  if (!digits) {
-    setter("");
-    return;
-  }
-
-  // número real
-  const number = Number(digits) / 100;
-
-  // formatação PT-BR
-  const formatted = number.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
-  setter(formatted);
-
-  // recoloca o cursor corretamente
-  setTimeout(() => {
-    const diff = formatted.length - value.length;
-    const newPos = Math.max(oldCursor + diff, 0);
-    input.setSelectionRange(newPos, newPos);
-  }, 0);
-
-  resetFeedback();
-}
-
-
 
   function calcular(e) {
     e.preventDefault();
     setAlert(null);
     setResultado(null);
-    // ⬅️ A PARTIR DAQUI continua o código que você já tem
-    // // Só calcula se for Simples Nacional
 
     // Só calcula se for Simples Nacional
     if (simples !== true) {
@@ -269,6 +264,7 @@ export default function FatorRCalculator() {
       return;
     }
 
+    // Se marcou "Sim", converte e valida; se marcou "Não", trata como zero
     const prolabore = temProlabore
       ? parseCurrencyToNumber(valorProlabore)
       : 0;
@@ -299,15 +295,9 @@ export default function FatorRCalculator() {
 
     const folha12 = (prolabore + folha) * 12;
 
-    if (folha12 <= 0) {
-      setAlert({
-        type: "warning",
-        title: "Dados insuficientes",
-        message:
-          "Verifique se pró-labore e folha foram preenchidos corretamente.",
-      });
-      return;
-    }
+    // 🔹 AQUI ESTAVA O PROBLEMA:
+    // Antes bloqueava quando folha12 <= 0, o que é errado para quem marcou "Não" nos dois.
+    // Agora permitimos folha12 = 0 (Fator R = 0%) como caso válido.
 
     const fatorR = folha12 / receita12;
     const fatorRPercent = fatorR * 100;
@@ -378,54 +368,58 @@ export default function FatorRCalculator() {
     <>
       {/* Modal de aviso quando NÃO é Simples */}
       {simples === false && (
-  <div
-    className="fr-modal-overlay fr-modal-open"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modal-simples-title"
-    aria-describedby="modal-simples-desc"
-    onClick={(e) => {
-      // fecha ao clicar fora do card
-      if (e.target.classList.contains("fr-modal-overlay")) {
-        setSimples(null);
-      }
-    }}
-  >
-    <div className="fr-modal-card" tabIndex={-1}>
-      <button
-        className="fr-modal-x"
-        type="button"
-        aria-label="Fechar aviso"
-        onClick={() => setSimples(null)}
-      >
-        ×
-      </button>
-
-      <h3 id="modal-simples-title" className="fr-modal-title">OPS, ATENÇÃO!</h3>
-
-      <p id="modal-simples-desc" className="fr-modal-text">
-        O cálculo do Fator R só vale para empresas que estão<br />
-        no Simples Nacional.
-      </p>
-      <p className="fr-modal-text">
-        Se a sua empresa não opta por esse regime, não se preocupe:<br />
-        você pode avaliar outras formas de planejamento tributário para<br />
-        o seu negócio chamando a gente!
-      </p>
-
-      <div className="fr-modal-actions">
-        <button
-          type="button"
-          className="fr-btn-primary"
-          onClick={() => setSimples(null)}
+        <div
+          className="fr-modal-overlay fr-modal-open"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-simples-title"
+          aria-describedby="modal-simples-desc"
+          onClick={(e) => {
+            // fecha ao clicar fora do card
+            if (e.target.classList.contains("fr-modal-overlay")) {
+              setSimples(null);
+            }
+          }}
         >
-          ENTENDI
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+          <div className="fr-modal-card" tabIndex={-1}>
+            <button
+              className="fr-modal-x"
+              type="button"
+              aria-label="Fechar aviso"
+              onClick={() => setSimples(null)}
+            >
+              ×
+            </button>
 
+            <h3 id="modal-simples-title" className="fr-modal-title">
+              OPS, ATENÇÃO!
+            </h3>
+
+            <p id="modal-simples-desc" className="fr-modal-text">
+              O cálculo do Fator R só vale para empresas que estão
+              <br />
+              no Simples Nacional.
+            </p>
+            <p className="fr-modal-text">
+              Se a sua empresa não opta por esse regime, não se preocupe:
+              <br />
+              você pode avaliar outras formas de planejamento tributário para
+              <br />
+              o seu negócio chamando a gente!
+            </p>
+
+            <div className="fr-modal-actions">
+              <button
+                type="button"
+                className="fr-btn-primary"
+                onClick={() => setSimples(null)}
+              >
+                ENTENDI
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="fr-layout">
         {/* Coluna azul */}
@@ -453,15 +447,23 @@ export default function FatorRCalculator() {
               <section className="fr-question">
                 <h3 className="fr-label">
                   Sua empresa opta pelo Simples Nacional?
-                   <span className="fr-help" aria-describedby="hint-simples">
-                   <span className="fr-help-icon">?</span>
-                   <span id="hint-simples" className="fr-help-bubble" role="tooltip">
-                     Selecione <strong>“Sim”</strong> apenas se sua empresa estiver formalmente
-                     enquadrada no regime do <strong>Simples Nacional</strong> junto à Receita
-                     Federal.  
-                     Essa calculadora é exclusiva para empresas optantes por esse regime.
-                   </span>
-                   </span>
+                  <span
+                    className="fr-help"
+                    aria-describedby="hint-simples"
+                  >
+                    <span className="fr-help-icon">?</span>
+                    <span
+                      id="hint-simples"
+                      className="fr-help-bubble"
+                      role="tooltip"
+                    >
+                      Selecione <strong>“Sim”</strong> apenas se sua empresa
+                      estiver formalmente enquadrada no regime do{" "}
+                      <strong>Simples Nacional</strong> junto à Receita
+                      Federal. Essa calculadora é exclusiva para empresas
+                      optantes por esse regime.
+                    </span>
+                  </span>
                 </h3>
 
                 <div className="fr-options-row">
@@ -471,17 +473,16 @@ export default function FatorRCalculator() {
                       name="simples"
                       checked={simples === true}
                       onChange={() => {
-                       setSimples(true);
-                       setAlert(null);
-                       setResultado(null);
-                       // foca na atividade assim que marcar "Sim"
-                       setTimeout(() => {
-                        if (atividadeRef.current) {
-                         atividadeRef.current.focus();
-                        }
-                      }, 0);
+                        setSimples(true);
+                        setAlert(null);
+                        setResultado(null);
+                        // foca na atividade assim que marcar "Sim"
+                        setTimeout(() => {
+                          if (atividadeRef.current) {
+                            atividadeRef.current.focus();
+                          }
+                        }, 0);
                       }}
-
                     />
                     Sim
                   </label>
@@ -508,13 +509,21 @@ export default function FatorRCalculator() {
                 {/* Atividade */}
                 <section className="fr-question">
                   <h3 className="fr-label">
-                   Qual a atividade de sua empresa?
-                    <span className="fr-help" aria-describedby="hint-atividade">
-                    <span className="fr-help-icon">?</span>
-                    <span id="hint-atividade" className="fr-help-bubble" role="tooltip">
-                     Informe a atividade principal (CNAE) ou descreva sucintamente o serviço
-                     principal. Isso ajuda a orientar o enquadramento.
-                    </span>
+                    Qual a atividade de sua empresa?
+                    <span
+                      className="fr-help"
+                      aria-describedby="hint-atividade"
+                    >
+                      <span className="fr-help-icon">?</span>
+                      <span
+                        id="hint-atividade"
+                        className="fr-help-bubble"
+                        role="tooltip"
+                      >
+                        Informe a atividade principal (CNAE) ou descreva
+                        sucintamente o serviço principal. Isso ajuda a orientar
+                        o enquadramento.
+                      </span>
                     </span>
                   </h3>
 
@@ -531,152 +540,177 @@ export default function FatorRCalculator() {
                 </section>
 
                 {/* Tempo de funcionamento */}
-<section className="fr-question">
-  <h3 className="fr-label">
-    Há quanto tempo sua empresa está em funcionamento?
-    <span className="fr-help" aria-describedby="hint-tempo">
-      <span className="fr-help-icon">?</span>
-      <span id="hint-tempo" className="fr-help-bubble" role="tooltip">
-        Escolha “Mais de 12 meses” se a empresa já completou 1 ano de atividade
-        (ou seja, já possui histórico anual completo).  
-        Escolha “Menos de 12 meses” se ainda está em operação há menos de 1 ano.
-      </span>
-    </span>
-  </h3>
+                <section className="fr-question">
+                  <h3 className="fr-label">
+                    Há quanto tempo sua empresa está em funcionamento?
+                    <span
+                      className="fr-help"
+                      aria-describedby="hint-tempo"
+                    >
+                      <span className="fr-help-icon">?</span>
+                      <span
+                        id="hint-tempo"
+                        className="fr-help-bubble"
+                        role="tooltip"
+                      >
+                        Escolha “Mais de 12 meses” se a empresa já completou 1
+                        ano de atividade (ou seja, já possui histórico anual
+                        completo). Escolha “Menos de 12 meses” se ainda está em
+                        operação há menos de 1 ano.
+                      </span>
+                    </span>
+                  </h3>
 
-  <div className="fr-options-row">
-    <label className="fr-option">
-  <input
-    type="radio"
-    name="tempo"
-    checked={tempo === "mais12"}
-    onChange={() => {
-      setTempo("mais12");
-      setMesesEmpresa("");
-      resetFeedback();
-      // foca no faturamento mensal
-      if (faturamentoMensalRef.current) {
-        faturamentoMensalRef.current.focus();
-      }
-    }}
-  />
-  Mais de 12 meses
-</label>
+                  <div className="fr-options-row">
+                    <label className="fr-option">
+                      <input
+                        type="radio"
+                        name="tempo"
+                        checked={tempo === "mais12"}
+                        onChange={() => {
+                          setTempo("mais12");
+                          setMesesEmpresa("");
+                          resetFeedback();
+                          // foca no faturamento mensal
+                          if (faturamentoMensalRef.current) {
+                            faturamentoMensalRef.current.focus();
+                          }
+                        }}
+                      />
+                      Mais de 12 meses
+                    </label>
 
-<label className="fr-option">
-  <input
-    type="radio"
-    name="tempo"
-    checked={tempo === "menos12"}
-    onChange={() => {
-      setTempo("menos12");
-      resetFeedback();
-      // também foca no faturamento mensal
-      if (faturamentoMensalRef.current) {
-        faturamentoMensalRef.current.focus();
-      }
-    }}
-  />
-  Menos de 12 meses
-</label>
+                    <label className="fr-option">
+                      <input
+                        type="radio"
+                        name="tempo"
+                        checked={tempo === "menos12"}
+                        onChange={() => {
+                          setTempo("menos12");
+                          resetFeedback();
+                          // também foca no faturamento mensal
+                          if (faturamentoMensalRef.current) {
+                            faturamentoMensalRef.current.focus();
+                          }
+                        }}
+                      />
+                      Menos de 12 meses
+                    </label>
+                  </div>
+                </section>
 
-  </div>
-</section>
+                {/* Meses de funcionamento (para menos de 12) */}
+                {tempo === "menos12" && (
+                  <section className="fr-question">
+                    <h3>Há quantos meses sua empresa está em funcionamento?</h3>
+                    <input
+                      className="fr-input"
+                      type="number"
+                      min="1"
+                      max="11"
+                      value={mesesEmpresa}
+                      onChange={(e) => {
+                        setMesesEmpresa(e.target.value);
+                        resetFeedback();
+                      }}
+                      placeholder="Ex: 6"
+                    />
+                  </section>
+                )}
 
-{/* Meses de funcionamento (para menos de 12) */}
-{tempo === "menos12" && (
-  <section className="fr-question">
-    <h3>Há quantos meses sua empresa está em funcionamento?</h3>
-    <input
-      className="fr-input"
-      type="number"
-      min="1"
-      max="11"
-      value={mesesEmpresa}
-      onChange={(e) => {
-        setMesesEmpresa(e.target.value);
-        resetFeedback();
-      }}
-      placeholder="Ex: 6"
-    />
-  </section>
-)}
+                {/* Faturamento mensal */}
+                <section className="fr-question">
+                  <h3 className="fr-label">
+                    Qual o seu faturamento bruto mensal?
+                    <span
+                      className="fr-help"
+                      aria-describedby="hint-faturamento"
+                    >
+                      <span className="fr-help-icon">?</span>
+                      <span
+                        id="hint-faturamento"
+                        className="fr-help-bubble"
+                        role="tooltip"
+                      >
+                        Informe o valor médio de faturamento bruto mensal da
+                        empresa —{" "}
+                        <strong>
+                          sem deduzir impostos, custos ou despesas
+                        </strong>
+                        . Se houver variação entre os meses, utilize uma média
+                        aproximada.
+                      </span>
+                    </span>
+                  </h3>
 
-{/* Faturamento mensal */}
-<section className="fr-question">
-  <h3 className="fr-label">
-    Qual o seu faturamento bruto mensal?
-    <span className="fr-help" aria-describedby="hint-faturamento">
-      <span className="fr-help-icon">?</span>
-      <span id="hint-faturamento" className="fr-help-bubble" role="tooltip">
-        Informe o valor médio de faturamento bruto mensal da empresa —{" "}
-        <strong>sem deduzir impostos, custos ou despesas</strong>.  
-        Se houver variação entre os meses, utilize uma média aproximada.
-      </span>
-    </span>
-  </h3>
+                  <input
+                    className="fr-input"
+                    type="text"
+                    ref={faturamentoMensalRef}
+                    value={faturamentoMensal}
+                    onChange={(e) => {
+                      // Atualiza com máscara
+                      handleCurrencyChange(e, setFaturamentoMensal);
 
-  <input
-    className="fr-input"
-    type="text"
-    ref={faturamentoMensalRef}
-    value={faturamentoMensal}
-    onChange={(e) => {
-      // Atualiza com máscara
-      handleCurrencyChange(e, setFaturamentoMensal);
+                      // Se estiver usando o mensal, limpa o anual
+                      if (tempo === "mais12" && faturamentoAnual) {
+                        setFaturamentoAnual("");
+                      }
 
-      // Se estiver usando o mensal, limpa o anual
-      if (tempo === "mais12" && faturamentoAnual) {
-        setFaturamentoAnual("");
-      }
+                      resetFeedback();
+                    }}
+                    placeholder="R$ 0,00"
+                    // Se estiver em "mais de 12 meses" e o anual tiver valor, bloqueia o mensal
+                    disabled={tempo === "mais12" && !!faturamentoAnual}
+                  />
+                </section>
 
-      resetFeedback();
-    }}
-    placeholder="R$ 0,00"
-    // 🔒 Se estiver em "mais de 12 meses" e o anual tiver valor, bloqueia o mensal
-    disabled={tempo === "mais12" && !!faturamentoAnual}
-  />
-</section>
+                {/* Faturamento 12 meses (opcional p/ mais de 12 meses) */}
+                {tempo === "mais12" && (
+                  <section className="fr-question">
+                    <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
+                    <input
+                      className="fr-input"
+                      type="text"
+                      value={faturamentoAnual}
+                      onChange={(e) => {
+                        // Atualiza com máscara
+                        handleCurrencyChange(e, setFaturamentoAnual);
 
-{/* Faturamento 12 meses (opcional p/ mais de 12 meses) */}
-{tempo === "mais12" && (
-  <section className="fr-question">
-    <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
-    <input
-      className="fr-input"
-      type="text"
-      value={faturamentoAnual}
-      onChange={(e) => {
-        // Atualiza com máscara
-        handleCurrencyChange(e, setFaturamentoAnual);
+                        // Se estiver usando o anual, limpa o mensal
+                        if (faturamentoMensal) {
+                          setFaturamentoMensal("");
+                        }
 
-        // Se estiver usando o anual, limpa o mensal
-        if (faturamentoMensal) {
-          setFaturamentoMensal("");
-        }
-
-        resetFeedback();
-      }}
-      placeholder="Opcional - R$ 0,00"
-      // 🔒 Se já tiver valor mensal, bloqueia o anual
-      disabled={!!faturamentoMensal}
-    />
-  </section>
-)}
-
+                        resetFeedback();
+                      }}
+                      placeholder="Opcional - R$ 0,00"
+                      // Se já tiver valor mensal, bloqueia o anual
+                      disabled={!!faturamentoMensal}
+                    />
+                  </section>
+                )}
 
                 {/* Pró-labore */}
                 <section className="fr-question">
                   <h3 className="fr-label">
-                   Os sócios recebem pró-labore?
-                    <span className="fr-help" aria-describedby="hint-prolabore">
-                    <span className="fr-help-icon">?</span>
-                    <span id="hint-prolabore" className="fr-help-bubble" role="tooltip">
-                     O <strong>pró-labore</strong> é a remuneração mensal dos sócios que
-                       atuam na empresa.  
-                       Deve ser declarado mesmo que não haja retirada formal — e serve como
-                       base para o cálculo de encargos como <strong>INSS</strong> e <strong>IRPF</strong>.
-                    </span>
+                    Os sócios recebem pró-labore?
+                    <span
+                      className="fr-help"
+                      aria-describedby="hint-prolabore"
+                    >
+                      <span className="fr-help-icon">?</span>
+                      <span
+                        id="hint-prolabore"
+                        className="fr-help-bubble"
+                        role="tooltip"
+                      >
+                        O <strong>pró-labore</strong> é a remuneração mensal dos
+                        sócios que atuam na empresa. Deve ser declarado mesmo
+                        que não haja retirada formal — e serve como base para o
+                        cálculo de encargos como <strong>INSS</strong> e{" "}
+                        <strong>IRPF</strong>.
+                      </span>
                     </span>
                   </h3>
 
@@ -687,17 +721,16 @@ export default function FatorRCalculator() {
                         name="prolabore"
                         checked={temProlabore === true}
                         onChange={() => {
-                         setTemProlabore(true);
-                         resetFeedback();
-                         setValorProlabore("");
-                         // espera o input aparecer e foca nele
-                         setTimeout(() => {
-                          if (prolaboreRef.current) {
-                          prolaboreRef.current.focus();
-                          }
-                        }, 0);
+                          setTemProlabore(true);
+                          resetFeedback();
+                          setValorProlabore("");
+                          // espera o input aparecer e foca nele
+                          setTimeout(() => {
+                            if (prolaboreRef.current) {
+                              prolaboreRef.current.focus();
+                            }
+                          }, 0);
                         }}
-
                       />
                       Sim
                     </label>
@@ -733,21 +766,22 @@ export default function FatorRCalculator() {
                 <section className="fr-question">
                   <h3 className="fr-label">
                     Você possui funcionários?
-                      <span
-                        className="fr-help fr-help-right"
-                        aria-describedby="hint-funcionarios"
-                      >
+                    <span
+                      className="fr-help fr-help-right"
+                      aria-describedby="hint-funcionarios"
+                    >
                       <span className="fr-help-icon">?</span>
                       <span
                         id="hint-funcionarios"
                         className="fr-help-bubble fr-help-bubble-right"
                         role="tooltip"
                       >
-                        Inclua todos os colaboradores com vínculo CLT, estagiários ou autônomos
-                        pagos mensalmente.  
-                        Use o custo total da folha: salários + encargos sociais (INSS, FGTS, etc.).
+                        Inclua todos os colaboradores com vínculo CLT,
+                        estagiários ou autônomos pagos mensalmente. Use o custo
+                        total da folha: salários + encargos sociais (INSS, FGTS,
+                        etc.).
                       </span>
-                      </span>
+                    </span>
                   </h3>
 
                   <div className="fr-options-row">
@@ -757,16 +791,15 @@ export default function FatorRCalculator() {
                         name="funcionarios"
                         checked={temFuncionarios === true}
                         onChange={() => {
-                         setTemFuncionarios(true);
-                         resetFeedback();
-                         setFolhaMensal("");
-                         setTimeout(() => {
-                          if (folhaMensalRef.current) {
-                          folhaMensalRef.current.focus();
-                          }
+                          setTemFuncionarios(true);
+                          resetFeedback();
+                          setFolhaMensal("");
+                          setTimeout(() => {
+                            if (folhaMensalRef.current) {
+                              folhaMensalRef.current.focus();
+                            }
                           }, 0);
                         }}
-
                       />
                       Sim
                     </label>
@@ -839,12 +872,10 @@ export default function FatorRCalculator() {
 
                 <p className="fr-result-text">
                   Isso significa que a sua carga de impostos pode ser mais{" "}
-                  {resultado.anexoRecomendado === "III"
-                    ? "leve"
-                    : "elevada"}
-                  , impactando diretamente o crescimento do negócio. Utilize
-                  estes números como base para avaliar, junto com a Conta
-                  Ágil, o melhor planejamento tributário.
+                  {resultado.anexoRecomendado === "III" ? "leve" : "elevada"},
+                  impactando diretamente o crescimento do negócio. Utilize estes
+                  números como base para avaliar, junto com a Conta Ágil, o
+                  melhor planejamento tributário.
                 </p>
 
                 {/* Gráfico de barras horizontais */}
@@ -898,90 +929,119 @@ export default function FatorRCalculator() {
                 </div>
 
                 {/* Bloco com pizza + legendas */}
-<div className="fr-pie-section">
-  <div className="fr-pie-wrapper">
-    <svg
-      viewBox="0 0 200 200"
-      className="fr-pie-chart"
-      aria-label="Distribuição de receita: folha, impostos e renda líquida"
-      style={{ filter: "drop-shadow(1px 2px 5px rgba(0,0,0,0.15))" }}
-    >
-      {(() => {
-        const center = 100;
-        const r = 80;
-        const segments = [
-          { value: resultado.impostosPercent, color: "#F97316" }, // Impostos — laranja
-          { value: resultado.folhaPercent, color: "#52B788" },   // Folha — verde
-          { value: resultado.rendaPercent, color: "#D00084" },   // Renda — magenta
-        ];
+                <div className="fr-pie-section">
+                  <div className="fr-pie-wrapper">
+                    <svg
+                      viewBox="0 0 200 200"
+                      className="fr-pie-chart"
+                      aria-label="Distribuição de receita: folha, impostos e renda líquida"
+                      style={{
+                        filter:
+                          "drop-shadow(1px 2px 5px rgba(0,0,0,0.15))",
+                      }}
+                    >
+                      {(() => {
+                        const center = 100;
+                        const r = 80;
+                        const segments = [
+                          {
+                            value: resultado.impostosPercent,
+                            color: "#F97316",
+                          }, // Impostos — laranja
+                          {
+                            value: resultado.folhaPercent,
+                            color: "#52B788",
+                          }, // Folha — verde
+                          {
+                            value: resultado.rendaPercent,
+                            color: "#D00084",
+                          }, // Renda — magenta
+                        ];
 
-        let currentAngle = -90; // começa em cima
-        const paths = [];
+                        let currentAngle = -90; // começa em cima
+                        const paths = [];
 
-        segments.forEach((seg, i) => {
-          if (seg.value <= 0) return;
-          const angle = (seg.value / 100) * 360;
-          const start = (currentAngle * Math.PI) / 180;
-          const end = ((currentAngle + angle) * Math.PI) / 180;
+                        segments.forEach((seg, i) => {
+                          if (seg.value <= 0) return;
+                          const angle = (seg.value / 100) * 360;
+                          const start = (currentAngle * Math.PI) / 180;
+                          const end =
+                            ((currentAngle + angle) * Math.PI) / 180;
 
-          const x1 = center + r * Math.cos(start);
-          const y1 = center + r * Math.sin(start);
-          const x2 = center + r * Math.cos(end);
-          const y2 = center + r * Math.sin(end);
+                          const x1 =
+                            center + r * Math.cos(start);
+                          const y1 =
+                            center + r * Math.sin(start);
+                          const x2 =
+                            center + r * Math.cos(end);
+                          const y2 =
+                            center + r * Math.sin(end);
 
-          const largeArc = angle > 180 ? 1 : 0;
+                          const largeArc = angle > 180 ? 1 : 0;
 
-          const d = [
-            `M ${center} ${center}`,
-            `L ${x1} ${y1}`,
-            `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
-            "Z",
-          ].join(" ");
+                          const d = [
+                            `M ${center} ${center}`,
+                            `L ${x1} ${y1}`,
+                            `A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`,
+                            "Z",
+                          ].join(" ");
 
-          paths.push(
-            <path
-              key={i}
-              d={d}
-              fill={seg.color}
-              stroke="#ffffff"
-              strokeWidth="2"
-            />
-          );
+                          paths.push(
+                            <path
+                              key={i}
+                              d={d}
+                              fill={seg.color}
+                              stroke="#ffffff"
+                              strokeWidth="2"
+                            />
+                          );
 
-          currentAngle += angle;
-        });
+                          currentAngle += angle;
+                        });
 
-        return paths;
-      })()}
-    </svg>
-  </div>
+                        return paths;
+                      })()}
+                    </svg>
+                  </div>
 
-  <div className="fr-pie-legend">
-    <div className="fr-legend-item">
-      <span
-        className="fr-legend-color"
-        style={{ backgroundColor: "#F97316" }}
-      />
-      <span>Impostos ({resultado.impostosPercent.toFixed(1)}%)</span>
-    </div>
+                  <div className="fr-pie-legend">
+                    <div className="fr-legend-item">
+                      <span
+                        className="fr-legend-color"
+                        style={{ backgroundColor: "#F97316" }}
+                      />
+                      <span>
+                        Impostos (
+                        {resultado.impostosPercent.toFixed(1)}
+                        %)
+                      </span>
+                    </div>
 
-    <div className="fr-legend-item">
-      <span
-        className="fr-legend-color"
-        style={{ backgroundColor: "#52B788" }}
-      />
-      <span>Folha de Pagamento ({resultado.folhaPercent.toFixed(1)}%)</span>
-    </div>
+                    <div className="fr-legend-item">
+                      <span
+                        className="fr-legend-color"
+                        style={{ backgroundColor: "#52B788" }}
+                      />
+                      <span>
+                        Folha de Pagamento (
+                        {resultado.folhaPercent.toFixed(1)}
+                        %)
+                      </span>
+                    </div>
 
-    <div className="fr-legend-item">
-      <span
-        className="fr-legend-color"
-        style={{ backgroundColor: "#D00084" }}
-      />
-      <span>Renda Líquida ({resultado.rendaPercent.toFixed(1)}%)</span>
-    </div>
-  </div>
-</div>
+                    <div className="fr-legend-item">
+                      <span
+                        className="fr-legend-color"
+                        style={{ backgroundColor: "#D00084" }}
+                      />
+                      <span>
+                        Renda Líquida (
+                        {resultado.rendaPercent.toFixed(1)}
+                        %)
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Resumo numérico */}
                 <div className="fr-summary">
