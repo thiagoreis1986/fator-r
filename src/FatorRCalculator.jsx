@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /* Util: converte "R$ 10.000,00" -> 10000 */
 function parseCurrencyToNumber(value) {
@@ -43,6 +43,11 @@ export default function FatorRCalculator() {
 
   const [alert, setAlert] = useState(null);
   const [resultado, setResultado] = useState(null);
+
+  // 🔽 NOVO: refs para controle de foco
+  const atividadeRef = useRef(null);
+  const mesesEmpresaRef = useRef(null);
+  const faturamentoMensalRef = useRef(null);
 
   // Quando simples === false, bloqueia toda a calculadora
   const bloqueado = simples === false;
@@ -445,7 +450,7 @@ export default function FatorRCalculator() {
               <section className="fr-question">
                 <h3 className="fr-label">
                   Sua empresa opta pelo Simples Nacional?
-                   <span className="fr-help" tabIndex={0} aria-describedby="hint-simples">
+                   <span className="fr-help" aria-describedby="hint-simples">
                    <span className="fr-help-icon">?</span>
                    <span id="hint-simples" className="fr-help-bubble" role="tooltip">
                      Selecione <strong>“Sim”</strong> apenas se sua empresa estiver formalmente
@@ -463,9 +468,17 @@ export default function FatorRCalculator() {
                       name="simples"
                       checked={simples === true}
                       onChange={() => {
-                        setSimples(true);
-                        resetFeedback();
+                       setSimples(true);
+                       setAlert(null);
+                       setResultado(null);
+                       // foca na atividade assim que marcar "Sim"
+                       setTimeout(() => {
+                        if (atividadeRef.current) {
+                         atividadeRef.current.focus();
+                        }
+                      }, 0);
                       }}
+
                     />
                     Sim
                   </label>
@@ -493,7 +506,7 @@ export default function FatorRCalculator() {
                 <section className="fr-question">
                   <h3 className="fr-label">
                    Qual a atividade de sua empresa?
-                    <span className="fr-help" tabIndex={0} aria-describedby="hint-atividade">
+                    <span className="fr-help" aria-describedby="hint-atividade">
                     <span className="fr-help-icon">?</span>
                     <span id="hint-atividade" className="fr-help-bubble" role="tooltip">
                      Informe a atividade principal (CNAE) ou descreva sucintamente o serviço
@@ -504,6 +517,7 @@ export default function FatorRCalculator() {
 
                   <input
                     className="fr-input"
+                    ref={atividadeRef}
                     value={atividade}
                     onChange={(e) => {
                       setAtividade(e.target.value);
@@ -517,7 +531,7 @@ export default function FatorRCalculator() {
 <section className="fr-question">
   <h3 className="fr-label">
     Há quanto tempo sua empresa está em funcionamento?
-    <span className="fr-help" tabIndex={0} aria-describedby="hint-tempo">
+    <span className="fr-help" aria-describedby="hint-tempo">
       <span className="fr-help-icon">?</span>
       <span id="hint-tempo" className="fr-help-bubble" role="tooltip">
         Escolha “Mais de 12 meses” se a empresa já completou 1 ano de atividade
@@ -529,30 +543,40 @@ export default function FatorRCalculator() {
 
   <div className="fr-options-row">
     <label className="fr-option">
-      <input
-        type="radio"
-        name="tempo"
-        checked={tempo === "mais12"}
-        onChange={() => {
-          setTempo("mais12");
-          setMesesEmpresa("");
-          resetFeedback();
-        }}
-      />
-      Mais de 12 meses
-    </label>
-    <label className="fr-option">
-      <input
-        type="radio"
-        name="tempo"
-        checked={tempo === "menos12"}
-        onChange={() => {
-          setTempo("menos12");
-          resetFeedback();
-        }}
-      />
-      Menos de 12 meses
-    </label>
+  <input
+    type="radio"
+    name="tempo"
+    checked={tempo === "mais12"}
+    onChange={() => {
+      setTempo("mais12");
+      setMesesEmpresa("");
+      resetFeedback();
+      // foca no faturamento mensal
+      if (faturamentoMensalRef.current) {
+        faturamentoMensalRef.current.focus();
+      }
+    }}
+  />
+  Mais de 12 meses
+</label>
+
+<label className="fr-option">
+  <input
+    type="radio"
+    name="tempo"
+    checked={tempo === "menos12"}
+    onChange={() => {
+      setTempo("menos12");
+      resetFeedback();
+      // também foca no faturamento mensal
+      if (faturamentoMensalRef.current) {
+        faturamentoMensalRef.current.focus();
+      }
+    }}
+  />
+  Menos de 12 meses
+</label>
+
   </div>
 </section>
 
@@ -579,7 +603,7 @@ export default function FatorRCalculator() {
 <section className="fr-question">
   <h3 className="fr-label">
     Qual o seu faturamento bruto mensal?
-    <span className="fr-help" tabIndex={0} aria-describedby="hint-faturamento">
+    <span className="fr-help" aria-describedby="hint-faturamento">
       <span className="fr-help-icon">?</span>
       <span id="hint-faturamento" className="fr-help-bubble" role="tooltip">
         Informe o valor médio de faturamento bruto mensal da empresa —{" "}
@@ -592,6 +616,7 @@ export default function FatorRCalculator() {
   <input
     className="fr-input"
     type="text"
+    ref={faturamentoMensalRef}
     value={faturamentoMensal}
     onChange={(e) => {
       // Atualiza com máscara
@@ -641,7 +666,7 @@ export default function FatorRCalculator() {
                 <section className="fr-question">
                   <h3 className="fr-label">
                    Os sócios recebem pró-labore?
-                    <span className="fr-help" tabIndex={0} aria-describedby="hint-prolabore">
+                    <span className="fr-help" aria-describedby="hint-prolabore">
                     <span className="fr-help-icon">?</span>
                     <span id="hint-prolabore" className="fr-help-bubble" role="tooltip">
                      O <strong>pró-labore</strong> é a remuneração mensal dos sócios que
@@ -698,7 +723,6 @@ export default function FatorRCalculator() {
                     Você possui funcionários?
                       <span
                         className="fr-help fr-help-right"
-                        tabIndex={0}
                         aria-describedby="hint-funcionarios"
                       >
                       <span className="fr-help-icon">?</span>
