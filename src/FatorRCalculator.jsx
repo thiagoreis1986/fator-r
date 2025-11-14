@@ -903,6 +903,7 @@ export default function FatorRCalculator() {
                     <svg
                       viewBox="0 0 200 200"
                       className="fr-pie-chart"
+                      style={{ filter: "drop-shadow(1px 2px 5px rgba(0,0,0,0.15))" }}
                       aria-label="Distribuição de receita: folha, impostos e renda líquida"
                     >
                       {(() => {
