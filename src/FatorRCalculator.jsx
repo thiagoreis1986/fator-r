@@ -49,6 +49,9 @@ export default function FatorRCalculator() {
   const mesesEmpresaRef = useRef(null);
   const faturamentoMensalRef = useRef(null);
 
+  const prolaboreRef = useRef(null);
+  const folhaMensalRef = useRef(null);
+
   // Quando simples === false, bloqueia toda a calculadora
   const bloqueado = simples === false;
 
@@ -684,9 +687,17 @@ export default function FatorRCalculator() {
                         name="prolabore"
                         checked={temProlabore === true}
                         onChange={() => {
-                          setTemProlabore(true);
-                          resetFeedback();
+                         setTemProlabore(true);
+                         resetFeedback();
+                         setValorProlabore("");
+                         // espera o input aparecer e foca nele
+                         setTimeout(() => {
+                          if (prolaboreRef.current) {
+                          prolaboreRef.current.focus();
+                          }
+                        }, 0);
                         }}
+
                       />
                       Sim
                     </label>
@@ -708,6 +719,7 @@ export default function FatorRCalculator() {
                     <input
                       className="fr-input"
                       type="text"
+                      ref={prolaboreRef}
                       value={valorProlabore}
                       onChange={(e) =>
                         handleCurrencyChange(e, setValorProlabore)
@@ -745,9 +757,16 @@ export default function FatorRCalculator() {
                         name="funcionarios"
                         checked={temFuncionarios === true}
                         onChange={() => {
-                          setTemFuncionarios(true);
-                          resetFeedback();
+                         setTemFuncionarios(true);
+                         resetFeedback();
+                         setFolhaMensal("");
+                         setTimeout(() => {
+                          if (folhaMensalRef.current) {
+                          folhaMensalRef.current.focus();
+                          }
+                          }, 0);
                         }}
+
                       />
                       Sim
                     </label>
@@ -769,6 +788,7 @@ export default function FatorRCalculator() {
                     <input
                       className="fr-input"
                       type="text"
+                      ref={folhaMensalRef}
                       value={folhaMensal}
                       onChange={(e) =>
                         handleCurrencyChange(e, setFolhaMensal)
