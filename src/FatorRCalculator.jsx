@@ -514,111 +514,128 @@ export default function FatorRCalculator() {
                 </section>
 
                 {/* Tempo de funcionamento */}
-                <section className="fr-question">
-                  <h3 className="fr-label">
-                   Há quanto tempo sua empresa está em funcionamento?
-                    <span className="fr-help" tabIndex={0} aria-describedby="hint-tempo">
-                    <span className="fr-help-icon">?</span>
-                    <span id="hint-tempo" className="fr-help-bubble" role="tooltip">
-                      Escolha “Mais de 12 meses” se a empresa já completou 1 ano de atividade
-                      (ou seja, já possui histórico anual completo).  
-                      Escolha “Menos de 12 meses” se ainda está em operação há menos de 1 ano.
-                    </span>
-                    </span>
-                  </h3>
+<section className="fr-question">
+  <h3 className="fr-label">
+    Há quanto tempo sua empresa está em funcionamento?
+    <span className="fr-help" tabIndex={0} aria-describedby="hint-tempo">
+      <span className="fr-help-icon">?</span>
+      <span id="hint-tempo" className="fr-help-bubble" role="tooltip">
+        Escolha “Mais de 12 meses” se a empresa já completou 1 ano de atividade
+        (ou seja, já possui histórico anual completo).  
+        Escolha “Menos de 12 meses” se ainda está em operação há menos de 1 ano.
+      </span>
+    </span>
+  </h3>
 
-                  <div className="fr-options-row">
-                    <label className="fr-option">
-                      <input
-                        type="radio"
-                        name="tempo"
-                        checked={tempo === "mais12"}
-                        onChange={() => {
-                          setTempo("mais12");
-                          setMesesEmpresa("");
-                          resetFeedback();
-                        }}
-                      />
-                      Mais de 12 meses
-                    </label>
-                    <label className="fr-option">
-                      <input
-                        type="radio"
-                        name="tempo"
-                        checked={tempo === "menos12"}
-                        onChange={() => {
-                          setTempo("menos12");
-                          resetFeedback();
-                        }}
-                      />
-                      Menos de 12 meses
-                    </label>
-                  </div>
-                </section>
+  <div className="fr-options-row">
+    <label className="fr-option">
+      <input
+        type="radio"
+        name="tempo"
+        checked={tempo === "mais12"}
+        onChange={() => {
+          setTempo("mais12");
+          setMesesEmpresa("");
+          resetFeedback();
+        }}
+      />
+      Mais de 12 meses
+    </label>
+    <label className="fr-option">
+      <input
+        type="radio"
+        name="tempo"
+        checked={tempo === "menos12"}
+        onChange={() => {
+          setTempo("menos12");
+          resetFeedback();
+        }}
+      />
+      Menos de 12 meses
+    </label>
+  </div>
+</section>
 
-                {/* Meses de funcionamento (para menos de 12) */}
-                {tempo === "menos12" && (
-                  <section className="fr-question">
-                    <h3>
-                      Há quantos meses sua empresa está em funcionamento?
-                    </h3>
-                    <input
-                      className="fr-input"
-                      type="number"
-                      min="1"
-                      max="11"
-                      value={mesesEmpresa}
-                      onChange={(e) => {
-                        setMesesEmpresa(e.target.value);
-                        resetFeedback();
-                      }}
-                      placeholder="Ex: 6"
-                    />
-                  </section>
-                )}
+{/* Meses de funcionamento (para menos de 12) */}
+{tempo === "menos12" && (
+  <section className="fr-question">
+    <h3>Há quantos meses sua empresa está em funcionamento?</h3>
+    <input
+      className="fr-input"
+      type="number"
+      min="1"
+      max="11"
+      value={mesesEmpresa}
+      onChange={(e) => {
+        setMesesEmpresa(e.target.value);
+        resetFeedback();
+      }}
+      placeholder="Ex: 6"
+    />
+  </section>
+)}
 
-                {/* Faturamento mensal */}
-                <section className="fr-question">
-                  <h3 className="fr-label">
-                   Qual o seu faturamento bruto mensal?
-                    <span className="fr-help" tabIndex={0} aria-describedby="hint-faturamento">
-                    <span className="fr-help-icon">?</span>
-                    <span id="hint-faturamento" className="fr-help-bubble" role="tooltip">
-                     Informe o valor médio de faturamento bruto mensal da empresa —
-                      <strong> sem deduzir impostos, custos ou despesas</strong>.  
-                        Se houver variação entre os meses, utilize uma média aproximada.
-                    </span>
-                    </span>
-                  </h3>
+{/* Faturamento mensal */}
+<section className="fr-question">
+  <h3 className="fr-label">
+    Qual o seu faturamento bruto mensal?
+    <span className="fr-help" tabIndex={0} aria-describedby="hint-faturamento">
+      <span className="fr-help-icon">?</span>
+      <span id="hint-faturamento" className="fr-help-bubble" role="tooltip">
+        Informe o valor médio de faturamento bruto mensal da empresa —{" "}
+        <strong>sem deduzir impostos, custos ou despesas</strong>.  
+        Se houver variação entre os meses, utilize uma média aproximada.
+      </span>
+    </span>
+  </h3>
 
-                  <input
-                    className="fr-input"
-                    type="text"
-                    value={faturamentoMensal}
-                    onChange={(e) =>
-                      handleCurrencyChange(e, setFaturamentoMensal)
-                    }
-                    placeholder="R$ 0,00"
-                  />
-                </section>
+  <input
+    className="fr-input"
+    type="text"
+    value={faturamentoMensal}
+    onChange={(e) => {
+      // Atualiza com máscara
+      handleCurrencyChange(e, setFaturamentoMensal);
 
-                {/* Faturamento 12 meses (opcional p/ mais de 12 meses) */}
-                {tempo === "mais12" && (
-                  <section className="fr-question">
-                    <h3>
-                      Ou informe o faturamento bruto dos últimos 12 meses:
-                    </h3>
-                    <input
-                      className="fr-input"
-                      type="text"
-                      value={faturamentoAnual}
-                      onChange={(e) =>
-                        handleCurrencyChange(e, setFaturamentoAnual)
-                      }
-                      placeholder="Opcional - R$ 0,00"
-                    />
-                  </section>
-                )}
+      // Se estiver usando o mensal, limpa o anual
+      if (tempo === "mais12" && faturamentoAnual) {
+        setFaturamentoAnual("");
+      }
+
+      resetFeedback();
+    }}
+    placeholder="R$ 0,00"
+    // 🔒 Se estiver em "mais de 12 meses" e o anual tiver valor, bloqueia o mensal
+    disabled={tempo === "mais12" && !!faturamentoAnual}
+  />
+</section>
+
+{/* Faturamento 12 meses (opcional p/ mais de 12 meses) */}
+{tempo === "mais12" && (
+  <section className="fr-question">
+    <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
+    <input
+      className="fr-input"
+      type="text"
+      value={faturamentoAnual}
+      onChange={(e) => {
+        // Atualiza com máscara
+        handleCurrencyChange(e, setFaturamentoAnual);
+
+        // Se estiver usando o anual, limpa o mensal
+        if (faturamentoMensal) {
+          setFaturamentoMensal("");
+        }
+
+        resetFeedback();
+      }}
+      placeholder="Opcional - R$ 0,00"
+      // 🔒 Se já tiver valor mensal, bloqueia o anual
+      disabled={!!faturamentoMensal}
+    />
+  </section>
+)}
+
 
                 {/* Pró-labore */}
                 <section className="fr-question">
