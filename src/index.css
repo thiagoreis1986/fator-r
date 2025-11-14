@@ -548,3 +548,95 @@ body {
 }
 
 /* Removido qualquer triangulinho */
+
+/* ===== Modal Melhorado ===== */
+.fr-modal-open {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.45); /* fundo escuro translúcido */
+  backdrop-filter: saturate(110%) blur(6px); /* BLUR no fundo */
+  z-index: 999;
+  animation: fr-fade-in .18s ease-out;
+}
+
+/* card */
+.fr-modal-card {
+  position: relative;
+  width: min(560px, 92vw);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 28px 22px;
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.25),
+    0 2px 8px rgba(15, 23, 42, 0.12);
+  transform: translateY(8px) scale(.98);
+  animation: fr-pop-in .18s ease-out forwards;
+  outline: none;
+}
+
+/* título e textos */
+.fr-modal-title {
+  margin: 4px 0 10px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  color: #0f1a2b;
+  text-transform: uppercase; /* mantém o tom de alerta */
+}
+
+.fr-modal-text {
+  margin: 8px 0;
+  text-align: center;
+  color: #24334f;
+  line-height: 1.55;
+}
+
+/* ações */
+.fr-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+/* botão X */
+.fr-modal-x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: none;
+  background: #eef2ff;
+  color: #1f2a44;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform .12s ease, background .15s ease, color .15s ease;
+}
+
+.fr-modal-x:hover {
+  transform: rotate(90deg) scale(1.05);
+  background: #dbe3ff;
+  color: #0f1a2b;
+}
+
+@keyframes fr-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fr-pop-in {
+  to { transform: translateY(0) scale(1); }
+}
+
+/* Bloqueia scroll do body quando o modal está aberto */
+body:has(.fr-modal-open) {
+  overflow: hidden;
+}

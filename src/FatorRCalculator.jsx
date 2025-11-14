@@ -305,35 +305,54 @@ export default function FatorRCalculator() {
     <>
       {/* Modal de aviso quando NÃO é Simples */}
       {simples === false && (
-        <div className="fr-modal-overlay">
-          <div className="fr-modal">
-            <button
-              className="fr-modal-close"
-              type="button"
-              onClick={() => {
-                // Ao fechar, voltamos o simples para null e liberamos a calculadora
-                setSimples(null);
-              }}
-            >
-              ×
-            </button>
+  <div
+    className="fr-modal-overlay fr-modal-open"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-simples-title"
+    aria-describedby="modal-simples-desc"
+    onClick={(e) => {
+      // fecha ao clicar fora do card
+      if (e.target.classList.contains("fr-modal-overlay")) {
+        setSimples(null);
+      }
+    }}
+  >
+    <div className="fr-modal-card" tabIndex={-1}>
+      <button
+        className="fr-modal-x"
+        type="button"
+        aria-label="Fechar aviso"
+        onClick={() => setSimples(null)}
+      >
+        ×
+      </button>
 
-            <h3>OPS, ATENÇÃO!</h3>
-            <p>
-              O cálculo do Fator R só vale para empresas que estão
-              <br />
-              no Simples Nacional.
-            </p>
-            <p>
-              Se a sua empresa não opta por esse regime, não se preocupe:
-              <br />
-              você pode avaliar outras formas de planejamento tributário para
-              <br />
-              o seu negócio chamando a gente!
-            </p>
-          </div>
-        </div>
-      )}
+      <h3 id="modal-simples-title" className="fr-modal-title">OPS, ATENÇÃO!</h3>
+
+      <p id="modal-simples-desc" className="fr-modal-text">
+        O cálculo do Fator R só vale para empresas que estão<br />
+        no Simples Nacional.
+      </p>
+      <p className="fr-modal-text">
+        Se a sua empresa não opta por esse regime, não se preocupe:<br />
+        você pode avaliar outras formas de planejamento tributário para<br />
+        o seu negócio chamando a gente!
+      </p>
+
+      <div className="fr-modal-actions">
+        <button
+          type="button"
+          className="fr-btn-primary"
+          onClick={() => setSimples(null)}
+        >
+          ENTENDI
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
       <div className="fr-layout">
         {/* Coluna azul */}
