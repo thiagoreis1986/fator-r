@@ -14,7 +14,6 @@ function parseCurrencyToNumber(value) {
   return parseFloat(cleaned) || 0;
 }
 
-
 /* Util: formata número em BRL para exibição no resultado */
 function formatCurrencyBRL(value) {
   if (isNaN(value)) return "";
