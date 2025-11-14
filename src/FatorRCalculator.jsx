@@ -3,12 +3,17 @@ import { useState, useEffect } from "react";
 /* Util: converte "R$ 10.000,00" -> 10000 */
 function parseCurrencyToNumber(value) {
   if (!value) return 0;
-  return (
-    parseFloat(
-      value.toString().replace(/[R$\s.]/g, "").replace(",", ".")
-    ) || 0
-  );
+
+  // remove "R$", pontos, espaços e ajusta vírgula
+  const cleaned = value
+    .toString()
+    .replace(/[^\d,]/g, "")   // mantém apenas dígitos e vírgula
+    .replace(/\./g, "")       // remove pontos
+    .replace(",", ".");       // vírgula -> ponto
+  
+  return parseFloat(cleaned) || 0;
 }
+
 
 /* Util: formata número em BRL para exibição no resultado */
 function formatCurrencyBRL(value) {
