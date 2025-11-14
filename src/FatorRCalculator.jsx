@@ -21,37 +21,6 @@ function formatCurrencyBRL(value) {
 }
 
 export default function FatorRCalculator() {
-  // --- seus useState existentes aqui ---
-  const [simples, setSimples] = useState(null);
-  // ... (demais states)
-
-  // 🔽 coloque o useEffect AQUI, dentro do componente
-  useEffect(() => {
-    function onKey(e) {
-      if (e.key === "Escape" && simples === false) {
-        setSimples(null);
-      }
-    }
-    window.addEventListener("keydown", onKey);
-
-    // trava scroll (fallback caso :has() não funcione)
-    if (simples === false) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-        window.removeEventListener("keydown", onKey);
-      };
-    }
-
-    return () => window.removeEventListener("keydown", onKey);
-  }, [simples]);
-
-  // ... resto do JSX do componente
-}
-
-
-export default function FatorRCalculator() {
   const [simples, setSimples] = useState(null);
   const [atividade, setAtividade] = useState("");
   const [tempo, setTempo] = useState(""); // "mais12" | "menos12"
@@ -71,6 +40,32 @@ export default function FatorRCalculator() {
 
   // Quando simples === false, bloqueia toda a calculadora
   const bloqueado = simples === false;
+
+  // Controla ESC e bloqueio de scroll quando o modal está aberto
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape" && simples === false) {
+        setSimples(null);
+      }
+    }
+
+    window.addEventListener("keydown", onKey);
+
+    // trava scroll (fallback caso :has() não funcione)
+    if (simples === false) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        document.body.style.overflow = prev;
+        window.removeEventListener("keydown", onKey);
+      };
+    }
+
+    return () => {
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [simples]);
 
   function resetFeedback() {
     setAlert(null);
@@ -117,6 +112,8 @@ export default function FatorRCalculator() {
     e.preventDefault();
     setAlert(null);
     setResultado(null);
+    // ⬅️ A PARTIR DAQUI continua o código que você já tem
+    // // Só calcula se for Simples Nacional
 
     // Só calcula se for Simples Nacional
     if (simples !== true) {
