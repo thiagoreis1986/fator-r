@@ -4,15 +4,17 @@ import { useState, useEffect } from "react";
 function parseCurrencyToNumber(value) {
   if (!value) return 0;
 
-  // remove "R$", pontos, espaços e ajusta vírgula
-  const cleaned = value
-    .toString()
-    .replace(/[^\d,]/g, "")   // mantém apenas dígitos e vírgula
-    .replace(/\./g, "")       // remove pontos
-    .replace(",", ".");       // vírgula -> ponto
-  
-  return parseFloat(cleaned) || 0;
+  return (
+    parseFloat(
+      value
+        .toString()
+        .replace(/[^\d,]/g, "")
+        .replace(/\./g, "")
+        .replace(",", ".")
+    ) || 0
+  );
 }
+
 
 /* Util: formata número em BRL para exibição no resultado */
 function formatCurrencyBRL(value) {
@@ -93,24 +95,41 @@ export default function FatorRCalculator() {
 
   // Máscara de moeda enquanto digita
   function handleCurrencyChange(e, setter) {
-  let value = e.target.value;
-
-  // salva posição do cursor antes de tudo
   const input = e.target;
-  const selectionStart = input.selectionStart;
+  let value = input.value;
 
-  // remove tudo exceto dígitos
-  const digits = value.replace(/\D/g, "");
+  // salva a posição original do cursor
+  const oldCursor = input.selectionStart;
+
+  // remove tudo que não for número, vírgula ou ponto
+  let cleaned = value.replace(/[^\d.,]/g, "");
+
+  // Se tiver ponto, troca por vírgula — mantém padrão PT-BR
+  cleaned = cleaned.replace(/\./g, ",");
+
+  // se houver MAIS DE UMA vírgula → mantém só a primeira
+  const parts = cleaned.split(",");
+  if (parts.length > 2) {
+    cleaned = parts[0] + "," + parts.slice(1).join("").replace(/,/g, "");
+  }
+
+  // remove zeros à esquerda do inteiro, preservando se for "0,xx"
+  if (cleaned !== "" && !cleaned.startsWith("0,")) {
+    cleaned = cleaned.replace(/^0+(?=\d)/, "");
+  }
+
+  // agora remove tudo que não for dígito para montar número puro
+  const digits = cleaned.replace(/\D/g, "");
 
   if (!digits) {
     setter("");
     return;
   }
 
-  // converte para número real
+  // número real
   const number = Number(digits) / 100;
 
-  // formata no padrão brasileiro
+  // formatação PT-BR
   const formatted = number.toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -118,15 +137,16 @@ export default function FatorRCalculator() {
 
   setter(formatted);
 
-  // reposiciona cursor no local correto
+  // recoloca o cursor corretamente
   setTimeout(() => {
     const diff = formatted.length - value.length;
-    const newPos = Math.max(selectionStart + diff, 0);
+    const newPos = Math.max(oldCursor + diff, 0);
     input.setSelectionRange(newPos, newPos);
   }, 0);
 
   resetFeedback();
 }
+
 
 
   function calcular(e) {
