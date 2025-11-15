@@ -51,6 +51,8 @@ export default function FatorRCalculator() {
   const prolaboreRef = useRef(null);
   const folhaMensalRef = useRef(null);
 
+  const resultadoRef = useRef(null);
+
   // Quando simples === false, bloqueia toda a calculadora
   const bloqueado = simples === false;
 
@@ -346,7 +348,7 @@ export default function FatorRCalculator() {
       return;
     }
 
-    setResultado({
+        setResultado({
       fatorRPercent,
       folha12,
       receita12,
@@ -362,7 +364,18 @@ export default function FatorRCalculator() {
         ? "Com Fator R igual ou superior a 28%, a tributação tende a ser pelo Anexo III, geralmente mais vantajoso para serviços."
         : "Com Fator R abaixo de 28%, a tributação tende a ser pelo Anexo V. É importante revisar pró-labore e folha com um especialista.",
     });
+
+    // 🔽 Após montar o resultado, rola suavemente até a área de resultado
+    setTimeout(() => {
+      if (resultadoRef.current) {
+        resultadoRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 0);
   }
+
 
   return (
     <>
@@ -864,7 +877,7 @@ export default function FatorRCalculator() {
 
             {/* Resultado */}
             {resultado && (
-              <section className="fr-result">
+              <section className="fr-result" ref={resultadoRef}>
                 <h2 className="fr-result-title">
                   SEU NEGÓCIO SE ENQUADRA NO ANEXO{" "}
                   {resultado.anexoRecomendado}
