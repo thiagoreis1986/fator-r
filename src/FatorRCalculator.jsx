@@ -486,16 +486,21 @@ export default function FatorRCalculator() {
                       name="simples"
                       checked={simples === true}
                       onChange={() => {
-                        setSimples(true);
-                        setAlert(null);
-                        setResultado(null);
-                        // foca na atividade assim que marcar "Sim"
-                        setTimeout(() => {
-                          if (atividadeRef.current) {
-                            atividadeRef.current.focus();
-                          }
-                        }, 0);
-                      }}
+  setSimples(true);
+  setAlert(null);
+  setResultado(null);
+  // foca na atividade e rola até ela (desktop + mobile)
+  setTimeout(() => {
+    if (atividadeRef.current) {
+      atividadeRef.current.focus();
+      atividadeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, 0);
+}}
+
                     />
                     Sim
                   </label>
@@ -581,14 +586,20 @@ export default function FatorRCalculator() {
                         name="tempo"
                         checked={tempo === "mais12"}
                         onChange={() => {
-                          setTempo("mais12");
-                          setMesesEmpresa("");
-                          resetFeedback();
-                          // foca no faturamento mensal
-                          if (faturamentoMensalRef.current) {
-                            faturamentoMensalRef.current.focus();
-                          }
-                        }}
+  setTempo("mais12");
+  setMesesEmpresa("");
+  resetFeedback();
+  setTimeout(() => {
+    if (faturamentoMensalRef.current) {
+      faturamentoMensalRef.current.focus();
+      faturamentoMensalRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, 0);
+}}
+
                       />
                       Mais de 12 meses
                     </label>
@@ -599,13 +610,19 @@ export default function FatorRCalculator() {
                         name="tempo"
                         checked={tempo === "menos12"}
                         onChange={() => {
-                          setTempo("menos12");
-                          resetFeedback();
-                          // também foca no faturamento mensal
-                          if (faturamentoMensalRef.current) {
-                            faturamentoMensalRef.current.focus();
-                          }
-                        }}
+  setTempo("menos12");
+  resetFeedback();
+  setTimeout(() => {
+    if (faturamentoMensalRef.current) {
+      faturamentoMensalRef.current.focus();
+      faturamentoMensalRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, 0);
+}}
+
                       />
                       Menos de 12 meses
                     </label>
@@ -734,16 +751,21 @@ export default function FatorRCalculator() {
                         name="prolabore"
                         checked={temProlabore === true}
                         onChange={() => {
-                          setTemProlabore(true);
-                          resetFeedback();
-                          setValorProlabore("");
-                          // espera o input aparecer e foca nele
-                          setTimeout(() => {
-                            if (prolaboreRef.current) {
-                              prolaboreRef.current.focus();
-                            }
-                          }, 0);
-                        }}
+  setTemProlabore(true);
+  resetFeedback();
+  setValorProlabore("");
+  // foca e rola até o campo de pró-labore
+  setTimeout(() => {
+    if (prolaboreRef.current) {
+      prolaboreRef.current.focus();
+      prolaboreRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, 0);
+}}
+
                       />
                       Sim
                     </label>
@@ -804,15 +826,20 @@ export default function FatorRCalculator() {
                         name="funcionarios"
                         checked={temFuncionarios === true}
                         onChange={() => {
-                          setTemFuncionarios(true);
-                          resetFeedback();
-                          setFolhaMensal("");
-                          setTimeout(() => {
-                            if (folhaMensalRef.current) {
-                              folhaMensalRef.current.focus();
-                            }
-                          }, 0);
-                        }}
+  setTemFuncionarios(true);
+  resetFeedback();
+  setFolhaMensal("");
+  setTimeout(() => {
+    if (folhaMensalRef.current) {
+      folhaMensalRef.current.focus();
+      folhaMensalRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, 0);
+}}
+
                       />
                       Sim
                     </label>
