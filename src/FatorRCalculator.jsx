@@ -636,6 +636,7 @@ export default function FatorRCalculator() {
                     <input
                       className="fr-input"
                       type="number"
+                      inputMode="numeric"
                       min="1"
                       max="11"
                       value={mesesEmpresa}
@@ -674,25 +675,24 @@ export default function FatorRCalculator() {
                   </h3>
 
                   <input
-                    className="fr-input"
-                    type="text"
-                    ref={faturamentoMensalRef}
-                    value={faturamentoMensal}
-                    onChange={(e) => {
-                      // Atualiza com máscara
-                      handleCurrencyChange(e, setFaturamentoMensal);
+  className="fr-input"
+  type="text"
+  inputMode="decimal"           // ⬅ teclado numérico no celular
+  ref={faturamentoMensalRef}
+  value={faturamentoMensal}
+  onChange={(e) => {
+    handleCurrencyChange(e, setFaturamentoMensal);
 
-                      // Se estiver usando o mensal, limpa o anual
-                      if (tempo === "mais12" && faturamentoAnual) {
-                        setFaturamentoAnual("");
-                      }
+    if (tempo === "mais12" && faturamentoAnual) {
+      setFaturamentoAnual("");
+    }
 
-                      resetFeedback();
-                    }}
-                    placeholder="R$ 0,00"
-                    // Se estiver em "mais de 12 meses" e o anual tiver valor, bloqueia o mensal
-                    disabled={tempo === "mais12" && !!faturamentoAnual}
-                  />
+    resetFeedback();
+  }}
+  placeholder="R$ 0,00"
+  disabled={tempo === "mais12" && !!faturamentoAnual}
+/>
+
                 </section>
 
                 {/* Faturamento 12 meses (opcional p/ mais de 12 meses) */}
@@ -700,24 +700,23 @@ export default function FatorRCalculator() {
                   <section className="fr-question">
                     <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
                     <input
-                      className="fr-input"
-                      type="text"
-                      value={faturamentoAnual}
-                      onChange={(e) => {
-                        // Atualiza com máscara
-                        handleCurrencyChange(e, setFaturamentoAnual);
+  className="fr-input"
+  type="text"
+  inputMode="decimal"           // ⬅ teclado numérico
+  value={faturamentoAnual}
+  onChange={(e) => {
+    handleCurrencyChange(e, setFaturamentoAnual);
 
-                        // Se estiver usando o anual, limpa o mensal
-                        if (faturamentoMensal) {
-                          setFaturamentoMensal("");
-                        }
+    if (faturamentoMensal) {
+      setFaturamentoMensal("");
+    }
 
-                        resetFeedback();
-                      }}
-                      placeholder="Opcional - R$ 0,00"
-                      // Se já tiver valor mensal, bloqueia o anual
-                      disabled={!!faturamentoMensal}
-                    />
+    resetFeedback();
+  }}
+  placeholder="Opcional - R$ 0,00"
+  disabled={!!faturamentoMensal}
+/>
+
                   </section>
                 )}
 
@@ -785,17 +784,19 @@ export default function FatorRCalculator() {
                     </label>
                   </div>
                   {temProlabore && (
-                    <input
-                      className="fr-input"
-                      type="text"
-                      ref={prolaboreRef}
-                      value={valorProlabore}
-                      onChange={(e) =>
-                        handleCurrencyChange(e, setValorProlabore)
-                      }
-                      placeholder="Valor total mensal de pró-labore (R$)"
-                    />
-                  )}
+  <input
+    className="fr-input"
+    type="text"
+    inputMode="decimal"         // ⬅ teclado numérico
+    ref={prolaboreRef}
+    value={valorProlabore}
+    onChange={(e) =>
+      handleCurrencyChange(e, setValorProlabore)
+    }
+    placeholder="Valor total mensal de pró-labore (R$)"
+  />
+)}
+
                 </section>
 
                 {/* Funcionários */}
@@ -859,17 +860,19 @@ export default function FatorRCalculator() {
                     </label>
                   </div>
                   {temFuncionarios && (
-                    <input
-                      className="fr-input"
-                      type="text"
-                      ref={folhaMensalRef}
-                      value={folhaMensal}
-                      onChange={(e) =>
-                        handleCurrencyChange(e, setFolhaMensal)
-                      }
-                      placeholder="Gasto mensal com folha (R$)"
-                    />
-                  )}
+  <input
+    className="fr-input"
+    type="text"
+    inputMode="decimal"         // ⬅ teclado numérico
+    ref={folhaMensalRef}
+    value={folhaMensal}
+    onChange={(e) =>
+      handleCurrencyChange(e, setFolhaMensal)
+    }
+    placeholder="Gasto mensal com folha (R$)"
+  />
+)}
+
                 </section>
               </fieldset>
 
