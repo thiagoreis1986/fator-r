@@ -41,11 +41,11 @@ body {
   flex-direction: column;
   justify-content: center;
 
-  /* ⬇ novo: deixa a coluna fixa no topo ao rolar */
-  position: sticky;
-  top: 24px;      /* distância do topo da tela */
-  align-self: flex-start;
-  z-index: 1;     /* garante que fique acima do card branco se sobrepor */
+  /* Agora ela fica fixa na tela (desktop) */
+  position: fixed;
+  top: 40px;      /* mesmo padding superior do .fr-layout */
+  left: 6vw;      /* mesmo padding lateral do .fr-layout */
+  z-index: 1;
 }
 
 .fr-sidebar-title {
