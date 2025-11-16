@@ -751,20 +751,21 @@ export default function FatorRCalculator() {
                         name="prolabore"
                         checked={temProlabore === true}
                         onChange={() => {
-  setTemProlabore(true);
-  resetFeedback();
-  setValorProlabore("");
-  // foca e rola até o campo de pró-labore
-  setTimeout(() => {
-    if (prolaboreRef.current) {
-      prolaboreRef.current.focus();
-      prolaboreRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
-  }, 0);
-}}
+                          setTemProlabore(true);
+                          resetFeedback();
+                          setValorProlabore("");
+  
+                          // foca e rola até o campo de pró-labore
+                        setTimeout(() => {
+                          if (prolaboreRef.current) {
+                            prolaboreRef.current.focus();
+                            prolaboreRef.current.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                            });
+                          }
+                        }, 0);
+                        }}
 
                       />
                       Sim
@@ -826,19 +827,19 @@ export default function FatorRCalculator() {
                         name="funcionarios"
                         checked={temFuncionarios === true}
                         onChange={() => {
-  setTemFuncionarios(true);
-  resetFeedback();
-  setFolhaMensal("");
-  setTimeout(() => {
-    if (folhaMensalRef.current) {
-      folhaMensalRef.current.focus();
-      folhaMensalRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
-  }, 0);
-}}
+                          setTemFuncionarios(true);
+                          resetFeedback();
+                          setFolhaMensal("");
+                            setTimeout(() => {
+                              if (folhaMensalRef.current) {
+                                folhaMensalRef.current.focus();
+                                folhaMensalRef.current.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                                });
+                              }
+                            }, 0);
+                        }}
 
                       />
                       Sim
