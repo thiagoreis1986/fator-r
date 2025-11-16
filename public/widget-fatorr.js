@@ -4,7 +4,7 @@
   // ============================================
   // 👉 Troque essa URL pela URL do seu projeto no Vercel.
   // Exemplo: "https://fatorr-contaagil.vercel.app"
-  var ORIGIN = "https://SEU-PROJETO.vercel.app";
+  var ORIGIN = "https://fator-r.vercel.app/";
 
   // Cria o widget dentro de um container
   function createWidget(container) {
