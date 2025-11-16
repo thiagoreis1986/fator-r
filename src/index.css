@@ -70,7 +70,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+
+  /* novo: empurra o card pra direita pra não ficar atrás da sidebar */
+  margin-left: calc(32% + 40px); /* largura da sidebar + gap de 40px */
 }
+
 
 .fr-card {
   width: 100%;
@@ -269,6 +273,10 @@ body {
   .fr-sidebar {
     width: 100%;
     position: static;
+  }
+
+  .fr-content {
+    margin-left: 0;    /* não precisa mais empurrar pra direita */
   }
 
   .fr-sidebar-title {
