@@ -783,5 +783,28 @@ body:has(.fr-modal-open) {
   }
 }
 
+/* ===== Modo embed: quando a calculadora está dentro de outro site ===== */
+
+.fr-layout.fr-embed {
+  padding: 16px 0;
+  min-height: auto;
+}
+
+.fr-layout.fr-embed .fr-sidebar {
+  display: none;              /* some a coluna azul */
+}
+
+.fr-layout.fr-embed .fr-content {
+  flex: 1;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.fr-layout.fr-embed .fr-card {
+  max-width: 100%;            /* ocupa toda a largura disponível */
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
+}
+
 
 }

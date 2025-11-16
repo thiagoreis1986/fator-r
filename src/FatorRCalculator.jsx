@@ -55,6 +55,67 @@ export default function FatorRCalculator() {
 
   // Quando simples === false, bloqueia toda a calculadora
   const bloqueado = simples === false;
+  
+    const [isEmbed, setIsEmbed] = useState(false);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlHasEmbed = params.get("embed") === "1";
+      const inIframe = window !== window.parent;
+
+      if (urlHasEmbed || inIframe) {
+        setIsEmbed(true);
+      }
+    } catch (e) {
+      // se der qualquer erro, segue sem modo embed
+    }
+  }, []);
+
+    // 🔄 Ajuste automático de altura quando estiver em iframe (embed)
+  useEffect(() => {
+    if (window === window.parent) return; // não está em iframe
+
+    function postHeight() {
+      try {
+        const docEl = document.documentElement;
+        const body = document.body;
+
+        const height = Math.max(
+          docEl.scrollHeight,
+          docEl.offsetHeight,
+          body ? body.scrollHeight : 0,
+          body ? body.offsetHeight : 0
+        );
+
+        window.parent.postMessage(
+          { type: "fatorr-resize", height },
+          "*" // o widget filtra pelo origin
+        );
+      } catch (e) {
+        // silencioso
+      }
+    }
+
+    // dispara logo ao carregar
+    postHeight();
+
+    // dispara se a janela for redimensionada
+    window.addEventListener("resize", postHeight);
+
+    // observa mudanças de conteúdo
+    let observer = null;
+    if (window.ResizeObserver && document.body) {
+      observer = new ResizeObserver(postHeight);
+      observer.observe(document.body);
+    }
+
+    return () => {
+      window.removeEventListener("resize", postHeight);
+      if (observer) observer.disconnect();
+    };
+  }, []);
+
 
   // Controla ESC e bloqueio de scroll quando o modal está aberto
   useEffect(() => {
@@ -432,7 +493,8 @@ export default function FatorRCalculator() {
         </div>
       )}
 
-      <div className="fr-layout">
+            <div className={`fr-layout ${isEmbed ? "fr-embed" : ""}`}>
+
         {/* Coluna azul */}
         <aside className="fr-sidebar">
           <h1 className="fr-sidebar-title">
