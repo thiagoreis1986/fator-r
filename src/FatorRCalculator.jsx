@@ -1120,12 +1120,73 @@ export default function FatorRCalculator() {
 
                 <div className="fr-actions-bottom">
                   <button
-                    type="button"
-                    className="fr-btn-primary"
-                    onClick={limparTudo}
-                  >
-                    REFAZER CÁLCULO
-                  </button>
+  type="button"
+  className="fr-btn-primary"
+  onClick={() => {
+    limparTudo();
+
+    // foca no primeiro campo após limpar
+    setTimeout(() => {
+      if (atividadeRef.current) {
+        atividadeRef.current.focus();
+        atividadeRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
+    }, 150);
+  }}
+>
+  REFAZER CÁLCULO
+</button>
+
+<div className="fr-actions-bottom" style={{ gap: "12px" }}>
+  <button
+    type="button"
+    className="fr-btn-primary"
+    onClick={() => {
+      limparTudo();
+      setTimeout(() => {
+        if (atividadeRef.current) {
+          atividadeRef.current.focus();
+          atividadeRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+      }, 150);
+    }}
+  >
+    REFAZER CÁLCULO
+  </button>
+
+  <button
+    type="button"
+    className="fr-btn-outline"
+    onClick={() => {
+      const texto = `
+📌 *Resumo do Resultado do Fator R*
+
+• Receita (12 meses): ${formatCurrencyBRL(resultado.receita12)}
+• Folha/Pró-labore (12 meses): ${formatCurrencyBRL(resultado.folha12)}
+
+• Impostos no Anexo ${resultado.anexoRecomendado}: ${formatCurrencyBRL(resultado.impostoRecomendado)}
+• No outro anexo: ${formatCurrencyBRL(resultado.impostoAlternativo)}
+
+💡 Observação:
+${resultado.mensagem}
+      `.trim();
+
+      navigator.clipboard.writeText(texto);
+
+      alert("📋 Resumo copiado para a área de transferência!");
+    }}
+  >
+    COPIAR RESUMO
+  </button>
+</div>
+
+
                 </div>
               </section>
             )}
