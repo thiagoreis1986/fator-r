@@ -771,4 +771,17 @@ body:has(.fr-modal-open) {
   }
 }
 
+.fr-actions-bottom {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .fr-actions-bottom button {
+    width: 100%;
+  }
+}
+
+
 }
