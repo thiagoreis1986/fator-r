@@ -732,4 +732,46 @@ body:has(.fr-modal-open) {
   .fr-summary p {
     font-size: 13px;
   }
+
+  /* ===== Resumo do Resultado Organizado ===== */
+.fr-summary-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+  font-size: 16px;
+}
+
+.fr-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+
+.fr-summary-row span {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Mobile melhorias */
+@media (max-width: 480px) {
+  .fr-summary-row {
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-start;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .fr-summary-grid {
+    gap: 14px;
+    font-size: 14px;
+  }
+}
+
+
+
+
 }
