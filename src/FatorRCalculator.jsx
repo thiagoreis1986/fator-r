@@ -1085,25 +1085,28 @@ export default function FatorRCalculator() {
 
                 {/* Resumo numérico */}
                 <div className="fr-summary">
-                  <p>
-                    <strong>Folha (12 meses):</strong>{" "}
-                    {formatCurrencyBRL(resultado.folha12)} &nbsp; | &nbsp;
-                    <strong>Receita (12 meses):</strong>{" "}
-                    {formatCurrencyBRL(resultado.receita12)}
-                  </p>
-                  <p>
-                    <strong>
-                      Impostos no Anexo {resultado.anexoRecomendado}:
-                    </strong>{" "}
-                    {formatCurrencyBRL(
-                      resultado.impostoRecomendado
-                    )}{" "}
-                    &nbsp; | &nbsp;
-                    <strong>No outro anexo:</strong>{" "}
-                    {formatCurrencyBRL(
-                      resultado.impostoAlternativo
-                    )}
-                  </p>
+                  <div className="fr-summary-grid">
+                   <div className="fr-summary-row">
+                    <strong>Folha (12 meses):</strong>
+                    <span>{formatCurrencyBRL(resultado.folha12)}</span>
+                   </div>
+
+                  <div className="fr-summary-row">
+                   <strong>Receita (12 meses):</strong>
+                   <span>{formatCurrencyBRL(resultado.receita12)}</span>
+                  </div>
+
+                  <div className="fr-summary-row">
+                   <strong>Impostos no Anexo {resultado.anexoRecomendado}:</strong>
+                   <span>{formatCurrencyBRL(resultado.impostoRecomendado)}</span>
+                  </div>
+
+                  <div className="fr-summary-row">
+                   <strong>No outro anexo:</strong>
+                   <span>{formatCurrencyBRL(resultado.impostoAlternativo)}</span>
+                  </div>
+               </div>
+
                   <p className="fr-box-note">
                     Este simulador é uma referência. A Conta Ágil recomenda
                     análise completa do enquadramento, CNAE, benefícios e
