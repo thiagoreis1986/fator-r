@@ -375,8 +375,6 @@ export default function FatorRCalculator() {
       }
     }, 0);
   }
-
-
   return (
     <>
       {/* Modal de aviso quando NÃO é Simples */}
@@ -460,10 +458,7 @@ export default function FatorRCalculator() {
               <section className="fr-question">
                 <h3 className="fr-label">
                   Sua empresa opta pelo Simples Nacional?
-                  <span
-                    className="fr-help"
-                    aria-describedby="hint-simples"
-                  >
+                  <span className="fr-help" aria-describedby="hint-simples">
                     <span className="fr-help-icon">?</span>
                     <span
                       id="hint-simples"
@@ -486,21 +481,20 @@ export default function FatorRCalculator() {
                       name="simples"
                       checked={simples === true}
                       onChange={() => {
-  setSimples(true);
-  setAlert(null);
-  setResultado(null);
-  // foca na atividade e rola até ela (desktop + mobile)
-  setTimeout(() => {
-    if (atividadeRef.current) {
-      atividadeRef.current.focus();
-      atividadeRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
-  }, 0);
-}}
-
+                        setSimples(true);
+                        setAlert(null);
+                        setResultado(null);
+                        // foca na atividade e rola até ela (desktop + mobile)
+                        setTimeout(() => {
+                          if (atividadeRef.current) {
+                            atividadeRef.current.focus();
+                            atividadeRef.current.scrollIntoView({
+                              behavior: "smooth",
+                              block: "center",
+                            });
+                          }
+                        }, 0);
+                      }}
                     />
                     Sim
                   </label>
@@ -561,10 +555,7 @@ export default function FatorRCalculator() {
                 <section className="fr-question">
                   <h3 className="fr-label">
                     Há quanto tempo sua empresa está em funcionamento?
-                    <span
-                      className="fr-help"
-                      aria-describedby="hint-tempo"
-                    >
+                    <span className="fr-help" aria-describedby="hint-tempo">
                       <span className="fr-help-icon">?</span>
                       <span
                         id="hint-tempo"
@@ -586,20 +577,19 @@ export default function FatorRCalculator() {
                         name="tempo"
                         checked={tempo === "mais12"}
                         onChange={() => {
-  setTempo("mais12");
-  setMesesEmpresa("");
-  resetFeedback();
-  setTimeout(() => {
-    if (faturamentoMensalRef.current) {
-      faturamentoMensalRef.current.focus();
-      faturamentoMensalRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
-  }, 0);
-}}
-
+                          setTempo("mais12");
+                          setMesesEmpresa("");
+                          resetFeedback();
+                          setTimeout(() => {
+                            if (faturamentoMensalRef.current) {
+                              faturamentoMensalRef.current.focus();
+                              faturamentoMensalRef.current.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              });
+                            }
+                          }, 0);
+                        }}
                       />
                       Mais de 12 meses
                     </label>
@@ -610,19 +600,18 @@ export default function FatorRCalculator() {
                         name="tempo"
                         checked={tempo === "menos12"}
                         onChange={() => {
-  setTempo("menos12");
-  resetFeedback();
-  setTimeout(() => {
-    if (faturamentoMensalRef.current) {
-      faturamentoMensalRef.current.focus();
-      faturamentoMensalRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
-  }, 0);
-}}
-
+                          setTempo("menos12");
+                          resetFeedback();
+                          setTimeout(() => {
+                            if (faturamentoMensalRef.current) {
+                              faturamentoMensalRef.current.focus();
+                              faturamentoMensalRef.current.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              });
+                            }
+                          }, 0);
+                        }}
                       />
                       Menos de 12 meses
                     </label>
@@ -675,24 +664,23 @@ export default function FatorRCalculator() {
                   </h3>
 
                   <input
-  className="fr-input"
-  type="text"
-  inputMode="decimal"           // ⬅ teclado numérico no celular
-  ref={faturamentoMensalRef}
-  value={faturamentoMensal}
-  onChange={(e) => {
-    handleCurrencyChange(e, setFaturamentoMensal);
+                    className="fr-input"
+                    type="text"
+                    inputMode="decimal"
+                    ref={faturamentoMensalRef}
+                    value={faturamentoMensal}
+                    onChange={(e) => {
+                      handleCurrencyChange(e, setFaturamentoMensal);
 
-    if (tempo === "mais12" && faturamentoAnual) {
-      setFaturamentoAnual("");
-    }
+                      if (tempo === "mais12" && faturamentoAnual) {
+                        setFaturamentoAnual("");
+                      }
 
-    resetFeedback();
-  }}
-  placeholder="R$ 0,00"
-  disabled={tempo === "mais12" && !!faturamentoAnual}
-/>
-
+                      resetFeedback();
+                    }}
+                    placeholder="R$ 0,00"
+                    disabled={tempo === "mais12" && !!faturamentoAnual}
+                  />
                 </section>
 
                 {/* Faturamento 12 meses (opcional p/ mais de 12 meses) */}
@@ -700,23 +688,22 @@ export default function FatorRCalculator() {
                   <section className="fr-question">
                     <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
                     <input
-  className="fr-input"
-  type="text"
-  inputMode="decimal"           // ⬅ teclado numérico
-  value={faturamentoAnual}
-  onChange={(e) => {
-    handleCurrencyChange(e, setFaturamentoAnual);
+                      className="fr-input"
+                      type="text"
+                      inputMode="decimal"
+                      value={faturamentoAnual}
+                      onChange={(e) => {
+                        handleCurrencyChange(e, setFaturamentoAnual);
 
-    if (faturamentoMensal) {
-      setFaturamentoMensal("");
-    }
+                        if (faturamentoMensal) {
+                          setFaturamentoMensal("");
+                        }
 
-    resetFeedback();
-  }}
-  placeholder="Opcional - R$ 0,00"
-  disabled={!!faturamentoMensal}
-/>
-
+                        resetFeedback();
+                      }}
+                      placeholder="Opcional - R$ 0,00"
+                      disabled={!!faturamentoMensal}
+                    />
                   </section>
                 )}
 
@@ -753,19 +740,16 @@ export default function FatorRCalculator() {
                           setTemProlabore(true);
                           resetFeedback();
                           setValorProlabore("");
-  
-                          // foca e rola até o campo de pró-labore
-                        setTimeout(() => {
-                          if (prolaboreRef.current) {
-                            prolaboreRef.current.focus();
-                            prolaboreRef.current.scrollIntoView({
-                            behavior: "smooth",
-                            block: "center",
-                            });
-                          }
-                        }, 0);
+                          setTimeout(() => {
+                            if (prolaboreRef.current) {
+                              prolaboreRef.current.focus();
+                              prolaboreRef.current.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center",
+                              });
+                            }
+                          }, 0);
                         }}
-
                       />
                       Sim
                     </label>
@@ -783,20 +767,20 @@ export default function FatorRCalculator() {
                       Não
                     </label>
                   </div>
-                  {temProlabore && (
-  <input
-    className="fr-input"
-    type="text"
-    inputMode="decimal"         // ⬅ teclado numérico
-    ref={prolaboreRef}
-    value={valorProlabore}
-    onChange={(e) =>
-      handleCurrencyChange(e, setValorProlabore)
-    }
-    placeholder="Valor total mensal de pró-labore (R$)"
-  />
-)}
 
+                  {temProlabore && (
+                    <input
+                      className="fr-input"
+                      type="text"
+                      inputMode="decimal"
+                      ref={prolaboreRef}
+                      value={valorProlabore}
+                      onChange={(e) =>
+                        handleCurrencyChange(e, setValorProlabore)
+                      }
+                      placeholder="Valor total mensal de pró-labore (R$)"
+                    />
+                  )}
                 </section>
 
                 {/* Funcionários */}
@@ -815,8 +799,8 @@ export default function FatorRCalculator() {
                       >
                         Inclua todos os colaboradores com vínculo CLT,
                         estagiários ou autônomos pagos mensalmente. Use o custo
-                        total da folha: salários + encargos sociais (INSS, FGTS,
-                        etc.).
+                        total da folha: salários + encargos sociais (INSS,
+                        FGTS, etc.).
                       </span>
                     </span>
                   </h3>
@@ -831,17 +815,16 @@ export default function FatorRCalculator() {
                           setTemFuncionarios(true);
                           resetFeedback();
                           setFolhaMensal("");
-                            setTimeout(() => {
-                              if (folhaMensalRef.current) {
-                                folhaMensalRef.current.focus();
-                                folhaMensalRef.current.scrollIntoView({
+                          setTimeout(() => {
+                            if (folhaMensalRef.current) {
+                              folhaMensalRef.current.focus();
+                              folhaMensalRef.current.scrollIntoView({
                                 behavior: "smooth",
                                 block: "center",
-                                });
-                              }
-                            }, 0);
+                              });
+                            }
+                          }, 0);
                         }}
-
                       />
                       Sim
                     </label>
@@ -859,20 +842,20 @@ export default function FatorRCalculator() {
                       Não
                     </label>
                   </div>
-                  {temFuncionarios && (
-  <input
-    className="fr-input"
-    type="text"
-    inputMode="decimal"         // ⬅ teclado numérico
-    ref={folhaMensalRef}
-    value={folhaMensal}
-    onChange={(e) =>
-      handleCurrencyChange(e, setFolhaMensal)
-    }
-    placeholder="Gasto mensal com folha (R$)"
-  />
-)}
 
+                  {temFuncionarios && (
+                    <input
+                      className="fr-input"
+                      type="text"
+                      inputMode="decimal"
+                      ref={folhaMensalRef}
+                      value={folhaMensal}
+                      onChange={(e) =>
+                        handleCurrencyChange(e, setFolhaMensal)
+                      }
+                      placeholder="Gasto mensal com folha (R$)"
+                    />
+                  )}
                 </section>
               </fieldset>
 
@@ -891,7 +874,7 @@ export default function FatorRCalculator() {
                 </div>
               )}
 
-              {/* Botões */}
+              {/* Botões principais */}
               <div className="fr-actions">
                 <button type="submit" className="fr-btn-primary">
                   CALCULAR
@@ -940,10 +923,7 @@ export default function FatorRCalculator() {
                         }%`,
                       }}
                     >
-                      {(resultado.aliquotaRecomendada * 100).toFixed(
-                        2
-                      )}
-                      %
+                      {(resultado.aliquotaRecomendada * 100).toFixed(2)}%
                     </div>
                   </div>
 
@@ -964,10 +944,7 @@ export default function FatorRCalculator() {
                         }%`,
                       }}
                     >
-                      {(resultado.aliquotaAlternativa * 100).toFixed(
-                        2
-                      )}
-                      %
+                      {(resultado.aliquotaAlternativa * 100).toFixed(2)}%
                     </div>
                   </div>
                 </div>
@@ -991,35 +968,32 @@ export default function FatorRCalculator() {
                           {
                             value: resultado.impostosPercent,
                             color: "#F97316",
-                          }, // Impostos — laranja
+                          },
                           {
                             value: resultado.folhaPercent,
                             color: "#52B788",
-                          }, // Folha — verde
+                          },
                           {
                             value: resultado.rendaPercent,
                             color: "#D00084",
-                          }, // Renda — magenta
+                          },
                         ];
 
-                        let currentAngle = -90; // começa em cima
+                        let currentAngle = -90;
                         const paths = [];
 
                         segments.forEach((seg, i) => {
                           if (seg.value <= 0) return;
+
                           const angle = (seg.value / 100) * 360;
                           const start = (currentAngle * Math.PI) / 180;
                           const end =
                             ((currentAngle + angle) * Math.PI) / 180;
 
-                          const x1 =
-                            center + r * Math.cos(start);
-                          const y1 =
-                            center + r * Math.sin(start);
-                          const x2 =
-                            center + r * Math.cos(end);
-                          const y2 =
-                            center + r * Math.sin(end);
+                          const x1 = center + r * Math.cos(start);
+                          const y1 = center + r * Math.sin(start);
+                          const x2 = center + r * Math.cos(end);
+                          const y2 = center + r * Math.sin(end);
 
                           const largeArc = angle > 180 ? 1 : 0;
 
@@ -1055,9 +1029,7 @@ export default function FatorRCalculator() {
                         style={{ backgroundColor: "#F97316" }}
                       />
                       <span>
-                        Impostos (
-                        {resultado.impostosPercent.toFixed(1)}
-                        %)
+                        Impostos ({resultado.impostosPercent.toFixed(1)}%)
                       </span>
                     </div>
 
@@ -1068,8 +1040,7 @@ export default function FatorRCalculator() {
                       />
                       <span>
                         Folha de Pagamento (
-                        {resultado.folhaPercent.toFixed(1)}
-                        %)
+                        {resultado.folhaPercent.toFixed(1)}%)
                       </span>
                     </div>
 
@@ -1079,9 +1050,7 @@ export default function FatorRCalculator() {
                         style={{ backgroundColor: "#D00084" }}
                       />
                       <span>
-                        Renda Líquida (
-                        {resultado.rendaPercent.toFixed(1)}
-                        %)
+                        Renda Líquida ({resultado.rendaPercent.toFixed(1)}%)
                       </span>
                     </div>
                   </div>
@@ -1090,26 +1059,32 @@ export default function FatorRCalculator() {
                 {/* Resumo numérico */}
                 <div className="fr-summary">
                   <div className="fr-summary-grid">
-                   <div className="fr-summary-row">
-                    <strong>Folha (12 meses):</strong>
-                    <span>{formatCurrencyBRL(resultado.folha12)}</span>
-                   </div>
+                    <div className="fr-summary-row">
+                      <strong>Folha (12 meses):</strong>
+                      <span>{formatCurrencyBRL(resultado.folha12)}</span>
+                    </div>
 
-                  <div className="fr-summary-row">
-                   <strong>Receita (12 meses):</strong>
-                   <span>{formatCurrencyBRL(resultado.receita12)}</span>
-                  </div>
+                    <div className="fr-summary-row">
+                      <strong>Receita (12 meses):</strong>
+                      <span>{formatCurrencyBRL(resultado.receita12)}</span>
+                    </div>
 
-                  <div className="fr-summary-row">
-                   <strong>Impostos no Anexo {resultado.anexoRecomendado}:</strong>
-                   <span>{formatCurrencyBRL(resultado.impostoRecomendado)}</span>
-                  </div>
+                    <div className="fr-summary-row">
+                      <strong>
+                        Impostos no Anexo {resultado.anexoRecomendado}:
+                      </strong>
+                      <span>
+                        {formatCurrencyBRL(resultado.impostoRecomendado)}
+                      </span>
+                    </div>
 
-                  <div className="fr-summary-row">
-                   <strong>No outro anexo:</strong>
-                   <span>{formatCurrencyBRL(resultado.impostoAlternativo)}</span>
+                    <div className="fr-summary-row">
+                      <strong>No outro anexo:</strong>
+                      <span>
+                        {formatCurrencyBRL(resultado.impostoAlternativo)}
+                      </span>
+                    </div>
                   </div>
-               </div>
 
                   <p className="fr-box-note">
                     Este simulador é uma referência. A Conta Ágil recomenda
@@ -1118,75 +1093,74 @@ export default function FatorRCalculator() {
                   </p>
                 </div>
 
+                {/* Botões finais */}
                 <div className="fr-actions-bottom">
                   <button
-  type="button"
-  className="fr-btn-primary"
-  onClick={() => {
-    limparTudo();
+                    type="button"
+                    className="fr-btn-primary"
+                    onClick={() => {
+                      limparTudo();
+                      setTimeout(() => {
+                        if (atividadeRef.current) {
+                          atividadeRef.current.focus();
+                          atividadeRef.current.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                          });
+                        }
+                      }, 150);
+                    }}
+                  >
+                    REFAZER CÁLCULO
+                  </button>
 
-    // foca no primeiro campo após limpar
-    setTimeout(() => {
-      if (atividadeRef.current) {
-        atividadeRef.current.focus();
-        atividadeRef.current.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
-    }, 150);
-  }}
->
-  REFAZER CÁLCULO
-</button>
+                  <button
+                    type="button"
+                    className="fr-btn-outline"
+                    onClick={() => {
+                      const texto = `
+📌 Resumo do Resultado do Fator R
 
-<div className="fr-actions-bottom" style={{ gap: "12px" }}>
-  <button
-    type="button"
-    className="fr-btn-primary"
-    onClick={() => {
-      limparTudo();
-      setTimeout(() => {
-        if (atividadeRef.current) {
-          atividadeRef.current.focus();
-          atividadeRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
-      }, 150);
-    }}
-  >
-    REFAZER CÁLCULO
-  </button>
+• Receita (12 meses): ${formatCurrencyBRL(
+                        resultado.receita12
+                      )}
+• Folha/Pró-labore (12 meses): ${formatCurrencyBRL(
+                        resultado.folha12
+                      )}
 
-  <button
-    type="button"
-    className="fr-btn-outline"
-    onClick={() => {
-      const texto = `
-📌 *Resumo do Resultado do Fator R*
-
-• Receita (12 meses): ${formatCurrencyBRL(resultado.receita12)}
-• Folha/Pró-labore (12 meses): ${formatCurrencyBRL(resultado.folha12)}
-
-• Impostos no Anexo ${resultado.anexoRecomendado}: ${formatCurrencyBRL(resultado.impostoRecomendado)}
-• No outro anexo: ${formatCurrencyBRL(resultado.impostoAlternativo)}
+• Impostos no Anexo ${resultado.anexoRecomendado}: ${formatCurrencyBRL(
+                        resultado.impostoRecomendado
+                      )}
+• No outro anexo: ${formatCurrencyBRL(
+                        resultado.impostoAlternativo
+                      )}
 
 💡 Observação:
 ${resultado.mensagem}
-      `.trim();
+                      `.trim();
 
-      navigator.clipboard.writeText(texto);
-
-      alert("📋 Resumo copiado para a área de transferência!");
-    }}
-  >
-    COPIAR RESUMO
-  </button>
-</div>
-
-
+                      if (navigator.clipboard?.writeText) {
+                        navigator.clipboard
+                          .writeText(texto)
+                          .then(() => {
+                            alert(
+                              "📋 Resumo copiado para a área de transferência!"
+                            );
+                          })
+                          .catch(() => {
+                            alert(
+                              "Não foi possível copiar automaticamente. Tente novamente."
+                            );
+                          });
+                      } else {
+                        alert(
+                          "Seu navegador não suporta cópia automática. 😕"
+                        );
+                      }
+                    }}
+                  >
+                    COPIAR RESUMO
+                  </button>
                 </div>
               </section>
             )}
