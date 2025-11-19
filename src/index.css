@@ -311,7 +311,7 @@ body {
   margin: 0 0 12px;
   text-align: center;
   font-size: 32px;
-  font-weight: 800;
+  font-weight: 400;
   color: #1f2937;
   letter-spacing: 2px;
 }
@@ -332,7 +332,7 @@ body {
 
 .fr-bar-label {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   color: #1f2937;
   margin-bottom: 4px;
 }
