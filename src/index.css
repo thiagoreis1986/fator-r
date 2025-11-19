@@ -56,7 +56,7 @@ body {
 .fr-sidebar-title {
   font-size: 64px;
   line-height: 0.95;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin: 0 0 24px;
@@ -101,7 +101,7 @@ body {
   margin: 0 0 30px;
   text-align: center;
   font-size: 40px;
-  font-weight: 400;
+  font-weight: 700;
   color: var(--fr-text-dark);
   letter-spacing: 3px;
 }
