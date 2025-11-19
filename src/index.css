@@ -40,6 +40,8 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
 
   /* Agora ela fica fixa na tela (desktop) */
   position: fixed;
@@ -57,10 +59,11 @@ body {
 }
 
 .fr-sidebar p {
-  margin: 0;
+  margin: 0 auto;
   font-size: 16px;
   line-height: 1.6;
   max-width: 320px;
+  text-align: center;
 }
 
 /* Card branco direita */
