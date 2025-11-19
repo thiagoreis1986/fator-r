@@ -39,9 +39,12 @@ body {
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  justify-content: 'flex-start' (Alinha itens verticalmente ao topo) */
+  justify-content: flex-start;
+  align-items:'flex-start' (Alinha itens horizontalmente à esquerda) */
+  align-items: flex-start;
+  text-align: 'left' (Alinhamento de texto herdado) */
+  text-align: left;
 
   /* Agora ela fica fixa na tela (desktop) */
   position: fixed;
@@ -58,15 +61,17 @@ body {
   letter-spacing: 2px;
   margin: 0 0 24px;
   text-transform: uppercase;
+  text-align: left;
   
 }
 
 .fr-sidebar p {
-  margin: 0 auto;
+  margin: 0;
   font-size: 18px;
   line-height: 1.6;
   max-width: 320px;
-  text-align: center;
+  text-align: left' */
+  text-align: left;
   font-weight: 600;
 }
 
