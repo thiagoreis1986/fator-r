@@ -48,9 +48,10 @@ body {
 
   /* Agora ela fica fixa na tela (desktop) */
   position: fixed;
-  top: 40px;      /* mesmo padding superior do .fr-layout */
+  top: 80px;      /* mesmo padding superior do .fr-layout */
   left: 10vw;      /* mesmo padding lateral do .fr-layout */
   z-index: 1;
+padding-top: 20px;
 }
 
 .fr-sidebar-title {
