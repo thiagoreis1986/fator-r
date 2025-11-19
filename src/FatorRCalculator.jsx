@@ -939,7 +939,7 @@ export default function FatorRCalculator() {
               {/* Botões principais */}
               <div className="fr-actions">
                 <button type="submit" className="fr-btn-primary">
-                  CALCULAR
+                  CALCULAR MEU FATOR R
                 </button>
                 <button
                   type="button"
