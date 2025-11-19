@@ -35,7 +35,7 @@ body {
 /* Coluna azul esquerda */
 
 .fr-sidebar {
-  width: 42%;
+  width: 40%;
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -49,7 +49,7 @@ body {
   /* Agora ela fica fixa na tela (desktop) */
   position: fixed;
   top: 80px;      /* mesmo padding superior do .fr-layout */
-  left: 10vw;      /* mesmo padding lateral do .fr-layout */
+  left: 12vw;      /* mesmo padding lateral do .fr-layout */
   z-index: 1;
 padding-top: 20px;
 }
@@ -70,7 +70,7 @@ padding-top: 20px;
   margin: 0;
   font-size: 18px;
   line-height: 1.6;
-  max-width: 550px;
+  max-width: 500px;
   text-align: left' */
   text-align: left;
   font-weight: 600;
