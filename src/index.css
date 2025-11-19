@@ -35,7 +35,7 @@ body {
 /* Coluna azul esquerda */
 
 .fr-sidebar {
-  width: 35%;
+  width: 38%;
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -69,7 +69,7 @@ body {
   margin: 0;
   font-size: 18px;
   line-height: 1.6;
-  max-width: 320px;
+  max-width: 400px;
   text-align: left' */
   text-align: left;
   font-weight: 600;
