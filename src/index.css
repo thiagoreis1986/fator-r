@@ -3,7 +3,7 @@
   --fr-blue2: #0792FC;
   --fr-text-dark: #111827;
   --fr-radius-card: 32px;
-  --fr-font: "Poppins", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+  --fr-font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     sans-serif;
 }
 
@@ -53,7 +53,7 @@ body {
 .fr-sidebar-title {
   font-size: 52px;
   line-height: 0.95;
-  font-weight: 800;
+  font-weight: 400;
   letter-spacing: 2px;
   margin: 0 0 24px;
 }
@@ -92,7 +92,7 @@ body {
   margin: 0 0 30px;
   text-align: center;
   font-size: 40px;
-  font-weight: 800;
+  font-weight: 400;
   color: var(--fr-text-dark);
   letter-spacing: 3px;
 }
@@ -108,7 +108,7 @@ body {
 .fr-question h3 {
   margin: 0 0 8px;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--fr-text-dark);
 }
 
@@ -209,7 +209,7 @@ body {
   padding: 14px 32px;
   border-radius: 999px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.2s ease;
 }
