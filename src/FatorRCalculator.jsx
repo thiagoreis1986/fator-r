@@ -513,7 +513,7 @@ export default function FatorRCalculator() {
         {/* Card branco */}
         <main className="fr-content">
           <div className="fr-card">
-            <h2 className="fr-title">CALCULADORA FATOR R</h2>
+          <h2 className="fr-title">CALCULADORA<br/>FATOR R</h2>
 
             <form className="fr-form" onSubmit={calcular}>
               {/* Simples Nacional */}
