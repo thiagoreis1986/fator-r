@@ -705,7 +705,7 @@ body:has(.fr-modal-open) {
   .fr-title {
     font-size: 22px;
     letter-spacing: 1px;
-    white-space: nowrap;     /* mantém em uma linha até ~390px */
+   
   }
 
   /* Perguntas e textos */
