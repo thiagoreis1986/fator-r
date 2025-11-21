@@ -77,6 +77,7 @@ padding-top: 20px;
 }
 
 /* Card branco direita */
+/* Card branco direita */
 
 .fr-content {
   flex: 1;
@@ -85,8 +86,10 @@ padding-top: 20px;
   align-items: flex-start;
 
   /* novo: empurra o card pra direita pra não ficar atrás da sidebar */
-  margin-left: calc(40% + 40px); /* largura da sidebar + gap de 40px */
+  /* CORRIGIDO: Adiciona 6vw (o padding lateral do .fr-layout) */
+  margin-left: calc(40% + 40px + 6vw); 
 }
+
 
 
 .fr-card {
