@@ -56,7 +56,7 @@ padding-top: 20px;
 
 .fr-sidebar-title {
   font-size: 64px;
-  line-height: 0.95;
+  line-height: 1.05;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -85,7 +85,7 @@ padding-top: 20px;
   align-items: flex-start;
 
   /* novo: empurra o card pra direita pra não ficar atrás da sidebar */
-  margin-left: calc(32% + 40px); /* largura da sidebar + gap de 40px */
+  margin-left: calc(40% + 40px); /* largura da sidebar + gap de 40px */
 }
 
 
