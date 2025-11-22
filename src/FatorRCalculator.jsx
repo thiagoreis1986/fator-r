@@ -468,9 +468,9 @@ export default function FatorRCalculator() {
             </h3>
 
             <p id="modal-simples-desc" className="fr-modal-text">
-              O cálculo do Fator R só vale para empresas que estão
+              <strong>O cálculo do Fator R só vale para empresas que estão</strong>
               <br />
-              no Simples Nacional.
+              <strong>no Simples Nacional.</strong>
             </p>
             <p className="fr-modal-text">
               Se a sua empresa não opta por esse regime, não se preocupe:
