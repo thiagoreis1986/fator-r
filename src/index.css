@@ -857,3 +857,46 @@ body:has(.fr-modal-open) {
   left: auto;
   transform: none;
 }
+
+/* ===== Fix responsivo para mobile ===== */
+@media (max-width: 768px) {
+
+  .fr-layout {
+    flex-direction: column;
+    padding: 16px;
+    margin: 0;
+    gap: 20px;
+  }
+
+  .fr-sidebar {
+    width: 100% !important;
+    position: static !important;
+    text-align: center;
+  }
+
+  .fr-content {
+    width: 100%;
+    margin-left: 0 !important;
+  }
+
+  .fr-card {
+    width: 100%;
+    max-width: 100% !important;
+    border-radius: 16px;
+  }
+
+  /* Faz inputs ocuparem largura total sem overflow */
+  .fr-input {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  /* Garante que os tooltips não estourem a tela */
+  .fr-help-bubble {
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: 92vw;
+    text-align: left;
+  }
+}
