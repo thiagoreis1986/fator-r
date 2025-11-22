@@ -900,3 +900,17 @@ body:has(.fr-modal-open) {
     text-align: left;
   }
 }
+
+/* ===== Anti-overflow em mobile ===== */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Garante que o layout e o card nunca ultrapassem a largura da tela */
+.fr-layout,
+.fr-content,
+.fr-card {
+  max-width: 100%;
+}
