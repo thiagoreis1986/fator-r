@@ -513,7 +513,7 @@ export default function FatorRCalculator() {
         {/* Card branco */}
         <main className="fr-content">
           <div className="fr-card">
-            <h2 className="fr-title">CALCULADORA FATOR R</h2>
+          <h2 className="fr-title">CALCULADORA FATOR R</h2>
 
             <form className="fr-form" onSubmit={calcular}>
               {/* Simples Nacional */}
@@ -695,7 +695,7 @@ export default function FatorRCalculator() {
                         setMesesEmpresa(e.target.value);
                         resetFeedback();
                       }}
-                      placeholder="Ex: 6"
+                      placeholder="Escreva somente numerais. EX.: 0 - 12"
                     />
                   </section>
                 )}
@@ -939,7 +939,7 @@ export default function FatorRCalculator() {
               {/* Botões principais */}
               <div className="fr-actions">
                 <button type="submit" className="fr-btn-primary">
-                  CALCULAR
+                  CALCULAR MEU FATOR R
                 </button>
                 <button
                   type="button"

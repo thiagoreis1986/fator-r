@@ -1,9 +1,9 @@
 :root {
-  --fr-blue1: #0b63ff;
-  --fr-blue2: #2563eb;
+  --fr-blue1: #3A58E8;
+  --fr-blue2: #0792FC;
   --fr-text-dark: #111827;
   --fr-radius-card: 32px;
-  --fr-font: "Poppins", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+  --fr-font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     sans-serif;
 }
 
@@ -35,34 +35,48 @@ body {
 /* Coluna azul esquerda */
 
 .fr-sidebar {
-  width: 32%;
+  width: 40%;
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: 'flex-start' (Alinha itens verticalmente ao topo) */
+  justify-content: flex-start;
+  align-items:'flex-start' (Alinha itens horizontalmente à esquerda) */
+  align-items: flex-start;
+  text-align: 'left' (Alinhamento de texto herdado) */
+  text-align: left;
 
   /* Agora ela fica fixa na tela (desktop) */
   position: fixed;
-  top: 40px;      /* mesmo padding superior do .fr-layout */
-  left: 6vw;      /* mesmo padding lateral do .fr-layout */
+  top: 80px;      /* mesmo padding superior do .fr-layout */
+  left: 12vw;      /* mesmo padding lateral do .fr-layout */
   z-index: 1;
+padding-top: 20px;
 }
 
 .fr-sidebar-title {
-  font-size: 52px;
-  line-height: 0.95;
-  font-weight: 800;
+  font-size: 64px;
+  line-height: 1.05;
+  font-weight: 700;
+  text-transform: uppercase;
   letter-spacing: 2px;
   margin: 0 0 24px;
+  text-transform: uppercase;
+  text-align: left;
+  
 }
 
 .fr-sidebar p {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.6;
-  max-width: 320px;
+  max-width: 500px;
+  text-align: left' */
+  text-align: left;
+  font-weight: 600;
 }
 
+/* Card branco direita */
 /* Card branco direita */
 
 .fr-content {
@@ -72,8 +86,10 @@ body {
   align-items: flex-start;
 
   /* novo: empurra o card pra direita pra não ficar atrás da sidebar */
-  margin-left: calc(32% + 40px); /* largura da sidebar + gap de 40px */
+  /* CORRIGIDO: Adiciona 6vw (o padding lateral do .fr-layout) */
+  margin-left: calc(40% + 40px + 6vw); 
 }
+
 
 
 .fr-card {
@@ -88,10 +104,11 @@ body {
 .fr-title {
   margin: 0 0 30px;
   text-align: center;
-  font-size: 40px;
-  font-weight: 800;
+  font-size: 38px;
+  font-weight: 700;
   color: var(--fr-text-dark);
   letter-spacing: 3px;
+  white-space: nowrap;
 }
 
 /* Formulário */
@@ -105,7 +122,7 @@ body {
 .fr-question h3 {
   margin: 0 0 8px;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--fr-text-dark);
 }
 
@@ -198,6 +215,7 @@ body {
   flex-wrap: wrap;
   gap: 16px;
   margin-top: 4px;
+  justify-content: center;
 }
 
 .fr-btn-primary,
@@ -205,7 +223,7 @@ body {
   padding: 14px 32px;
   border-radius: 999px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -307,7 +325,7 @@ body {
   margin: 0 0 12px;
   text-align: center;
   font-size: 32px;
-  font-weight: 800;
+  font-weight: 400;
   color: #1f2937;
   letter-spacing: 2px;
 }
@@ -328,7 +346,7 @@ body {
 
 .fr-bar-label {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   color: #1f2937;
   margin-bottom: 4px;
 }
@@ -688,7 +706,7 @@ body:has(.fr-modal-open) {
   .fr-title {
     font-size: 22px;
     letter-spacing: 1px;
-    white-space: nowrap;     /* mantém em uma linha até ~390px */
+   
   }
 
   /* Perguntas e textos */
