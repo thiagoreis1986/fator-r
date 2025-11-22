@@ -123,6 +123,15 @@ body {
   color: var(--fr-text-dark);
 }
 
+/* Títulos com ícone de ajuda (?) na mesma linha */
+.fr-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;        /* espaço entre o texto e o ? */
+  flex-wrap: nowrap;
+}
+
+
 .fr-options-row {
   display: flex;
   flex-wrap: wrap;
