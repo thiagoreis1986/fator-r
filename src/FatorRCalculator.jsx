@@ -769,103 +769,96 @@ export default function FatorRCalculator() {
                   </section>
                 )}
 
-                {/* Pró-labore */}
-                <section className="fr-question">
-                  <h3 className="fr-label">
-                    Você recebe pró-labore?
-                    <span
-                      className="fr-help"
-                      aria-describedby="hint-prolabore"
-                    >
-                      <span className="fr-help-icon">?</span>
-                      <span
-                        id="hint-prolabore"
-                        className="fr-help-bubble"
-                        role="tooltip"
-                      >
-                        O <strong>pró-labore</strong> é a remuneração mensal dos
-                        sócios que atuam na empresa. Deve ser declarado mesmo
-                        que não haja retirada formal — e serve como base para o
-                        cálculo de encargos como <strong>INSS</strong> e{" "}
-                        <strong>IRPF</strong>.
-                      </span>
-                    </span>
-                  </h3>
+ {/* Pró-labore */}
+<section className="fr-question">
+  <h3 className="fr-label">
+    Você recebe pró-labore?
+    <span className="fr-help" aria-describedby="hint-prolabore">
+      <span className="fr-help-icon">?</span>
+      <span id="hint-prolabore" className="fr-help-bubble" role="tooltip">
+        O <strong>pró-labore</strong> é a remuneração mensal dos sócios que atuam na empresa.
+        Deve ser declarado mesmo que não haja retirada formal — e serve como base para
+        o cálculo de encargos como <strong>INSS</strong> e <strong>IRPF</strong>.
+      </span>
+    </span>
+  </h3>
 
-                  <div className="fr-options-row">
-                    <label className="fr-option">
-                      <input
-                        type="radio"
-                        name="prolabore"
-                        checked={temProlabore === true}
-                        onChange={() => {
-                          setTemProlabore(true);
-                          resetFeedback();
-                          setValorProlabore("");
-                          setTimeout(() => {
-                            if (prolaboreRef.current) {
-                              prolaboreRef.current.focus();
-                              prolaboreRef.current.scrollIntoView({
-                                behavior: "smooth",
-                                block: "center",
-                              });
-                            }
-                          }, 0);
-                        }}
-                      />
-                      Sim
-                    </label>
-                    <label className="fr-option">
-                      <input
-                        type="radio"
-                        name="prolabore"
-                        checked={temProlabore === false}
-                        onChange={() => {
-                          setTemProlabore(false);
-                          setValorProlabore("");
-                          resetFeedback();
-                        }}
-                      />
-                      Não
-                    </label>
-                  </div>
+  <div className="fr-options-row">
+    <label className="fr-option">
+      <input
+        type="radio"
+        name="prolabore"
+        checked={temProlabore === true}
+        onChange={() => {
+          setTemProlabore(true);
+          resetFeedback();
+          setValorProlabore("");
 
-                  {temProlabore && (
-                    <input
-                      className="fr-input"
-                      type="text"
-                      inputMode="decimal"
-                      ref={prolaboreRef}
-                      value={valorProlabore}
-                      onChange={(e) =>
-                        handleCurrencyChange(e, setValorProlabore)
-                      }
-                      placeholder="Valor total mensal de pró-labore (R$)"
-                    />
-                  )}
-                </section>
+          setTimeout(() => {
+            if (prolaboreRef.current) {
+              prolaboreRef.current.focus();
+              prolaboreRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            }
+          }, 0);
+        }}
+      />
+      Sim
+    </label>
 
-                {/* Funcionários */}
-                <section className="fr-question">
-                  <h3 className="fr-label">
-                    Você possui funcionários?
-                    <span
-                      className="fr-help fr-help-right"
-                      aria-describedby="hint-funcionarios"
-                    >
-                      <span className="fr-help-icon">?</span>
-                      <span
-                        id="hint-funcionarios"
-                        className="fr-help-bubble fr-help-bubble-right"
-                        role="tooltip"
-                      >
-                        Inclua todos os colaboradores com vínculo CLT,
-                        estagiários ou autônomos pagos mensalmente. Use o custo
-                        total da folha: salários + encargos sociais (INSS,
-                        FGTS, etc.).
-                      </span>
-                    </span>
-                  </h3>
+    <label className="fr-option">
+      <input
+        type="radio"
+        name="prolabore"
+        checked={temProlabore === false}
+        onChange={() => {
+          setTemProlabore(false);
+          setValorProlabore("");
+          resetFeedback();
+        }}
+      />
+      Não
+    </label>
+  </div>
+
+  {temProlabore && (
+    <section className="fr-question">
+      <h3 className="fr-label">Quanto você recebe de pró-labore mensal?</h3>
+
+      <input
+        className="fr-input"
+        type="text"
+        inputMode="decimal"
+        ref={prolaboreRef}
+        value={valorProlabore}
+        onChange={(e) => handleCurrencyChange(e, setValorProlabore)}
+        placeholder="Digite o valor mensal (R$)"
+      />
+    </section>
+  )}
+</section>
+
+
+{/* Funcionários */}
+<section className="fr-question">
+  <h3 className="fr-label">
+    Você possui funcionários?
+    <span className="fr-help fr-help-right" aria-describedby="hint-funcionarios">
+      <span className="fr-help-icon">?</span>
+      <span
+        id="hint-funcionarios"
+        className="fr-help-bubble fr-help-bubble-right"
+        role="tooltip"
+      >
+        Inclua todos os colaboradores com vínculo CLT, estagiários ou autônomos pagos
+        mensalmente. Use o custo total da folha: salários + encargos sociais
+        (INSS, FGTS, etc.).
+      </span>
+    </span>
+  </h3>
+
 
                   <div className="fr-options-row">
                     <label className="fr-option">
