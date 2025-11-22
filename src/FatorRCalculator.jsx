@@ -845,73 +845,82 @@ export default function FatorRCalculator() {
 <section className="fr-question">
   <h3 className="fr-label">
     Você possui funcionários?
-    <span className="fr-help fr-help-right" aria-describedby="hint-funcionarios">
+    <span
+      className="fr-help fr-help-right"
+      aria-describedby="hint-funcionarios"
+    >
       <span className="fr-help-icon">?</span>
       <span
         id="hint-funcionarios"
         className="fr-help-bubble fr-help-bubble-right"
         role="tooltip"
       >
-        Inclua todos os colaboradores com vínculo CLT, estagiários ou autônomos pagos
-        mensalmente. Use o custo total da folha: salários + encargos sociais
-        (INSS, FGTS, etc.).
+        Inclua todos os colaboradores com vínculo CLT, estagiários ou
+        autônomos pagos mensalmente. Use o custo total da folha:
+        salários + encargos sociais (INSS, FGTS, etc.).
       </span>
     </span>
   </h3>
 
+  <div className="fr-options-row">
+    <label className="fr-option">
+      <input
+        type="radio"
+        name="funcionarios"
+        checked={temFuncionarios === true}
+        onChange={() => {
+          setTemFuncionarios(true);
+          resetFeedback();
+          setFolhaMensal("");
 
-                  <div className="fr-options-row">
-                    <label className="fr-option">
-                      <input
-                        type="radio"
-                        name="funcionarios"
-                        checked={temFuncionarios === true}
-                        onChange={() => {
-                          setTemFuncionarios(true);
-                          resetFeedback();
-                          setFolhaMensal("");
-                          setTimeout(() => {
-                            if (folhaMensalRef.current) {
-                              folhaMensalRef.current.focus();
-                              folhaMensalRef.current.scrollIntoView({
-                                behavior: "smooth",
-                                block: "center",
-                              });
-                            }
-                          }, 0);
-                        }}
-                      />
-                      Sim
-                    </label>
-                    <label className="fr-option">
-                      <input
-                        type="radio"
-                        name="funcionarios"
-                        checked={temFuncionarios === false}
-                        onChange={() => {
-                          setTemFuncionarios(false);
-                          setFolhaMensal("");
-                          resetFeedback();
-                        }}
-                      />
-                      Não
-                    </label>
-                  </div>
+          setTimeout(() => {
+            if (folhaMensalRef.current) {
+              folhaMensalRef.current.focus();
+              folhaMensalRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            }
+          }, 0);
+        }}
+      />
+      Sim
+    </label>
 
-                  {temFuncionarios && (
-                    <input
-                      className="fr-input"
-                      type="text"
-                      inputMode="decimal"
-                      ref={folhaMensalRef}
-                      value={folhaMensal}
-                      onChange={(e) =>
-                        handleCurrencyChange(e, setFolhaMensal)
-                      }
-                      placeholder="Gasto mensal com folha (R$)"
-                    />
-                  )}
-                </section>
+    <label className="fr-option">
+      <input
+        type="radio"
+        name="funcionarios"
+        checked={temFuncionarios === false}
+        onChange={() => {
+          setTemFuncionarios(false);
+          setFolhaMensal("");
+          resetFeedback();
+        }}
+      />
+      Não
+    </label>
+  </div>
+
+  {temFuncionarios && (
+    <section className="fr-question">
+      <h3 className="fr-label">
+        Qual o seu gasto médio com folha de pagamento mensal, incluindo impostos?
+      </h3>
+
+      <input
+        className="fr-input"
+        type="text"
+        inputMode="decimal"
+        ref={folhaMensalRef}
+        value={folhaMensal}
+        onChange={(e) => handleCurrencyChange(e, setFolhaMensal)}
+        placeholder="Digite o gasto mensal com folha (R$)"
+      />
+    </section>
+  )}
+</section>
+
               </fieldset>
 
               {/* Alertas */}
