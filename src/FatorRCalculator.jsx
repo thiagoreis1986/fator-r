@@ -615,7 +615,7 @@ export default function FatorRCalculator() {
 
                 {/* Tempo de funcionamento */}
                 <section className="fr-question">
-                  <h3 className="fr-label">
+                  <h3 className="fr-label fr-label-nowrap">
                     Há quanto tempo sua empresa está em funcionamento?
                       <span className="fr-help" aria-describedby="hint-tempo">
                       <span className="fr-help-icon">?</span>

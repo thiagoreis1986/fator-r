@@ -123,17 +123,15 @@ body {
   color: var(--fr-text-dark);
 }
 
-/* Garante que a pergunta e o ícone (?) fiquem sempre na mesma linha */
-.fr-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* Para manter a pergunta do tempo + ? em uma única linha no desktop */
+.fr-label-nowrap {
   white-space: nowrap;
-  width: 100%;
-  gap: 10px;
 }
 
-
+/* rótulos padrão das perguntas */
+.fr-label {
+  display: inline-block;
+}
 
 .fr-options-row {
   display: flex;
