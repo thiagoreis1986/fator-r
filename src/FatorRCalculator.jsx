@@ -519,7 +519,7 @@ export default function FatorRCalculator() {
               {/* Simples Nacional */}
               <section className="fr-question">
                 <h3 className="fr-label">
-                  Sua empresa é optante pelo Simples Nacional?
+                  Sua empresa opta pelo Simples Nacional?
                   <span className="fr-help" aria-describedby="hint-simples">
                     <span className="fr-help-icon">?</span>
                     <span
