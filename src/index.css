@@ -123,13 +123,16 @@ body {
   color: var(--fr-text-dark);
 }
 
-/* Títulos com ícone de ajuda (?) na mesma linha */
+/* Garante que a pergunta e o ícone (?) fiquem sempre na mesma linha */
 .fr-label {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;        /* espaço entre o texto e o ? */
-  flex-wrap: nowrap;
+  justify-content: space-between;
+  white-space: nowrap;
+  width: 100%;
+  gap: 10px;
 }
+
 
 
 .fr-options-row {
