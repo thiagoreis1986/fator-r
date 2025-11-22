@@ -844,3 +844,16 @@ body:has(.fr-modal-open) {
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
 }
+
+/* Permite quebra de linha dentro do tooltip mesmo quando o label usa nowrap */
+.fr-help-bubble {
+  white-space: normal !important;
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+/* Alinha o tooltip para a direita do ícone */
+.fr-help-bubble {
+  left: auto;
+  transform: none;
+}
