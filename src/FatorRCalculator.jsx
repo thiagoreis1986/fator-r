@@ -519,7 +519,7 @@ export default function FatorRCalculator() {
               {/* Simples Nacional */}
               <section className="fr-question">
                 <h3 className="fr-label">
-                  Sua empresa opta pelo Simples Nacional?
+                  Sua empresa é optante pelo Simples Nacional?
                   <span className="fr-help" aria-describedby="hint-simples">
                     <span className="fr-help-icon">?</span>
                     <span
@@ -583,7 +583,7 @@ export default function FatorRCalculator() {
                 {/* Atividade */}
                 <section className="fr-question">
                   <h3 className="fr-label">
-                    Qual a atividade de sua empresa?
+                    Qual a atividade da sua empresa?
                     <span
                       className="fr-help"
                       aria-describedby="hint-atividade"
@@ -772,7 +772,7 @@ export default function FatorRCalculator() {
                 {/* Pró-labore */}
                 <section className="fr-question">
                   <h3 className="fr-label">
-                    Os sócios recebem pró-labore?
+                    Você recebe pró-labore?
                     <span
                       className="fr-help"
                       aria-describedby="hint-prolabore"
