@@ -3,8 +3,7 @@
   --fr-blue2: #0792FC;
   --fr-text-dark: #111827;
   --fr-radius-card: 32px;
-  --fr-font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    sans-serif;
+  --fr-font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 }
 
 * {
@@ -22,7 +21,9 @@ body {
   min-height: 100vh;
 }
 
-/* Layout geral */
+/* ==============================
+   Layout geral
+   ============================== */
 
 .fr-layout {
   display: flex;
@@ -32,38 +33,35 @@ body {
   align-items: flex-start;
 }
 
-/* Coluna azul esquerda */
+/* ==============================
+   Coluna azul esquerda (sidebar)
+   ============================== */
 
 .fr-sidebar {
   width: 40%;
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  justify-content: 'flex-start' (Alinha itens verticalmente ao topo) */
-  justify-content: flex-start;
-  align-items:'flex-start' (Alinha itens horizontalmente à esquerda) */
-  align-items: flex-start;
-  text-align: 'left' (Alinhamento de texto herdado) */
-  text-align: left;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
 
-  /* Agora ela fica fixa na tela (desktop) */
+  /* fixa no desktop */
   position: fixed;
-  top: 80px;      /* mesmo padding superior do .fr-layout */
-  left: 12vw;      /* mesmo padding lateral do .fr-layout */
+  top: 80px;
+  left: 12vw;
   z-index: 1;
-padding-top: 20px;
+  padding-top: 20px;
 }
 
 .fr-sidebar-title {
   font-size: 64px;
   line-height: 1.05;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 2px;
   margin: 0 0 24px;
   text-transform: uppercase;
   text-align: left;
-  
 }
 
 .fr-sidebar p {
@@ -71,13 +69,13 @@ padding-top: 20px;
   font-size: 18px;
   line-height: 1.6;
   max-width: 500px;
-  text-align: left' */
-  text-align: left;
+  text-align: left;
   font-weight: 600;
 }
 
-/* Card branco direita */
-/* Card branco direita */
+/* ==============================
+   Card branco direita
+   ============================== */
 
 .fr-content {
   flex: 1;
@@ -85,12 +83,9 @@ padding-top: 20px;
   justify-content: center;
   align-items: flex-start;
 
-  /* novo: empurra o card pra direita pra não ficar atrás da sidebar */
-  /* CORRIGIDO: Adiciona 6vw (o padding lateral do .fr-layout) */
-  margin-left: calc(40% + 40px + 6vw); 
+  /* empurra o card pra direita pra não ficar atrás da sidebar no desktop */
+  margin-left: calc(40% + 40px + 6vw);
 }
-
-
 
 .fr-card {
   width: 100%;
@@ -111,7 +106,9 @@ padding-top: 20px;
   white-space: nowrap;
 }
 
-/* Formulário */
+/* ==============================
+   Formulário
+   ============================== */
 
 .fr-form {
   display: flex;
@@ -141,13 +138,15 @@ padding-top: 20px;
   cursor: pointer;
 }
 
+/* Radios customizados */
+
 .fr-option input[type="radio"] {
-  appearance: none;                /* remove o estilo padrão */
+  appearance: none;
   -webkit-appearance: none;
   width: 22px;
   height: 22px;
-  border: 2px solid #1f3a66;       /* azul escuro, igual ao das bordas */
-  border-radius: 4px;              /* quadradinho levemente arredondado */
+  border: 2px solid #1f3a66;
+  border-radius: 4px;
   display: inline-block;
   position: relative;
   cursor: pointer;
@@ -156,18 +155,20 @@ padding-top: 20px;
 }
 
 .fr-option input[type="radio"]:checked {
-  background-color: #2563eb;       /* azul do "check" */
+  background-color: #2563eb;
   border-color: #2563eb;
 }
 
 .fr-option input[type="radio"]:checked::after {
-  content: "✔";                    /* o "V" dentro */
+  content: "✔";
   position: absolute;
   color: #fff;
   font-size: 14px;
   top: 0px;
   left: 4px;
 }
+
+/* Inputs */
 
 .fr-input {
   width: 100%;
@@ -178,18 +179,22 @@ padding-top: 20px;
   font-size: 16px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+  margin-top: 0.6rem;
+  margin-bottom: 0;
 }
 
 .fr-input::placeholder {
-  color: #c4c4c4;                     /* placeholder cinza claro */
+  color: #c4c4c4;
 }
 
 .fr-input:focus {
-  border-color: #2563eb;              /* azul mais vivo no foco */
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-/* Alertas */
+/* ==============================
+   Alertas
+   ============================== */
 
 .fr-alert {
   padding: 14px 18px;
@@ -208,7 +213,9 @@ padding-top: 20px;
   color: #1d4ed8;
 }
 
-/* Botões */
+/* ==============================
+   Botões
+   ============================== */
 
 .fr-actions {
   display: flex;
@@ -250,7 +257,9 @@ padding-top: 20px;
   background: #f9fafb;
 }
 
-/* Resultado */
+/* ==============================
+   Box e notas
+   ============================== */
 
 .fr-box {
   margin-top: 22px;
@@ -279,39 +288,9 @@ padding-top: 20px;
   margin-top: 6px;
 }
 
-/* Responsivo */
-
-@media (max-width: 900px) {
-  .fr-layout {
-    flex-direction: column;
-    padding: 24px 16px;
-    gap: 24px;
-  }
-
-  .fr-sidebar {
-    width: 100%;
-    position: static;
-  }
-
-  .fr-content {
-    margin-left: 0;    /* não precisa mais empurrar pra direita */
-  }
-
-  .fr-sidebar-title {
-    font-size: 38px;
-  }
-
-  .fr-card {
-    padding: 26px 20px;
-    border-radius: 24px;
-  }
-
-  .fr-title {
-    font-size: 26px;
-    letter-spacing: 2px;
-  }
-}
-/* ===== Tela de Resultado ===== */
+/* ==============================
+   Resultado
+   ============================== */
 
 .fr-result {
   margin-top: 26px;
@@ -338,7 +317,7 @@ padding-top: 20px;
   line-height: 1.6;
 }
 
-/* Barras horizontais - comparação de anexos */
+/* Barras horizontais */
 
 .fr-bars {
   margin-bottom: 26px;
@@ -422,7 +401,7 @@ padding-top: 20px;
   border-radius: 4px;
 }
 
-/* Resumo + botão */
+/* Resumo + ações inferiores */
 
 .fr-summary p {
   margin: 4px 0;
@@ -430,22 +409,40 @@ padding-top: 20px;
   color: #4b5563;
 }
 
+/* grid de resumo do resultado */
+
+.fr-summary-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+  font-size: 16px;
+}
+
+.fr-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+
+.fr-summary-row span {
+  font-weight: 600;
+  color: #111827;
+}
+
 .fr-actions-bottom {
   margin-top: 16px;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 900px) {
-  .fr-result-title {
-    font-size: 22px;
-  }
+/* ==============================
+   Modal (Simples Nacional)
+   ============================== */
 
-  .fr-pie-section {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
 .fr-modal-overlay {
   position: fixed;
   inset: 0;
@@ -491,10 +488,16 @@ padding-top: 20px;
   color: #006b7a;
 }
 
+/* disabled */
+
 .fr-disabled {
   opacity: 0.45;
 }
-/* === Ajuste visual: remove a borda do fieldset da calculadora === */
+
+/* ==============================
+   Fieldset / espaçamentos
+   ============================== */
+
 .fr-form fieldset {
   border: none;
   padding: 0;
@@ -505,30 +508,19 @@ padding-top: 20px;
   border: none;
 }
 
-/* === Ajuste uniforme de espaçamento entre perguntas === */
 .fr-question {
-  margin-top: 2.2rem;   /* distância superior padrão entre perguntas */
-  margin-bottom: 0;     /* evita espaçamento duplo com o próximo elemento */
-}
-
-/* === Espaçamento entre as caixinhas de opções (Sim / Não) === */
-.fr-options-row {
-  margin-top: 0.6rem;   /* distância entre o texto da pergunta e as opções */
-  margin-bottom: 0;     /* remove espaço extra abaixo */
-}
-
-/* === Melhora a consistência visual quando há inputs logo abaixo === */
-.fr-question + .fr-question {
-  margin-top: 2.2rem;   /* mantém mesma distância entre campos consecutivos */
-}
-
-/* === Opcional: ajusta o espaçamento entre inputs e textos internos === */
-.fr-input {
-  margin-top: 0.6rem;
+  margin-top: 2.2rem;
   margin-bottom: 0;
 }
 
-/* ===== Tooltip de ajuda (sem setinha) ===== */
+.fr-question + .fr-question {
+  margin-top: 2.2rem;
+}
+
+/* ==============================
+   Tooltip de ajuda
+   ============================== */
+
 .fr-help {
   position: relative;
   display: inline-flex;
@@ -544,7 +536,7 @@ padding-top: 20px;
   justify-content: center;
   width: 26px;
   height: 26px;
-  border: 2px solid #1f2a44;    /* azul escuro do seu tema */
+  border: 2px solid #1f2a44;
   color: #1f2a44;
   border-radius: 50%;
   font-weight: 700;
@@ -554,26 +546,28 @@ padding-top: 20px;
 }
 
 /* Balão */
+
 .fr-help-bubble {
   position: absolute;
-  top: calc(100% + 10px);        /* abaixo do “?” */
+  top: calc(100% + 10px);
   left: 50%;
-  transform: translate(-50%, -6px);  /* leve subida ao esconder */
+  transform: translate(-50%, -6px);
   min-width: 280px;
   max-width: min(560px, 86vw);
-  background: #eaf1ff;          /* azul bem claro */
+  background: #eaf1ff;
   color: #0f1a2b;
   padding: 14px 16px;
   border: 1px solid #a8b6da;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
   opacity: 0;
-  pointer-events: none;          /* não captura clique quando escondido */
-  transition: opacity .15s ease, transform .15s ease;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
   z-index: 50;
 }
 
-/* Mostrar no hover e no foco (acessível teclado) */
+/* Mostrar tooltip */
+
 .fr-help:hover .fr-help-bubble,
 .fr-help:focus-within .fr-help-bubble {
   opacity: 1;
@@ -581,22 +575,22 @@ padding-top: 20px;
   pointer-events: auto;
 }
 
-/* Removido qualquer triangulinho */
+/* ==============================
+   Modal melhorado (overlay blur)
+   ============================== */
 
-/* ===== Modal Melhorado ===== */
 .fr-modal-open {
   position: fixed;
   inset: 0;
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(15, 23, 42, 0.45); /* fundo escuro translúcido */
-  backdrop-filter: saturate(110%) blur(6px); /* BLUR no fundo */
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: saturate(110%) blur(6px);
   z-index: 999;
-  animation: fr-fade-in .18s ease-out;
+  animation: fr-fade-in 0.18s ease-out;
 }
 
-/* card */
 .fr-modal-card {
   position: relative;
   width: min(560px, 92vw);
@@ -606,20 +600,19 @@ padding-top: 20px;
   box-shadow:
     0 20px 50px rgba(15, 23, 42, 0.25),
     0 2px 8px rgba(15, 23, 42, 0.12);
-  transform: translateY(8px) scale(.98);
-  animation: fr-pop-in .18s ease-out forwards;
+  transform: translateY(8px) scale(0.98);
+  animation: fr-pop-in 0.18s ease-out forwards;
   outline: none;
 }
 
-/* título e textos */
 .fr-modal-title {
   margin: 4px 0 10px;
   text-align: center;
   font-size: 22px;
   font-weight: 800;
-  letter-spacing: .4px;
+  letter-spacing: 0.4px;
   color: #0f1a2b;
-  text-transform: uppercase; /* mantém o tom de alerta */
+  text-transform: uppercase;
 }
 
 .fr-modal-text {
@@ -629,7 +622,6 @@ padding-top: 20px;
   line-height: 1.55;
 }
 
-/* ações */
 .fr-modal-actions {
   display: flex;
   justify-content: center;
@@ -637,7 +629,6 @@ padding-top: 20px;
   margin-top: 18px;
 }
 
-/* botão X */
 .fr-modal-x {
   position: absolute;
   top: 10px;
@@ -653,7 +644,7 @@ padding-top: 20px;
   cursor: pointer;
   display: grid;
   place-items: center;
-  transition: transform .12s ease, background .15s ease, color .15s ease;
+  transition: transform 0.12s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .fr-modal-x:hover {
@@ -666,6 +657,7 @@ padding-top: 20px;
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
 @keyframes fr-pop-in {
   to { transform: translateY(0) scale(1); }
 }
@@ -675,7 +667,54 @@ body:has(.fr-modal-open) {
   overflow: hidden;
 }
 
-/* ===== Responsividade fina para celulares muito pequenos (até 390px) ===== */
+/* ==============================
+   Responsivo até 900px
+   ============================== */
+
+@media (max-width: 900px) {
+  .fr-layout {
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 24px;
+  }
+
+  .fr-sidebar {
+    width: 100%;
+    position: static; /* deixa de ser fixa no mobile */
+  }
+
+  .fr-content {
+    margin-left: 0;
+  }
+
+  .fr-sidebar-title {
+    font-size: 38px;
+  }
+
+  .fr-card {
+    padding: 26px 20px;
+    border-radius: 24px;
+  }
+
+  .fr-title {
+    font-size: 26px;
+    letter-spacing: 2px;
+  }
+
+  .fr-result-title {
+    font-size: 22px;
+  }
+
+  .fr-pie-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ==============================
+   Responsividade fina (até 390px)
+   ============================== */
+
 @media (max-width: 390px) {
   .fr-layout {
     padding: 18px 12px;
@@ -702,14 +741,11 @@ body:has(.fr-modal-open) {
     border-radius: 20px;
   }
 
-  /* Título principal da calculadora – sem quebra feia */
   .fr-title {
     font-size: 22px;
     letter-spacing: 1px;
-   
   }
 
-  /* Perguntas e textos */
   .fr-question h3 {
     font-size: 18px;
   }
@@ -729,7 +765,6 @@ body:has(.fr-modal-open) {
     font-size: 14px;
   }
 
-  /* Resultado em tela pequena */
   .fr-result {
     padding: 20px 16px 18px;
   }
@@ -750,30 +785,12 @@ body:has(.fr-modal-open) {
   .fr-summary p {
     font-size: 13px;
   }
-
-  /* ===== Resumo do Resultado Organizado ===== */
-.fr-summary-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 16px 0;
-  font-size: 16px;
 }
 
-.fr-summary-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 6px;
-}
+/* ==============================
+   Ajustes extra para mobile até 480px
+   ============================== */
 
-.fr-summary-row span {
-  font-weight: 600;
-  color: #111827;
-}
-
-/* Mobile melhorias */
 @media (max-width: 480px) {
   .fr-summary-row {
     flex-direction: column;
@@ -787,21 +804,15 @@ body:has(.fr-modal-open) {
     gap: 14px;
     font-size: 14px;
   }
-}
 
-.fr-actions-bottom {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 480px) {
   .fr-actions-bottom button {
     width: 100%;
   }
 }
 
-/* ===== Modo embed: quando a calculadora está dentro de outro site ===== */
+/* ==============================
+   Modo embed (widget em outro site)
+   ============================== */
 
 .fr-layout.fr-embed {
   padding: 16px 0;
@@ -809,7 +820,7 @@ body:has(.fr-modal-open) {
 }
 
 .fr-layout.fr-embed .fr-sidebar {
-  display: none;              /* some a coluna azul */
+  display: none; /* some a coluna azul no embed */
 }
 
 .fr-layout.fr-embed .fr-content {
@@ -819,10 +830,7 @@ body:has(.fr-modal-open) {
 }
 
 .fr-layout.fr-embed .fr-card {
-  max-width: 100%;            /* ocupa toda a largura disponível */
+  max-width: 100%;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
-}
-
-
 }
