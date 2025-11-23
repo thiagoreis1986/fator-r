@@ -1,18 +1,27 @@
 :root {
-  --fr-blue1: #3A58E8;
-  --fr-blue2: #0792FC;
+  --fr-blue1: #3a58e8;
+  --fr-blue2: #0792fc;
   --fr-text-dark: #111827;
   --fr-radius-card: 32px;
-  --fr-font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --fr-font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    "Roboto", "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
   font-family: var(--fr-font);
+}
+
+body {
   background: linear-gradient(135deg, var(--fr-blue1), var(--fr-blue2));
   color: var(--fr-text-dark);
 }
@@ -21,9 +30,7 @@ body {
   min-height: 100vh;
 }
 
-/* ==============================
-   Layout geral
-   ============================== */
+/* ========== LAYOUT GERAL ========== */
 
 .fr-layout {
   display: flex;
@@ -33,9 +40,7 @@ body {
   align-items: flex-start;
 }
 
-/* ==============================
-   Coluna azul esquerda (sidebar)
-   ============================== */
+/* Coluna azul esquerda */
 
 .fr-sidebar {
   width: 40%;
@@ -49,19 +54,17 @@ body {
   /* fixa no desktop */
   position: fixed;
   top: 80px;
-  left: 12vw;
+  left: 6vw;
   z-index: 1;
-  padding-top: 20px;
 }
 
 .fr-sidebar-title {
   font-size: 64px;
   line-height: 1.05;
   font-weight: 700;
+  text-transform: uppercase;
   letter-spacing: 2px;
   margin: 0 0 24px;
-  text-transform: uppercase;
-  text-align: left;
 }
 
 .fr-sidebar p {
@@ -69,13 +72,10 @@ body {
   font-size: 18px;
   line-height: 1.6;
   max-width: 500px;
-  text-align: left;
   font-weight: 600;
 }
 
-/* ==============================
-   Card branco direita
-   ============================== */
+/* Coluna branca direita */
 
 .fr-content {
   flex: 1;
@@ -83,8 +83,8 @@ body {
   justify-content: center;
   align-items: flex-start;
 
-  /* empurra o card pra direita pra não ficar atrás da sidebar no desktop */
-  margin-left: calc(40% + 40px + 6vw);
+  /* empurra o card pra direita pra não ficar atrás da sidebar */
+  margin-left: calc(40% + 40px);
 }
 
 .fr-card {
@@ -103,17 +103,19 @@ body {
   font-weight: 700;
   color: var(--fr-text-dark);
   letter-spacing: 3px;
-  white-space: nowrap;
 }
 
-/* ==============================
-   Formulário
-   ============================== */
+/* ========== FORMULÁRIO ========== */
 
 .fr-form {
   display: flex;
   flex-direction: column;
   gap: 22px;
+}
+
+.fr-question {
+  margin-top: 2.2rem;
+  margin-bottom: 0;
 }
 
 .fr-question h3 {
@@ -123,21 +125,18 @@ body {
   color: var(--fr-text-dark);
 }
 
-/* Para manter a pergunta do tempo + ? em uma única linha no desktop */
-.fr-label-nowrap {
-  white-space: nowrap;
-}
-
-/* rótulos padrão das perguntas */
 .fr-label {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .fr-options-row {
   display: flex;
   flex-wrap: wrap;
   gap: 26px;
-  margin-top: 4px;
+  margin-top: 0.6rem;
+  margin-bottom: 0;
 }
 
 .fr-option {
@@ -147,8 +146,6 @@ body {
   font-size: 16px;
   cursor: pointer;
 }
-
-/* Radios customizados */
 
 .fr-option input[type="radio"] {
   appearance: none;
@@ -178,8 +175,6 @@ body {
   left: 4px;
 }
 
-/* Inputs */
-
 .fr-input {
   width: 100%;
   padding: 14px 22px;
@@ -202,9 +197,7 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-/* ==============================
-   Alertas
-   ============================== */
+/* ========== ALERTAS ========== */
 
 .fr-alert {
   padding: 14px 18px;
@@ -223,9 +216,7 @@ body {
   color: #1d4ed8;
 }
 
-/* ==============================
-   Botões
-   ============================== */
+/* ========== BOTÕES ========== */
 
 .fr-actions {
   display: flex;
@@ -267,40 +258,7 @@ body {
   background: #f9fafb;
 }
 
-/* ==============================
-   Box e notas
-   ============================== */
-
-.fr-box {
-  margin-top: 22px;
-  padding: 18px 20px 16px;
-  border-radius: 20px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-}
-
-.fr-box h3 {
-  margin: 0 0 8px;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--fr-text-dark);
-}
-
-.fr-box p {
-  margin: 2px 0;
-  font-size: 15px;
-  color: #4b5563;
-}
-
-.fr-box-note {
-  font-size: 12px;
-  color: #9ca3af;
-  margin-top: 6px;
-}
-
-/* ==============================
-   Resultado
-   ============================== */
+/* ========== RESULTADO ========== */
 
 .fr-result {
   margin-top: 26px;
@@ -327,7 +285,7 @@ body {
   line-height: 1.6;
 }
 
-/* Barras horizontais */
+/* Barras */
 
 .fr-bars {
   margin-bottom: 26px;
@@ -359,12 +317,12 @@ body {
 }
 
 .fr-bar-fill-main {
-  background: #fbbf24; /* amarelo */
+  background: #fbbf24;
   color: #1f2937;
 }
 
 .fr-bar-fill-alt {
-  background: #22d3ee; /* ciano */
+  background: #22d3ee;
   color: #0f172a;
 }
 
@@ -411,7 +369,11 @@ body {
   border-radius: 4px;
 }
 
-/* Resumo + ações inferiores */
+/* Resumo numérico */
+
+.fr-summary {
+  margin-top: 4px;
+}
 
 .fr-summary p {
   margin: 4px 0;
@@ -419,7 +381,11 @@ body {
   color: #4b5563;
 }
 
-/* grid de resumo do resultado */
+.fr-box-note {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 6px;
+}
 
 .fr-summary-grid {
   display: flex;
@@ -449,9 +415,7 @@ body {
   flex-wrap: wrap;
 }
 
-/* ==============================
-   Modal (Simples Nacional)
-   ============================== */
+/* ========== MODAL ========== */
 
 .fr-modal-overlay {
   position: fixed;
@@ -462,132 +426,6 @@ body {
   background: rgba(0, 0, 0, 0.35);
   z-index: 999;
 }
-
-.fr-modal {
-  background: #44f4f0;
-  padding: 32px 40px;
-  border-radius: 16px;
-  max-width: 720px;
-  text-align: center;
-  color: #004466;
-  font-weight: 500;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
-  position: relative;
-}
-
-.fr-modal h3 {
-  margin: 0 0 12px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.fr-modal p {
-  margin: 4px 0;
-  line-height: 1.5;
-  font-size: 16px;
-}
-
-.fr-modal-close {
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  border: none;
-  background: transparent;
-  font-size: 22px;
-  cursor: pointer;
-  color: #006b7a;
-}
-
-/* disabled */
-
-.fr-disabled {
-  opacity: 0.45;
-}
-
-/* ==============================
-   Fieldset / espaçamentos
-   ============================== */
-
-.fr-form fieldset {
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
-.fr-form fieldset:disabled {
-  border: none;
-}
-
-.fr-question {
-  margin-top: 2.2rem;
-  margin-bottom: 0;
-}
-
-.fr-question + .fr-question {
-  margin-top: 2.2rem;
-}
-
-/* ==============================
-   Tooltip de ajuda
-   ============================== */
-
-.fr-help {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  margin-left: 8px;
-  cursor: help;
-  outline: none;
-}
-
-.fr-help-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border: 2px solid #1f2a44;
-  color: #1f2a44;
-  border-radius: 50%;
-  font-weight: 700;
-  line-height: 1;
-  background: #fff;
-  user-select: none;
-}
-
-/* Balão */
-
-.fr-help-bubble {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 50%;
-  transform: translate(-50%, -6px);
-  min-width: 280px;
-  max-width: min(560px, 86vw);
-  background: #eaf1ff;
-  color: #0f1a2b;
-  padding: 14px 16px;
-  border: 1px solid #a8b6da;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  z-index: 50;
-}
-
-/* Mostrar tooltip */
-
-.fr-help:hover .fr-help-bubble,
-.fr-help:focus-within .fr-help-bubble {
-  opacity: 1;
-  transform: translate(-50%, 0);
-  pointer-events: auto;
-}
-
-/* ==============================
-   Modal melhorado (overlay blur)
-   ============================== */
 
 .fr-modal-open {
   position: fixed;
@@ -604,11 +442,10 @@ body {
 .fr-modal-card {
   position: relative;
   width: min(560px, 92vw);
-  background: #59f8e8;
+  background: #ffffff;
   border-radius: 16px;
   padding: 28px 28px 22px;
-  box-shadow:
-    0 20px 50px rgba(15, 23, 42, 0.25),
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25),
     0 2px 8px rgba(15, 23, 42, 0.12);
   transform: translateY(8px) scale(0.98);
   animation: fr-pop-in 0.18s ease-out forwards;
@@ -664,162 +501,97 @@ body {
 }
 
 @keyframes fr-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-
 @keyframes fr-pop-in {
-  to { transform: translateY(0) scale(1); }
-}
-
-/* Bloqueia scroll do body quando o modal está aberto */
-body:has(.fr-modal-open) {
-  overflow: hidden;
-}
-
-/* ==============================
-   Responsivo até 900px
-   ============================== */
-
-/* ===== Layout para telas até 900px (celular e tablet) ===== */
-@media (max-width: 900px) {
-  .fr-layout {
-    flex-direction: column;
-    padding: 16px 0;
-    margin: 0;
-    gap: 16px;
-    width: 100%;
-  }
-
-  .fr-sidebar {
-    width: 100%;
-    position: static;
-    padding: 0 16px;
-    text-align: left;
-  }
-
-  .fr-content {
-    width: 100%;
-    margin-left: 0;
-    padding: 0 16px 16px;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-  }
-
-  .fr-card {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 20px;
-    padding: 24px 16px 20px;
-    box-sizing: border-box;
-  }
-
-  .fr-sidebar-title {
-    font-size: 32px;
-  }
-
-  .fr-title {
-    font-size: 24px;
-    letter-spacing: 1px;
-    white-space: normal;
-  }
-
-  .fr-input {
-    width: 100%;
-    max-width: 100%;
-  }
-
-
-  .fr-result-title {
-    font-size: 22px;
-  }
-
-  .fr-pie-section {
-    flex-direction: column;
-    align-items: flex-start;
+  to {
+    transform: translateY(0) scale(1);
   }
 }
 
-/* ==============================
-   Responsividade fina (até 390px)
-   ============================== */
+/* ========== FIELDSET / DISABLED ========== */
 
-@media (max-width: 390px) {
-  .fr-layout {
-    padding: 18px 12px;
-    gap: 18px;
-  }
-
-  .fr-sidebar {
-    width: 100%;
-  }
-
-  .fr-sidebar-title {
-    font-size: 30px;
-    line-height: 1.05;
-    margin-bottom: 16px;
-  }
-
-  .fr-sidebar p {
-    font-size: 14px;
-    max-width: 100%;
-  }
-
-  .fr-card {
-    padding: 20px 16px 18px;
-    border-radius: 20px;
-  }
-
-  .fr-title {
-    font-size: 22px;
-    letter-spacing: 1px;
-  }
-
-  .fr-question h3 {
-    font-size: 18px;
-  }
-
-  .fr-input {
-    padding: 12px 16px;
-    font-size: 15px;
-  }
-
-  .fr-option {
-    font-size: 14px;
-  }
-
-  .fr-btn-primary,
-  .fr-btn-outline {
-    padding: 12px 22px;
-    font-size: 14px;
-  }
-
-  .fr-result {
-    padding: 20px 16px 18px;
-  }
-
-  .fr-result-title {
-    font-size: 20px;
-    letter-spacing: 1px;
-  }
-
-  .fr-result-text {
-    font-size: 14px;
-  }
-
-  .fr-pie-section {
-    gap: 16px;
-  }
-
-  .fr-summary p {
-    font-size: 13px;
-  }
+.fr-form fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* ==============================
-   Ajustes extra para mobile até 480px
-   ============================== */
+.fr-form fieldset:disabled {
+  border: none;
+}
+
+.fr-disabled {
+  opacity: 0.45;
+}
+
+/* ========== TOOLTIP DE AJUDA ========== */
+
+.fr-help {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  cursor: help;
+  outline: none;
+}
+
+.fr-help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid #1f2a44;
+  color: #1f2a44;
+  border-radius: 50%;
+  font-weight: 700;
+  line-height: 1;
+  background: #fff;
+  user-select: none;
+}
+
+/* Balão */
+
+.fr-help-bubble {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translate(-50%, -6px);
+  min-width: 280px;
+  max-width: min(560px, 86vw);
+  background: #eaf1ff;
+  color: #0f1a2b;
+  padding: 14px 16px;
+  border: 1px solid #a8b6da;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 50;
+  white-space: normal; /* importante pro texto não estourar */
+}
+
+.fr-help-bubble-right {
+  left: auto;
+  right: 0;
+  transform: translateY(-6px);
+}
+
+.fr-help:hover .fr-help-bubble,
+.fr-help:focus-within .fr-help-bubble {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+/* ========== RESPONSIVO ATÉ 480px (ajuste do resumo) ========== */
 
 @media (max-width: 480px) {
   .fr-summary-row {
@@ -840,9 +612,109 @@ body:has(.fr-modal-open) {
   }
 }
 
-/* ==============================
-   Modo embed (widget em outro site)
-   ============================== */
+/* ========== RESPONSIVO GERAL ATÉ 900px ========== */
+
+@media (max-width: 900px) {
+  .fr-layout {
+    flex-direction: column;
+    padding: 16px 0;
+    margin: 0;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .fr-sidebar {
+    position: static;
+    width: 100%;
+    padding: 16px;
+    text-align: left;
+  }
+
+  .fr-sidebar-title {
+    font-size: 32px;
+  }
+
+  .fr-sidebar p {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .fr-content {
+    width: 100%;
+    margin-left: 0;
+    padding: 0 16px 16px;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  .fr-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 16px 20px;
+    border-radius: 20px;
+    box-sizing: border-box;
+  }
+
+  .fr-title {
+    font-size: 24px;
+    letter-spacing: 1px;
+  }
+
+  .fr-result-title {
+    font-size: 22px;
+  }
+
+  .fr-result {
+    padding: 20px 16px 18px;
+  }
+
+  .fr-result-text {
+    font-size: 14px;
+  }
+
+  .fr-pie-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .fr-input {
+    font-size: 15px;
+  }
+
+  .fr-option {
+    font-size: 14px;
+  }
+
+  .fr-btn-primary,
+  .fr-btn-outline {
+    padding: 12px 22px;
+    font-size: 14px;
+  }
+}
+
+/* ========== EXTRA PEQUENO (ATÉ 390px) ========== */
+
+@media (max-width: 390px) {
+  .fr-title {
+    font-size: 22px;
+  }
+
+  .fr-sidebar-title {
+    font-size: 28px;
+  }
+
+  .fr-question h3 {
+    font-size: 18px;
+  }
+
+  .fr-summary p {
+    font-size: 13px;
+  }
+}
+
+/* ========== MODO EMBED (QUANDO USAR EM OUTRO SITE) ========== */
 
 .fr-layout.fr-embed {
   padding: 16px 0;
@@ -850,11 +722,13 @@ body:has(.fr-modal-open) {
 }
 
 .fr-layout.fr-embed .fr-sidebar {
-  display: none; /* some a coluna azul no embed */
+  display: none;
 }
 
 .fr-layout.fr-embed .fr-content {
   flex: 1;
+  margin-left: 0;
+  padding: 0;
   justify-content: center;
   align-items: stretch;
 }
@@ -863,116 +737,4 @@ body:has(.fr-modal-open) {
   max-width: 100%;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
-}
-
-/* Permite quebra de linha dentro do tooltip mesmo quando o label usa nowrap */
-.fr-help-bubble {
-  white-space: normal !important;
-  line-height: 1.5;
-  max-width: 480px;
-}
-
-/* Alinha o tooltip para a direita do ícone */
-.fr-help-bubble {
-  left: auto;
-  transform: none;
-}
-
-/* ===== Fix responsivo para mobile ===== */
-@media (max-width: 768px) {
-
-  .fr-layout {
-    flex-direction: column;
-    padding: 16px;
-    margin: 0;
-    gap: 20px;
-  }
-
-  .fr-sidebar {
-    width: 100% !important;
-    position: static !important;
-    text-align: center;
-  }
-
-  .fr-content {
-    width: 100%;
-    margin-left: 0 !important;
-  }
-
-  .fr-card {
-    width: 100%;
-    max-width: 100% !important;
-    border-radius: 16px;
-  }
-
-  /* Faz inputs ocuparem largura total sem overflow */
-  .fr-input {
-    width: 100% !important;
-    max-width: 100%;
-  }
-
-  /* Garante que os tooltips não estourem a tela */
-  .fr-help-bubble {
-    left: 50%;
-    transform: translateX(-50%);
-    width: auto;
-    max-width: 92vw;
-    text-align: left;
-  }
-}
-
-/* ===== Anti-overflow em mobile ===== */
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* Garante que o layout e o card nunca ultrapassem a largura da tela */
-.fr-layout,
-.fr-content,
-.fr-card {
-  max-width: 100%;
-}
-
-/* ===== HOTFIX MOBILE: card sempre 100% da largura ===== */
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* Força layout/card a usar toda a largura em telas menores */
-@media (max-width: 900px) {
-  .fr-layout {
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-  }
-
-  .fr-sidebar {
-    width: 100% !important;
-    position: static !important;
-    padding: 16px !important;
-  }
-
-  .fr-content {
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 16px 16px !important;
-    display: block !important;
-  }
-
-  .fr-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;   /* opcional: cola o branco na borda da tela */
-    box-sizing: border-box;
-  }
-
-  .fr-input {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
 }
