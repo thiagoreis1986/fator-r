@@ -1049,15 +1049,15 @@ export default function FatorRCalculator() {
                         const segments = [
                           {
                             value: resultado.impostosPercent,
-                            color: "#F97316",
+                            color: "#FFC700",
                           },
                           {
                             value: resultado.folhaPercent,
-                            color: "#52B788",
+                            color: "#0792FC",
                           },
                           {
                             value: resultado.rendaPercent,
-                            color: "#D00084",
+                            color: "#5327EA",
                           },
                         ];
 
@@ -1108,7 +1108,7 @@ export default function FatorRCalculator() {
                     <div className="fr-legend-item">
                       <span
                         className="fr-legend-color"
-                        style={{ backgroundColor: "#F97316" }}
+                        style={{ backgroundColor: "#FFC700" }}
                       />
                       <span>
                         Impostos ({resultado.impostosPercent.toFixed(1)}%)
@@ -1118,7 +1118,7 @@ export default function FatorRCalculator() {
                     <div className="fr-legend-item">
                       <span
                         className="fr-legend-color"
-                        style={{ backgroundColor: "#52B788" }}
+                        style={{ backgroundColor: "#0792FC" }}
                       />
                       <span>
                         Folha de Pagamento (
@@ -1129,7 +1129,7 @@ export default function FatorRCalculator() {
                     <div className="fr-legend-item">
                       <span
                         className="fr-legend-color"
-                        style={{ backgroundColor: "#D00084" }}
+                        style={{ backgroundColor: "#5327EA" }}
                       />
                       <span>
                         Renda Líquida ({resultado.rendaPercent.toFixed(1)}%)
