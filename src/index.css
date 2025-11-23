@@ -934,3 +934,45 @@ body {
 .fr-card {
   max-width: 100%;
 }
+
+/* ===== HOTFIX MOBILE: card sempre 100% da largura ===== */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Força layout/card a usar toda a largura em telas menores */
+@media (max-width: 900px) {
+  .fr-layout {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .fr-sidebar {
+    width: 100% !important;
+    position: static !important;
+    padding: 16px !important;
+  }
+
+  .fr-content {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 16px 16px !important;
+    display: block !important;
+  }
+
+  .fr-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;   /* opcional: cola o branco na borda da tela */
+    box-sizing: border-box;
+  }
+
+  .fr-input {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
