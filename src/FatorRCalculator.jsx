@@ -747,27 +747,45 @@ export default function FatorRCalculator() {
 
                 {/* Faturamento 12 meses (opcional p/ mais de 12 meses) */}
                 {tempo === "mais12" && (
-                  <section className="fr-question">
-                    <h3>Ou informe o faturamento bruto dos últimos 12 meses:</h3>
-                    <input
-                      className="fr-input"
-                      type="text"
-                      inputMode="decimal"
-                      value={faturamentoAnual}
-                      onChange={(e) => {
-                        handleCurrencyChange(e, setFaturamentoAnual);
+  <section className="fr-question">
+    <h3 className="fr-label">
+      Ou informe o faturamento bruto dos últimos 12 meses:
+      <span 
+        className="fr-help" 
+        aria-describedby="hint-faturamento12"
+      >
+        <span className="fr-help-icon">?</span>
+        <span 
+          id="hint-faturamento12" 
+          className="fr-help-bubble"
+          role="tooltip"
+        >
+          Preencha este campo apenas se <strong>não tiver informado</strong> o faturamento médio mensal acima.  
+          As duas opções servem para calcular o mesmo valor final — você só precisa selecionar <strong>uma delas</strong>.
+        </span>
+      </span>
+    </h3>
 
-                        if (faturamentoMensal) {
-                          setFaturamentoMensal("");
-                        }
+    <input
+      className="fr-input"
+      type="text"
+      inputMode="decimal"
+      value={faturamentoAnual}
+      onChange={(e) => {
+        handleCurrencyChange(e, setFaturamentoAnual);
 
-                        resetFeedback();
-                      }}
-                      placeholder="Opcional - R$ 0,00"
-                      disabled={!!faturamentoMensal}
-                    />
-                  </section>
-                )}
+        if (faturamentoMensal) {
+          setFaturamentoMensal("");
+        }
+
+        resetFeedback();
+      }}
+      placeholder="Opcional - R$ 0,00"
+      disabled={!!faturamentoMensal}
+    />
+  </section>
+)}
+
 
  {/* Pró-labore */}
 <section className="fr-question">
