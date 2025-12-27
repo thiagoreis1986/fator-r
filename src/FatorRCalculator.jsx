@@ -695,7 +695,7 @@ export default function FatorRCalculator() {
                         setMesesEmpresa(e.target.value);
                         resetFeedback();
                       }}
-                      placeholder="Escreva somente numerais. EX.: 0 - 12"
+                      placeholder="Escreva somente numerais. EX.: 0 - 11"
                     />
                   </section>
                 )}
