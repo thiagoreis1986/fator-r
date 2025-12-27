@@ -975,8 +975,10 @@ export default function FatorRCalculator() {
             {resultado && (
               <section className="fr-result" ref={resultadoRef}>
                 <h2 className="fr-result-title">
-                  SEU NEGÓCIO SE ENQUADRA NO ANEXO{" "}
-                  {resultado.anexoRecomendado}
+                  {resultado.anexoRecomendado}{" "}
+                  {resultado.anexoRecomendado === "III"
+                  ? "(COM FATOR R)"
+                  : "(SEM FATOR R)"}
                 </h2>
 
                 <p className="fr-result-text">
