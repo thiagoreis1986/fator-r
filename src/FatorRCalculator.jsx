@@ -1141,41 +1141,45 @@ export default function FatorRCalculator() {
                 </div>
 
                 {/* Resumo numérico */}
-                <div className="fr-summary">
-                  <div className="fr-summary-grid">
-                    <div className="fr-summary-row">
-                      <strong>Folha (12 meses):</strong>
-                      <span>{formatCurrencyBRL(resultado.folha12)}</span>
-                    </div>
+<div className="fr-summary">
+  <div className="fr-summary-grid">
+    <div className="fr-summary-row">
+      <strong>Folha (12 meses):</strong>
+      <span>{formatCurrencyBRL(resultado.folha12)}</span>
+    </div>
 
-                    <div className="fr-summary-row">
-                      <strong>Receita (12 meses):</strong>
-                      <span>{formatCurrencyBRL(resultado.receita12)}</span>
-                    </div>
+    <div className="fr-summary-row">
+      <strong>Receita (12 meses):</strong>
+      <span>{formatCurrencyBRL(resultado.receita12)}</span>
+    </div>
 
-                    <div className="fr-summary-row">
-                      <strong>
-                        Impostos no Anexo {resultado.anexoRecomendado}:
-                      </strong>
-                      <span>
-                        {formatCurrencyBRL(resultado.impostoRecomendado)}
-                      </span>
-                    </div>
+    <div className="fr-summary-row">
+      <strong>
+        Impostos no Anexo {resultado.anexoRecomendado}:
+      </strong>
+      <span>
+        {formatCurrencyBRL(resultado.impostoRecomendado)}
+      </span>
+    </div>
 
-                    <div className="fr-summary-row">
-                      <strong>No outro anexo:</strong>
-                      <span>
-                        {formatCurrencyBRL(resultado.impostoAlternativo)}
-                      </span>
-                    </div>
-                  </div>
+    <div className="fr-summary-row">
+      <strong>
+        Impostos no Anexo{" "}
+        {resultado.anexoRecomendado === "III" ? "V" : "III"}:
+      </strong>
+      <span>
+        {formatCurrencyBRL(resultado.impostoAlternativo)}
+      </span>
+    </div>
+  </div>
 
-                  <p className="fr-box-note">
-                    Este simulador é uma referência. A Conta Ágil recomenda
-                    análise completa do enquadramento, CNAE, benefícios e
-                    legislação vigente antes de tomar decisões.
-                  </p>
-                </div>
+  <p className="fr-box-note">
+    Este simulador é uma referência. A Conta Ágil recomenda
+    análise completa do enquadramento, CNAE, benefícios e
+    legislação vigente antes de tomar decisões.
+  </p>
+</div>
+
 
                 {/* Botões finais */}
                 <div className="fr-actions-bottom">
